@@ -2,20 +2,15 @@
 
 Replace this text with your commit message / description of the change.
 Please ensure that the title of the PR is what you will be use as the commit title
-
-```
 e.g: "ASWE-0002: Add pull request template into repository"
-```
 
 ## Changes
 
 Replace this text with changes you have made.
 
-```
 e.g:
 1. Added a new script to format/lint react code
 2. Fixed an issue with elements not showing up correctly in shopping view
-```
 
 ## How has this been tested?
 
