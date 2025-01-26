@@ -1,0 +1,5 @@
+# Dev dependencies - upgrade to wheel later
+black==24.10.0
+isort==5.13.2
+pylint==3.3.3
+invoke==2.2.0 # add automation later
