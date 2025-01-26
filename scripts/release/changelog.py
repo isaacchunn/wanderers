@@ -137,8 +137,11 @@ class Changelog:
         ) -> None:
             if curr_release != []:
                 # Handle unreleased case
-                if curr_version == "Unreleased":
-                    curr_version = None
+                curr_version = (
+                    None
+                    if curr_version == "Unreleased"
+                    else version.parse(curr_version)
+                )
                 release = ReleaseLog(curr_version, curr_release_date)
                 release.parse(curr_release)
                 self.releases.append(release)
@@ -154,13 +157,13 @@ class Changelog:
             # Break so we do not hit diff text
             if line == "-----\n":
                 break
+
             # Cryptic looking regex to match our version and release date
-            version_pattern = re.compile(r"^## \[(.*)\](?: - (\d{4}-\d{2}-\d{2}))?$")
+            version_pattern = re.compile(r"^## \[(.*)\](?: - (\d{4}-\d{2}-\d{2}))?")
             match = version_pattern.match(line)
             if match:
                 # Found our first version, we should start logging
                 start_logging = True
-
                 # Update previous release
                 if curr_version is not None:
                     create_release(curr_release, curr_version, curr_release_date)
@@ -175,7 +178,8 @@ class Changelog:
                 curr_release.append(line.strip())
 
         # Then add last entry
-        create_release(curr_release, curr_version, curr_release_date)
+        if curr_version is not None:
+            create_release(curr_release, curr_version, curr_release_date)
 
         # Then format diff text
         self.format_diff_text()
@@ -233,8 +237,7 @@ class Changelog:
 
         # Check if the version to release is greater than the previous release
         if len(self.releases) > 1 and self.releases[1].version:
-            previous_version = version.parse(self.releases[1].version)
-            if version_to_release <= previous_version:
+            if version_to_release <= self.releases[1].version:
                 logging.error(
                     "Unable to release the latest version as it is not greater than the previous version"
                 )
