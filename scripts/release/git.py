@@ -3,14 +3,14 @@ our class by providing utility functions for accessing repo
 information."""
 
 import logging.config
-import os
 import subprocess
+from pathlib import Path
 from typing import List
 
-current_directory = os.getcwd()
-config_path = os.path.join(current_directory, "scripts", "logging_config.ini")
+config_path = Path.cwd() / "scripts" / "logging_config.ini"
 
 logging.config.fileConfig(config_path)
+
 
 class Git:
     """
