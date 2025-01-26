@@ -181,9 +181,6 @@ class Changelog:
         if curr_version is not None:
             create_release(curr_release, curr_version, curr_release_date)
 
-        # Then format diff text
-        self.format_diff_text()
-
     def save_file(self) -> None:
         file_text = self._FILE_HEADER
         for release in self.releases:
@@ -198,10 +195,10 @@ class Changelog:
         """This text is shown at the bottom of the changelog to show
         changes among tags"""
         diff_text = []
-        for i, release in enumerate(reversed(self.releases)):
+        reversed_releases = list(reversed(self.releases))
+        for i, release in enumerate(reversed_releases):
             # I will hardcode it to this repository for now, probably should
             # read this from some .env variable
-
             # First release
             if i == 0:
                 if release.version is not None:  # First release
@@ -210,19 +207,19 @@ class Changelog:
                     )
             else:
                 # Check to next release to see if we are at the last release
-                if i + 1 == len(self.releases):
+                if i + 1 == len(reversed_releases):
                     # This is the unreleased section, so we should get the
                     # difference between this release and the HEAD of the repo
                     diff_text.append(
                         f"[unreleased]: https://github.com/isaacchunn/wanderers/compare/"
-                        f"v{self.releases[i].version}...HEAD"
+                        f"v{reversed_releases[i-1].version}...HEAD"
                     )
                 else:
                     # This is a valid release so get the difference in tags
                     # between this release and the previous release
                     diff_text.append(
-                        f"[{self.releases[i].version}]: https://github.com/isaacchunn/wanderers/compare/"
-                        f"v{self.releases[i].version}...v{self.releases[i+1].version}"
+                        f"[{reversed_releases[i].version}]: https://github.com/isaacchunn/wanderers/compare/"
+                        f"v{reversed_releases[i-1].version}...v{reversed_releases[i].version}"
                     )
         return list(reversed(diff_text))
 
