@@ -3,3 +3,7 @@ black==24.10.0
 isort==5.13.2
 pylint==3.3.3
 invoke==2.2.0 # add automation later
+python-dotenv==1.0.1
+
+# Dependencies
+PyGithub==2.5.0
