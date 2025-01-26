@@ -7,16 +7,10 @@ import os
 import subprocess
 from typing import List
 
-from dotenv import dotenv_values
-from github import Github
-
-config = dotenv_values(".env")
-
 current_directory = os.getcwd()
 config_path = os.path.join(current_directory, "scripts", "logging_config.ini")
 
 logging.config.fileConfig(config_path)
-
 
 class Git:
     """
