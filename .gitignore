@@ -39,3 +39,9 @@ jspm_packages
 
 # virtual venv
 *venv
+
+# Environment file setup
+.env
+
+# Python logging file
+debug.log
