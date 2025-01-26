@@ -151,6 +151,9 @@ class Changelog:
         curr_release_date = None
 
         for line in lines:
+            # Break so we do not hit diff text
+            if line == "-----\n":
+                break
             # Cryptic looking regex to match our version and release date
             version_pattern = re.compile(r"^## \[(.*)\](?: - (\d{4}-\d{2}-\d{2}))?$")
             match = version_pattern.match(line)
@@ -174,22 +177,69 @@ class Changelog:
         # Then add last entry
         create_release(curr_release, curr_version, curr_release_date)
 
+        # Then format diff text
+        self.format_diff_text()
+
     def save_file(self) -> None:
         file_text = self._FILE_HEADER
         for release in self.releases:
             file_text += str(release)
+        file_text += "-----\n"
+        for diff_text in self.format_diff_text():
+            file_text += diff_text + "\n"
         with open(self.file_path, "w", encoding="UTF-8") as file:
             file.write(file_text)
 
+    def format_diff_text(self):
+        """This text is shown at the bottom of the changelog to show
+        changes among tags"""
+        diff_text = []
+        for i, release in enumerate(reversed(self.releases)):
+            # I will hardcode it to this repository for now, probably should
+            # read this from some .env variable
+
+            # First release
+            if i == 0:
+                if release.version is not None:  # First release
+                    diff_text.append(
+                        f"[{release.version}]: https://github.com/isaacchunn/wanderers/releases/tag/v{release.version}"
+                    )
+            else:
+                # Check to next release to see if we are at the last release
+                if i + 1 == len(self.releases):
+                    # This is the unreleased section, so we should get the
+                    # difference between this release and the HEAD of the repo
+                    diff_text.append(
+                        f"[unreleased]: https://github.com/isaacchunn/wanderers/compare/"
+                        f"v{self.releases[i].version}...HEAD"
+                    )
+                else:
+                    # This is a valid release so get the difference in tags
+                    # between this release and the previous release
+                    diff_text.append(
+                        f"[{self.releases[i].version}]: https://github.com/isaacchunn/wanderers/compare/"
+                        f"v{self.releases[i].version}...v{self.releases[i+1].version}"
+                    )
+        return list(reversed(diff_text))
+
     def release_latest(
-        self, version_to_release: version, date_of_release: datetime
+        self, version_to_release: str, date_of_release: datetime
     ) -> None:
         """This function converts the unreleased section into a
         release and appends another unreleased section for usage"""
         # Get the latest release
         latest_release = self.releases[0]
-        # If the latest release is already released, then we should
-        # create a new release
+        version_to_release = version.parse(version_to_release)
+
+        # Check if the version to release is greater than the previous release
+        if len(self.releases) > 1 and self.releases[1].version:
+            previous_version = version.parse(self.releases[1].version)
+            if version_to_release <= previous_version:
+                logging.error(
+                    "Unable to release the latest version as it is not greater than the previous version"
+                )
+                return
+        # Ensure the latest release is pending
         if latest_release.type != ReleaseLog.Type.PENDING:
             logging.error(
                 "Unable to release the latest version as it "
@@ -197,7 +247,7 @@ class Changelog:
             )
             return
 
-        # Update latest release type to be released and version
+        # Update latest release to be released
         latest_release.type = ReleaseLog.Type.RELEASED
         latest_release.version = version_to_release
         latest_release.date = date_of_release
