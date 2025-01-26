@@ -1,19 +1,12 @@
 # Refer to https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners for more information on CODEOWNERS documentation.
 
 # Team Members
-
 # Project Manager + QA: Seo Jin - @kimtorl
-
 # BE + FE: Jsen - @Jaysenso
-
 # BE + FE: Hazim - @fattycuty
-
 # BE + FE: Miko - @P1935404
-
 # BE + Release: Raghav - @raghavrnair
-
 # Lead + BE: Albert - @Albert481
-
 # QA + Release: Isaac - @isaacchunn
 
 docs      @isaacchunn
