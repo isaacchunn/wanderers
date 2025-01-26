@@ -45,3 +45,6 @@ jspm_packages
 
 # Python logging file
 debug.log
+
+# Python cache
+__pycache__
