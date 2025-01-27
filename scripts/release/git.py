@@ -54,10 +54,18 @@ class Git:
             List[str]: _description_
         """
         try:
-            return self._call("tags", *args).split("\n")
+            return self._call("tag", *args).split("\n")
         except Exception as e:
             logging.error(f"Error: {e}")
             return None
+
+    def add(self, *args) -> None:
+        """Adds the changes to the repository
+
+        Returns:
+            None
+        """
+        self._call("add", *args)
 
     def push(self, *args) -> None:
         """Pushes the changes to the repository
@@ -106,6 +114,14 @@ class Git:
             None
         """
         self._call("status", *args)
+
+    def log(self, *args) -> None:
+        """Shows the log of the repository
+
+        Returns:
+            None
+        """
+        return self._call("log", *args)
 
 
 if __name__ == "__main__":
