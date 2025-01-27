@@ -9,9 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Full automation of our release process by running generate_release.py
+
 ### Fixed
 
 ### Changed
+
+- File name of generate_release.py file
 
 ### Removed
 

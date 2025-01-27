@@ -24,6 +24,33 @@ class GitRepo:
         # Get the repo that the user has access to
         self.repo = self.gh.get_user().get_repo(repo_name)
 
+    def create_draft_release(self, tag_name: str, message: str):
+        """Creates a draft release on the GitHub repository
+
+        Args:
+            tag_name (str): tag name of the release
+            message (str): message to attach to the release
+
+        Returns:
+            str: URL of the created release
+        """
+        release = self.repo.create_git_release(
+            tag=tag_name, name=tag_name, message=message, draft=True, prerelease=False
+        )
+        return release.html_url
+
+    def create_pr(self, title: str, body: str, head: str, base: str):
+        """Creates a pull request on the GitHub repository
+
+        Args:
+            title (str): title of the PR
+            body (str): body of the PR
+            head (str): head branch of the PR
+            base (str): base branch of the PR
+        """
+        pr = self.repo.create_pull(title=title, body=body, head=head, base=base)
+        return pr.html_url
+
 
 if __name__ == "__main__":
     git_repo = GitRepo("wanderers")
