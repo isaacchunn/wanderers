@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - Initial Express API Backend with Signup and Login
 
 ### Fixed
@@ -35,7 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added base docs (README and contribution guidelines) for this repository
 - CODEOWNERS file to track mandatory reviewers of certain PRs
 
------
+---
+
 [unreleased]: https://github.com/isaacchunn/wanderers/compare/v0.0.2...HEAD
 [0.0.2]: https://github.com/isaacchunn/wanderers/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/isaacchunn/wanderers/releases/tag/v0.0.1

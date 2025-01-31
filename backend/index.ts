@@ -17,16 +17,18 @@ import authRouter from "./routes/auth";
 const port = process.env.PORT || 4000;
 const app = express();
 
-
 // Set up options
-var allowedDomains = ['http://localhost:4000'];
+var allowedDomains = ["http://localhost:4000"];
 
 const corsOptions = {
-  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+  origin: function (
+    origin: string | undefined,
+    callback: (err: Error | null, allow?: boolean) => void,
+  ) {
     if (!origin || allowedDomains.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error("Not allowed by CORS"));
     }
   },
   optionsSuccessStatus: 200,
@@ -34,26 +36,25 @@ const corsOptions = {
 
 // Swagger options
 const swaggerDefinition = {
-  openapi: '3.0.0',
+  openapi: "3.0.0",
   info: {
-    title: 'Express API for Wanderers',
-    version: '1.0.0',
+    title: "Express API for Wanderers",
+    version: "1.0.0",
   },
   servers: [
     {
-      url: 'http://localhost:4000',
-      description: 'Development server',
+      url: "http://localhost:4000",
+      description: "Development server",
     },
   ],
 };
 
 const options = {
   swaggerDefinition,
-  apis: [path.join(__dirname, './routes/*.ts')]
+  apis: [path.join(__dirname, "./routes/*.ts")],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
-
 
 // Setup public directory
 app.use(express.static(path.join(__dirname, "public")));
@@ -66,28 +67,28 @@ app.use(errorHandler);
 app.use(cookieParser());
 
 // API Routes
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/auth", authRouter);
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../frontend/build')));
+app.use(express.static(path.join(__dirname, "../frontend/build")));
 
 // Catch-all route to serve the React index.html
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
 });
 
 // the check is needed for testing
 // refer to https://stackoverflow.com/a/63299022
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== "test") {
   // sequelize.sync().then(() => {
-    app.listen(Number(port), '0.0.0.0', () => {
-      console.log(`[server]: Server is running at ${port}`);
+  app.listen(Number(port), "0.0.0.0", () => {
+    console.log(`[server]: Server is running at ${port}`);
   });
   // });
 }
 
-if (process.env.NODE_ENV === 'test') {
+if (process.env.NODE_ENV === "test") {
   // sequelize.sync({ force: false})
 }
 export default app;

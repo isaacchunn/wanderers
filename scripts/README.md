@@ -19,19 +19,19 @@ This folder holds utility scripts written in Python that would aid us in our rel
 ## Prerequisite
 
 These are the environment variables you need, I will be using python-dotenv.
-* `GITHUB_TOKEN` - Personal access token to access git related services.
-  * Generating your personal access token: https://github.com/settings/tokens
 
+- `GITHUB_TOKEN` - Personal access token to access git related services.
+  - Generating your personal access token: https://github.com/settings/tokens
 
 1. Create an `.env` file locally in the root directory, and key in the following secrets into your file
-    ```bash
-    GITHUB_TOKEN='<INSERT GITHUB TOKEN>'
-    ```
-2. This `.env` file is consumed by the python-dotenv package through 
-    ```python
+   ```bash
+   GITHUB_TOKEN='<INSERT GITHUB TOKEN>'
+   ```
+2. This `.env` file is consumed by the python-dotenv package through
+   `python
     config = dotenv_values(".env")
-    ```
-NOTE: `.env` file is git ignored by default, do not push this file at ANY cost!
+    `
+   NOTE: `.env` file is git ignored by default, do not push this file at ANY cost!
 
 ## Setup Steps (Developing locally)
 

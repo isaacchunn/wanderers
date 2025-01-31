@@ -4,7 +4,7 @@ import { registerUser, loginUser, confirmAccount } from "../controllers/auth";
 
 const router = express.Router();
 
- /**
+/**
  * @swagger
  * /api/auth/register:
  *   post:
@@ -29,7 +29,7 @@ const router = express.Router();
  *       400:
  *         description: Bad request
  */
-router.post('/register', registerUser);
+router.post("/register", registerUser);
 
 /**
  * @swagger
@@ -54,11 +54,11 @@ router.post('/register', registerUser);
  *       400:
  *         description: Invalid credentials
  */
-router.post('/login', loginUser);
+router.post("/login", loginUser);
 
 // router.post('/request-confirmation', authController.requestConfirmationEmail)
 // router.post('/forgot-password', authController.requestForgetPasswordEmail)
-router.get('/confirmaccount/:token', confirmAccount)
+router.get("/confirmaccount/:token", confirmAccount);
 // router.post('/update-password/:token', authController.updatePassword)
 // router.post('/reset-password/:token', authController.updatePassword)
 
