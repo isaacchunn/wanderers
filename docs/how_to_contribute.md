@@ -10,3 +10,4 @@
      ```
 3. TODO: Modify Changelog.md file for new features to be added to "Pending Release" section, @isaacchunn will make the script for this
 4. Make pull request into "develop" branch
+5. When making PRs - change the title to the ticket + ticket name `e.g: SCEL-42: Update docs for branch creation in repository` as this is the name that would be tagged in the commit tree -> this makes it very much cleaner! An example PR: https://github.com/isaacchunn/wanderers/pull/12
