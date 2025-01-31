@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial Express API Backend with Signup and Login
+- Set up frontend in repository and add landing page
 
 ### Fixed
 
