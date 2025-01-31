@@ -14,6 +14,8 @@ config_path = Path.cwd() / "scripts" / "logging_config.ini"
 
 logging.config.fileConfig(config_path)
 
+DELIMITER = "---\n"
+
 
 class ReleaseLog:
     """This class represents one record of the potentially
@@ -155,7 +157,7 @@ class Changelog:
 
         for line in lines:
             # Break so we do not hit diff text
-            if line == "-----\n":
+            if line == DELIMITER:
                 break
 
             # Cryptic looking regex to match our version and release date
@@ -185,7 +187,7 @@ class Changelog:
         file_text = self._FILE_HEADER
         for release in self.releases:
             file_text += str(release)
-        file_text += "-----\n"
+        file_text += DELIMITER
         for diff_text in self.format_diff_text():
             file_text += diff_text + "\n"
         with open(self.file_path, "w", encoding="UTF-8") as file:
