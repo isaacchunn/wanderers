@@ -1,3 +1,13 @@
+"""This file contains the script to update the release by following the process:
+Typically, the release process for Git is as follows:
+1. Create a release branch
+2. Update changelog
+3. Commit changelog changes
+4. Tag this particular commit
+5. Push the commit
+6. Make release on GitHub
+7. Create PR to merge the release branch into the main branch
+"""
 import argparse
 import logging.config
 from datetime import datetime
@@ -12,20 +22,16 @@ config_path = Path.cwd() / "scripts" / "logging_config.ini"
 
 logging.config.fileConfig(config_path)
 
-"""Typically, the release process for Git is as follows:
-1. Create a release branch
-2. Update changelog
-3. Commit changelog changes
-4. Tag this particular commit
-5. Push the commit
-6. Make release on GitHub
-7. Create PR to merge the release branch into the main branch
-"""
 
 REPO_NAME = "wanderers"
 
 
 def get_args():
+    """Parses and returns the command line arguments.
+
+    Returns:
+        argparse.Namespace: Parsed command line arguments.
+    """
     parser = argparse.ArgumentParser(
         description=(
             "Script that does the whole release process."
@@ -130,6 +136,7 @@ def make_draft_release(release_version):
         for release in changelog_file.releases:
             if release.version == version.parse(release_version):
                 return release
+        return None
 
     release_message = get_release_record(release_version)
     release_url = git_repo.create_draft_release(
@@ -140,6 +147,13 @@ def make_draft_release(release_version):
 
 
 def create_pr(release_version, release_message, release_url):
+    """Creates a pull request for the release branch
+
+    Args:
+        release_version (str): version of release
+        release_message (str): release notes message
+        release_url (str): URL of the draft release
+    """
     logging.info(f"Creating PR for release {release_version}")
     git_repo = GitRepo(REPO_NAME)
 
@@ -155,6 +169,7 @@ def create_pr(release_version, release_message, release_url):
 
 
 def main():
+    """Main function to execute the release process."""
     args = get_args()
 
     # Create release branch to start the release process
