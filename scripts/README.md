@@ -42,7 +42,7 @@ These are the environment variables you need, I will be using python-dotenv.
 2. Activate the virtual environment
    - Windows:
    ```bash
-       .venv\Scripts\activate
+    .venv\Scripts\activate
    ```
    - Mac:
    ```bash
