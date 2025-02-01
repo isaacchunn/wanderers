@@ -8,6 +8,7 @@ Typically, the release process for Git is as follows:
 6. Make release on GitHub
 7. Create PR to merge the release branch into the main branch
 """
+
 import argparse
 import logging.config
 from datetime import datetime
