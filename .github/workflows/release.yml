@@ -1,0 +1,32 @@
+# Workflow for updating release as a one click
+name: Release new version of Wanderers
+
+on:
+  # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
+      inputs:
+        version:
+            description: 'Version to release'
+            required: true
+    push:
+      branches : ["prd"]
+
+# Sets permissions of the GITHUB_TOKEN to write tags
+permissions:
+    contents: write
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Create Tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+            tag="${{ github.event.inputs.version }}"
+            gh release create "$tag" \
+            --repo="$GITHUB_REPOSITORY" \
+            --title="${tag#v}"
