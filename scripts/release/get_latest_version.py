@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from changelog import Changelog
+import random
 
 
 def main():
@@ -13,7 +14,8 @@ def main():
     changelog_file = Changelog(Path("Changelog.md"))
     # Get the latest known version from the changelog
     latest_version = changelog_file.releases[1].version
-    print(latest_version)
+    random_number = random.randint(0, 100)
+    print(f"{latest_version}-{random_number}")
 
 
 if __name__ == "__main__":
