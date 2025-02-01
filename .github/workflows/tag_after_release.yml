@@ -3,7 +3,7 @@ name: Tag prd after push
 
 on:
     push:
-        branches: ["prd", "SCEL-6-add-release-automation-workflow"]
+        branches: ["prd"]
 
 # Sets permissions of the GITHUB_TOKEN to access
 permissions: write-all

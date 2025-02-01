@@ -10,10 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial Express API Backend with Signup and Login
+- Initial next.js project with TailwindCSS
+- Landing page for Wanderers web site
+- Pylint workflow that runs per commit
+- Release workflows for tagging prd branch and creating the releases
 
 ### Fixed
 
 ### Changed
+
+- All python files that failed the pylint checl
 
 ### Removed
 
