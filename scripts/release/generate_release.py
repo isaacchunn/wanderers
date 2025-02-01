@@ -146,7 +146,7 @@ def make_draft_release(release_version):
     return str(release_message), release_url
 
 
-def create_pr(release_version, release_message, release_url):
+def create_pr(release_version, release_message, release_url, base):
     """Creates a pull request for the release branch
 
     Args:
@@ -163,7 +163,7 @@ def create_pr(release_version, release_message, release_url):
         "Please review and merge this PR to complete the release process."
     )
     pr_url = git_repo.create_pr(
-        title=pr_title, body=pr_body, head=f"release-{release_version}", base="stg"
+        title=pr_title, body=pr_body, head=f"release-{release_version}", base=base
     )
     logging.info(f"PR created at {pr_url}")
 
@@ -173,7 +173,7 @@ def main():
     args = get_args()
 
     # Create release branch to start the release process
-    create_release_branch(args.release_version)
+    # create_release_branch(args.release_version)
 
     # Update changelog
     update_changelog(args)
@@ -181,8 +181,10 @@ def main():
     # Commit changelog changes
     commit_changelog_changes(args.release_version)
 
-    # Tag changes
-    tag_commit(args.release_version)
+    # Tag changes (we no longer do this here, but in github actions)
+    # When the push event is detected on prd.
+    # We make the tags on prd
+    # tag_commit(args.release_version)
 
     # Push the changes
     push_changes(args.release_version)
@@ -190,8 +192,9 @@ def main():
     # Make draft release on Git
     release_message, release_url = make_draft_release(args.release_version)
 
-    # Create PR for branch
-    create_pr(args.release_version, release_message, release_url)
+    # Create PR for stg and prod
+    create_pr(args.release_version, release_message, release_url, base="stg")
+    create_pr(args.release_version, release_message, release_url, base="prd")
 
 
 if __name__ == "__main__":
