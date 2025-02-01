@@ -9,19 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Fixed
+
+### Changed
+
+### Removed
+
+## [0.0.3] - 2025-02-01
+
+### Added
+
 - Initial Express API Backend with Signup and Login
 - Initial next.js project with TailwindCSS
 - Landing page for Wanderers web site
 - Pylint workflow that runs per commit
 - Release workflows for tagging prd branch and creating the releases
 
-### Fixed
-
 ### Changed
 
 - All python files that failed the pylint checl
-
-### Removed
 
 ## [0.0.2] - 2025-01-27
 
@@ -43,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CODEOWNERS file to track mandatory reviewers of certain PRs
 
 ---
-
-[unreleased]: https://github.com/isaacchunn/wanderers/compare/v0.0.2...HEAD
+[unreleased]: https://github.com/isaacchunn/wanderers/compare/v0.0.3...HEAD
+[0.0.3]: https://github.com/isaacchunn/wanderers/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/isaacchunn/wanderers/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/isaacchunn/wanderers/releases/tag/v0.0.1
