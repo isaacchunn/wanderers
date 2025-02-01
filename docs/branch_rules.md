@@ -17,4 +17,5 @@ Our branch would follow the structure in the hierachy as follows:
 5. All PRs require at least one approval before it can be merged into `stg`.
 
 ---
+
 1. During release, whatever is in stg would be merged into prod as our stable release.

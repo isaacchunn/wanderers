@@ -34,10 +34,11 @@ class Git:
 
         # Run subprocess for call
         try:
-            result = subprocess.run(call_list, stdout=subprocess.PIPE)
+            result = subprocess.run(call_list, stdout=subprocess.PIPE, check=True)
             return result.stdout.decode("utf-8")
-        except:
-            pass
+        except subprocess.CalledProcessError as e:
+            logging.error(f"Subprocess error: {e}")
+            return ""
 
     def branch(self, *args) -> List[str]:
         """Acquire branch information about the repository
@@ -55,9 +56,9 @@ class Git:
         """
         try:
             return self._call("tag", *args).split("\n")
-        except Exception as e:
-            logging.error(f"Error: {e}")
-            return None
+        except subprocess.CalledProcessError as e:
+            logging.error(f"Subprocess error: {e}")
+            return []
 
     def add(self, *args) -> None:
         """Adds the changes to the repository
@@ -126,4 +127,4 @@ class Git:
 
 if __name__ == "__main__":
     git_instance = Git()
-    logging.info(git_instance._call("status"))
+    logging.info(git_instance.status())

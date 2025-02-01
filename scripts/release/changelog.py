@@ -14,6 +14,8 @@ config_path = Path.cwd() / "scripts" / "logging_config.ini"
 
 logging.config.fileConfig(config_path)
 
+DELIMITER = "---\n"
+
 
 class ReleaseLog:
     """This class represents one record of the potentially
@@ -40,8 +42,8 @@ class ReleaseLog:
     _REMOVED = "### Removed"
     _UNRELEASED = "## [Unreleased]"
 
-    def __init__(self, version=None, date=None) -> None:
-        self.version = version
+    def __init__(self, release_version=None, date=None) -> None:
+        self.version = release_version
         self.date = date
         self.added_items = []
         self.fixed_items = []
@@ -78,6 +80,12 @@ class ReleaseLog:
         return return_text
 
     def parse(self, lines: str) -> None:
+        """Parses the lines collected from the changelog
+        into a release log
+
+        Args:
+            lines (str): lines of string from changelog
+        """
         for line in lines:
             if line == "":
                 continue
@@ -111,10 +119,16 @@ class Changelog:
         "# Changelog\n\n"
         "All notable changes to this project will be documented in this file.\n\n"
         "The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),\n"
-        "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\n\n"
+        "and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)."
+        "\n\n"
     )
 
     def __init__(self, path: Path) -> None:
+        """Called when changelog is created
+
+        Args:
+            path (Path): path to changelog file
+        """
         self.file_path = path
         self.releases = []
 
@@ -122,16 +136,30 @@ class Changelog:
         lines = self.load_file(path)
         self.parse_file(lines)
 
-    def load_file(self, path: Path):
+    def load_file(self, path: Path) -> list[str] | None:
+        """Attempt to load a file from the path
+
+        Args:
+            path (Path): path to changelog file
+
+        Returns:
+            list[str] | None: lines of the file if it exists, otherwise None
+        """
         if not path.exists():
             logging.error(f"Changelog file not found at {path}")
-            return
+            return None
 
         with open(path, "r", encoding="UTF-8") as file:
             lines = file.readlines()
         return lines
 
     def parse_file(self, lines: list) -> None:
+        """Parses the lines from the changelog file into release logs
+
+        Args:
+            lines (list): lines of string from changelog file
+        """
+
         def create_release(
             curr_release: list, curr_version: str, curr_release_date: str
         ) -> None:
@@ -155,7 +183,7 @@ class Changelog:
 
         for line in lines:
             # Break so we do not hit diff text
-            if line == "-----\n":
+            if line == DELIMITER:
                 break
 
             # Cryptic looking regex to match our version and release date
@@ -182,10 +210,11 @@ class Changelog:
             create_release(curr_release, curr_version, curr_release_date)
 
     def save_file(self) -> None:
+        """Saves the changelog to the file specified by self.file_path"""
         file_text = self._FILE_HEADER
         for release in self.releases:
             file_text += str(release)
-        file_text += "-----\n"
+        file_text += DELIMITER
         for diff_text in self.format_diff_text():
             file_text += diff_text + "\n"
         with open(self.file_path, "w", encoding="UTF-8") as file:
@@ -203,7 +232,7 @@ class Changelog:
             if i == 0:
                 if release.version is not None:  # First release
                     diff_text.append(
-                        f"[{release.version}]: https://github.com/isaacchunn/wanderers/releases/tag/v{release.version}"
+                        f"[{release.version}]: https://github.com/isaacchunn/wanderers/releases/tag/v{release.version}"  # pylint: disable=line-too-long
                     )
             else:
                 # Check to next release to see if we are at the last release
@@ -218,7 +247,7 @@ class Changelog:
                     # This is a valid release so get the difference in tags
                     # between this release and the previous release
                     diff_text.append(
-                        f"[{reversed_releases[i].version}]: https://github.com/isaacchunn/wanderers/compare/"
+                        f"[{reversed_releases[i].version}]: https://github.com/isaacchunn/wanderers/compare/"  # pylint: disable=line-too-long
                         f"v{reversed_releases[i-1].version}...v{reversed_releases[i].version}"
                     )
         return list(reversed(diff_text))
@@ -236,7 +265,8 @@ class Changelog:
         if len(self.releases) > 1 and self.releases[1].version:
             if version_to_release <= self.releases[1].version:
                 logging.error(
-                    "Unable to release the latest version as it is not greater than the previous version"
+                    "Unable to release the latest version as it is not greater "
+                    "than the previous version"
                 )
                 return
         # Ensure the latest release is pending

@@ -8,18 +8,31 @@ config = dotenv_values(".env")
 
 
 class GitRepo:
+    """Class to interact with a GitHub repository using PyGithub.
+
+    This class provides methods to create draft releases and pull requests
+    on a specified GitHub repository.
+
+    Attributes:
+        repo_name (str): The name of the GitHub repository.
+        gh (Github): An authenticated GitHub instance.
+        repo (Repository): The GitHub repository object.
+    """
+
     def __init__(self, repo_name: str):
         self.repo_name = repo_name
         # Try get token from config
         git_token = config.get("GITHUB_TOKEN")
         if git_token is None:
-            raise Exception("GitHub token not found in config. Update your .env file!")
+            raise ValueError("GitHub token not found in config. Update your .env file!")
         try:
             # Try to login to GitHub
             self.gh = Github(login_or_token=git_token)
-        except:
-            # If login fails, raise exception
-            raise Exception("Failed to login to GitHub. Check your token.")
+        except Exception as exc:
+            # If login fails, raise exception, this is not the correct exception though...
+            raise ConnectionError(
+                "Failed to login to GitHub. Check your token."
+            ) from exc
 
         # Get the repo that the user has access to
         self.repo = self.gh.get_user().get_repo(repo_name)

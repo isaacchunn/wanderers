@@ -9,6 +9,7 @@ e.g: "ASWE-0002: Add pull request template into repository"
 Replace this text with changes you have made.
 
 e.g:
+
 1. Added a new script to format/lint react code
 2. Fixed an issue with elements not showing up correctly in shopping view
 

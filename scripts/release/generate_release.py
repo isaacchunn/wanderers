@@ -1,3 +1,14 @@
+"""This file contains the script to update the release by following the process:
+Typically, the release process for Git is as follows:
+1. Create a release branch
+2. Update changelog
+3. Commit changelog changes
+4. Tag this particular commit
+5. Push the commit
+6. Make release on GitHub
+7. Create PR to merge the release branch into the main branch
+"""
+
 import argparse
 import logging.config
 from datetime import datetime
@@ -26,6 +37,11 @@ REPO_NAME = "wanderers"
 
 
 def get_args():
+    """Parses and returns the command line arguments.
+
+    Returns:
+        argparse.Namespace: Parsed command line arguments.
+    """
     parser = argparse.ArgumentParser(
         description=(
             "Script that does the whole release process."
@@ -130,6 +146,7 @@ def make_draft_release(release_version):
         for release in changelog_file.releases:
             if release.version == version.parse(release_version):
                 return release
+        return None
 
     release_message = get_release_record(release_version)
     release_url = git_repo.create_draft_release(
@@ -139,7 +156,14 @@ def make_draft_release(release_version):
     return str(release_message), release_url
 
 
-def create_pr(release_version, release_message, release_url):
+def create_pr(release_version, release_message, release_url, base):
+    """Creates a pull request for the release branch
+
+    Args:
+        release_version (str): version of release
+        release_message (str): release notes message
+        release_url (str): URL of the draft release
+    """
     logging.info(f"Creating PR for release {release_version}")
     git_repo = GitRepo(REPO_NAME)
 
@@ -149,16 +173,17 @@ def create_pr(release_version, release_message, release_url):
         "Please review and merge this PR to complete the release process."
     )
     pr_url = git_repo.create_pr(
-        title=pr_title, body=pr_body, head=f"release-{release_version}", base="stg"
+        title=pr_title, body=pr_body, head=f"release-{release_version}", base=base
     )
     logging.info(f"PR created at {pr_url}")
 
 
 def main():
+    """Main function to execute the release process."""
     args = get_args()
 
     # Create release branch to start the release process
-    create_release_branch(args.release_version)
+    # create_release_branch(args.release_version)
 
     # Update changelog
     update_changelog(args)
@@ -166,8 +191,10 @@ def main():
     # Commit changelog changes
     commit_changelog_changes(args.release_version)
 
-    # Tag changes
-    tag_commit(args.release_version)
+    # Tag changes (we no longer do this here, but in github actions)
+    # When the push event is detected on prd.
+    # We make the tags on prd
+    # tag_commit(args.release_version)
 
     # Push the changes
     push_changes(args.release_version)
@@ -175,8 +202,9 @@ def main():
     # Make draft release on Git
     release_message, release_url = make_draft_release(args.release_version)
 
-    # Create PR for branch
-    create_pr(args.release_version, release_message, release_url)
+    # Create PR for stg and prod
+    create_pr(args.release_version, release_message, release_url, base="stg")
+    create_pr(args.release_version, release_message, release_url, base="prd")
 
 
 if __name__ == "__main__":
