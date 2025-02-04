@@ -25,7 +25,6 @@ export default function LandingPage() {
                         className="h-6 rounded-full px-3 text-sm"
                         variant="secondary"
                     >
-                        ✨ Your next adventure awaits
                     </Badge>
                     <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
                         Plan trips together,{" "}
