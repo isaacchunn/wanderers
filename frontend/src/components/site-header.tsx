@@ -1,48 +1,65 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { LandPlot } from "lucide-react";
+import Link from "next/link"
+import Image from "next/image"
+import { Button } from "@/components/ui/button"
 
 export function SiteHeader() {
     return (
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ">
-            <div className="container flex h-16 items-center mx-auto">
-                <div className="flex items-center space-x-2">
-                    <LandPlot className="h-6 w-6" />
-                    <span className="text-xl font-bold">Wanderers</span>
-                </div>
-                <nav className="flex flex-1 items-center justify-center space-x-6 text-sm font-bold">
-                    <Link
-                        href="#features"
-                        className="transition hover:text-foreground/80"
-                    >
-                        Home
+        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="container flex h-14 items-center justify-between">
+                <Link href="/" className="flex items-center space-x-2">
+                    <Image
+                        src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-UxlfakJsdGghf1pf35POgCUZvdShQZ.png"
+                        alt="Wanderers Logo"
+                        width={32}
+                        height={32}
+                        className="h-8 w-8"
+                    />
+                    <span className="hidden font-bold sm:inline-block">Wanderers</span>
+                </Link>
+
+                <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+                    <Link href="/itinerary" className="transition-colors hover:text-foreground/80">
+                        Itinerary
                     </Link>
-                    <Link
-                        href="#testimonials"
-                        className="transition hover:text-foreground/80"
-                    >
-                        Testimonials
+                    <Link href="/discussion" className="transition-colors hover:text-foreground/80">
+                        Discussion
                     </Link>
-                    <Link
-                        href="#explore"
-                        className="transition hover:text-foreground/80"
-                    >
-                        Explore
+                    <Link href="/budget" className="transition-colors hover:text-foreground/80">
+                        Budget
                     </Link>
-                    <Link
-                        href="#contact"
-                        className="transition hover:text-foreground/80"
-                    >
+                    <Link href="/contact" className="transition-colors hover:text-foreground/80">
                         Contact
                     </Link>
                 </nav>
-                <div className="flex items-center space-x-2 rounded-full">
-                    <Button variant="ghost" size="sm">
+
+                <div className="flex items-center space-x-3">
+                    <Link href="/login" className="text-sm font-medium hover:underline underline-offset-4">
                         Log in
+                    </Link>
+                    <Button variant="default" asChild>
+                        <Link href="/signup">Sign Up</Link>
                     </Button>
-                    <Button size="sm">Sign Up</Button>
+                    <Button variant="ghost" className="md:hidden" size="icon">
+                        <span className="sr-only">Toggle menu</span>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="h-6 w-6"
+                        >
+                            <line x1="4" x2="20" y1="12" y2="12" />
+                            <line x1="4" x2="20" y1="6" y2="6" />
+                            <line x1="4" x2="20" y1="18" y2="18" />
+                        </svg>
+                    </Button>
                 </div>
             </div>
         </header>
-    );
+    )
 }
