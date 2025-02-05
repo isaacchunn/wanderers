@@ -1,29 +1,34 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import Link from "next/link"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 export default function LoginPage() {
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
+        e.preventDefault();
         // Here you would typically handle the login logic
-        console.log("Login attempt with:", { email, password })
-    }
+        console.log("Login attempt with:", { email, password });
+    };
 
     return (
         <div className="container flex items-center justify-center min-h-screen px-4 py-12">
             <div className="w-full max-w-md space-y-8">
                 <div className="text-center">
-                    <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+                    <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+                        Sign in to your account
+                    </h2>
                     <p className="mt-2 text-sm text-gray-600">
                         Or{" "}
-                        <Link href="/register" className="font-medium text-primary hover:text-primary/80">
+                        <Link
+                            href="/register"
+                            className="font-medium text-primary hover:text-primary/80"
+                        >
                             create a new account
                         </Link>
                     </p>
@@ -66,13 +71,19 @@ export default function LoginPage() {
                                 type="checkbox"
                                 className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
                             />
-                            <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                            <label
+                                htmlFor="remember-me"
+                                className="ml-2 block text-sm text-gray-900"
+                            >
                                 Remember me
                             </label>
                         </div>
 
                         <div className="text-sm">
-                            <Link href="#" className="font-medium text-primary hover:text-primary/80">
+                            <Link
+                                href="#"
+                                className="font-medium text-primary hover:text-primary/80"
+                            >
                                 Forgot your password?
                             </Link>
                         </div>
@@ -86,5 +97,5 @@ export default function LoginPage() {
                 </form>
             </div>
         </div>
-    )
+    );
 }

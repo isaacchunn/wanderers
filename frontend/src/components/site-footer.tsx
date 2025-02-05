@@ -1,5 +1,5 @@
-import Link from "next/link"
-import Image from "next/image"
+import Link from "next/link";
+import Image from "next/image";
 
 export function SiteFooter() {
     return (
@@ -13,17 +13,25 @@ export function SiteFooter() {
                         height={32}
                         className="h-6 w-6"
                     />
-                    <p className="text-sm text-muted-foreground">© 2025 Wanderers. All rights reserved.</p>
+                    <p className="text-sm text-muted-foreground">
+                        © 2025 Wanderers. All rights reserved.
+                    </p>
                 </div>
                 <nav className="flex gap-4 text-sm font-medium">
-                    <Link href="/privacy" className="text-muted-foreground hover:underline underline-offset-4">
+                    <Link
+                        href="/privacy"
+                        className="text-muted-foreground hover:underline underline-offset-4"
+                    >
                         Privacy
                     </Link>
-                    <Link href="/terms" className="text-muted-foreground hover:underline underline-offset-4">
+                    <Link
+                        href="/terms"
+                        className="text-muted-foreground hover:underline underline-offset-4"
+                    >
                         Terms
                     </Link>
                 </nav>
             </div>
         </footer>
-    )
+    );
 }

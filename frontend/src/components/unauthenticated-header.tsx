@@ -1,39 +1,51 @@
-import Link from "next/link"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { MapPinned } from "lucide-react";
 
-export function SiteHeader() {
+export function UnauthenticatedHeader() {
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-14 items-center justify-between">
                 <Link href="/" className="flex items-center space-x-2">
-                    <Image
-                        src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-UxlfakJsdGghf1pf35POgCUZvdShQZ.png"
-                        alt="Wanderers Logo"
-                        width={32}
-                        height={32}
-                        className="h-8 w-8"
-                    />
-                    <span className="hidden font-bold sm:inline-block">Wanderers</span>
+                    <MapPinned className="h-6 w-6" />
+                    <span className="hidden font-bold sm:inline-block">
+                        Wanderers
+                    </span>
                 </Link>
 
                 <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-                    <Link href="/itinerary" className="transition-colors hover:text-foreground/80">
+                    <Link
+                        href="/itinerary"
+                        className="transition-colors hover:text-foreground/80"
+                    >
                         Itinerary
                     </Link>
-                    <Link href="/discussion" className="transition-colors hover:text-foreground/80">
+                    <Link
+                        href="/discussion"
+                        className="transition-colors hover:text-foreground/80"
+                    >
                         Discussion
                     </Link>
-                    <Link href="/budget" className="transition-colors hover:text-foreground/80">
+                    <Link
+                        href="/budget"
+                        className="transition-colors hover:text-foreground/80"
+                    >
                         Budget
                     </Link>
-                    <Link href="/contact" className="transition-colors hover:text-foreground/80">
+                    <Link
+                        href="/contact"
+                        className="transition-colors hover:text-foreground/80"
+                    >
                         Contact
                     </Link>
                 </nav>
 
                 <div className="flex items-center space-x-3">
-                    <Link href="/login" className="text-sm font-medium hover:underline underline-offset-4">
+                    <Link
+                        href="/login"
+                        className="text-sm font-medium hover:underline underline-offset-4"
+                    >
                         Log in
                     </Link>
                     <Button variant="default" asChild>
@@ -61,5 +73,5 @@ export function SiteHeader() {
                 </div>
             </div>
         </header>
-    )
+    );
 }
