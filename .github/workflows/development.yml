@@ -5,7 +5,7 @@ on:
 
 jobs:
   # Job to run change detection
-  changes:
+  detect_file_changes:
       runs-on: ubuntu-latest
       outputs:
         backend: ${{ steps.filter.outputs.backend }}
@@ -24,8 +24,8 @@ jobs:
 
   # Job to test and lint backend code only if backend files were changed
   backend: 
-    needs: changes
-    if: ${{ needs.changes.outputs.backend == 'true' }}
+    needs: detect_file_changes
+    if: ${{ needs.detect_file_changes.outputs.backend == 'true' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -53,8 +53,8 @@ jobs:
 
   # Job to test and lint frontend code only if frontend files were changed
   frontend: 
-    needs: changes
-    if: ${{ needs.changes.outputs.frontend == 'true' }}
+    needs: detect_file_changes
+    if: ${{ needs.detect_file_changes.outputs.frontend == 'true' }}
     runs-on: ubuntu-latest
     defaults:
       run:
