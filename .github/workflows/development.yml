@@ -86,11 +86,11 @@ jobs:
       - name : "Run eslint"
         uses: sibiraj-s/action-eslint@v3
         with:
+          working-directory: ./frontend
           token: ${{ secrets.GITHUB_TOKEN }} # optional
-          eslint-args: "--ignore-path=.gitignore --quiet"
           extensions: "js,jsx,ts,tsx"
           annotations: true
-          working-directory: ./frontend
+
 
   scripts:
     needs: detect_file_changes
