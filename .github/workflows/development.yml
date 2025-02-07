@@ -10,6 +10,7 @@ jobs:
       outputs:
         backend: ${{ steps.filter.outputs.backend }}
         frontend: ${{ steps.filter.outputs.frontend }}
+        scripts: ${{ steps.filter.outputs.scripts }}
       steps:
         - name: "checkout repo"
           uses: actions/checkout@v4
@@ -21,6 +22,8 @@ jobs:
                 - 'backend/**'
               frontend:
                 - 'frontend/**'
+              scripts:
+                - 'scripts/**'
 
   # Job to test and lint backend code only if backend files were changed
   backend: 
@@ -87,3 +90,9 @@ jobs:
           eslint-args: "--ignore-path=.gitignore --quiet"
           extensions: "js,jsx,ts,tsx"
           annotations: true
+
+  scripts:
+    needs: detect_file_changes
+    if: ${{ needs.detect_file_changes.outputs.scripts == 'true' }}
+    name: "Run pylint on scripts"
+    uses: ./.github/workflows/pylint.yml

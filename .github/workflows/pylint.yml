@@ -1,9 +1,7 @@
 name: Pylint
 
-on: 
-  push:
-    paths:
-      - scripts/**
+on:
+  workflow_call:
 
 jobs:
   build:
