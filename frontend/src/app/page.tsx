@@ -105,10 +105,10 @@ export default function LandingPage() {
                                         ))}
                                     </div>
                                     <p className="mb-4 text-muted-foreground">
-                                        "TravelSync made planning our group trip
+                                        &quot;TravelSync made planning our group trip
                                         so much easier. Everyone could
                                         contribute ideas and we stayed organized
-                                        throughout."
+                                        throughout.&quot;
                                     </p>
                                     <div className="flex items-center">
                                         <Image
