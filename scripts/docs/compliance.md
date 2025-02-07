@@ -10,4 +10,3 @@ black . -l 79 # Formats all files with black
 isort .
 pylint scripts/release/...py # Check pylint of a specific file
 ```
-hi
