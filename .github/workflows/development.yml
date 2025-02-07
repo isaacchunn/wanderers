@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+
+jobs:
+  # Job to run change detection
+  changes:
+      runs-on: ubuntu-latest
+      outputs:
+        backend: ${{ steps.filter.outputs.backend }}
+        frontend: ${{ steps.filter.outputs.frontend }}
+      steps:
+        - name: "checkout repo"
+          uses: actions/checkout@v4
+        - uses: dorny/paths-filter@v3
+          id: filter
+          with:
+            filters: |
+              backend:
+                - 'backend/**'
+              frontend:
+                - 'frontend/**'
+
+  # Job to test and lint backend code only if backend files were changed
+  backend: 
+    needs: changes
+    if: ${{ needs.changes.outputs.backend == 'true' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    name: Run backend tests and lint
+    steps:
+      - name: "checkout repo"
+        uses: actions/checkout@v4
+
+      - name: "setup node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name : "install npm@latest"
+        run : npm i -g npm@latest
+
+      - name : "install dependencies"
+        uses: bahmutov/npm-install@v1.10.5
+        with:
+          working-directory: ./backend
+        
+      # Test and lint is not enabled for backend for now
+
+
+  # Job to test and lint frontend code only if frontend files were changed
+  frontend: 
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    name: Run frontend tests and lint
+    steps:
+      - name: "checkout repo"
+        uses: actions/checkout@v4
+
+      - name: "setup node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name : "install npm@latest"
+        run : npm i -g npm@latest
+
+      - name : "install dependencies"
+        uses: bahmutov/npm-install@v1.10.5
+        with:
+          working-directory: ./frontend
+        
+      - name : "run tests"
+        run : npm run test
+
+      - name : "Run eslint"
+        uses: sibiraj-s/action-eslint@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }} # optional
+          eslint-args: "--ignore-path=.gitignore --quiet"
+          extensions: "js,jsx,ts,tsx"
+          annotations: true
