@@ -1,166 +1,161 @@
+"use client";
+
+import { useState } from "react";
+import { useFormState } from "react-dom";
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, MapPin, Plus } from "lucide-react";
+import { Save } from "lucide-react";
+import { SortableLocationCard } from "../../components/ui/sortable-location-card";
+import { ChatBox } from "../../components/ui/chat-box";
+import { Input } from "@/components/ui/input";
+import { ExpenseSplitter } from "../../components/ui/expense-splitter";
+import { saveItinerary } from "../itinerary/actions";
+
+interface Location {
+    id: string;
+    title: string;
+    description: string;
+    image: string;
+    time: string;
+}
+
+const initialLocations: Location[] = [
+    {
+        id: "1",
+        title: "Eiffel Tower",
+        description: "Iconic iron lattice tower on the Champ de Mars in Paris",
+        image: "/placeholder.svg?height=200&width=400",
+        time: "09:00 AM",
+    },
+    {
+        id: "2",
+        title: "Louvre Museum",
+        description:
+            "World's largest art museum and historic monument in Paris",
+        image: "/placeholder.svg?height=200&width=400",
+        time: "11:30 AM",
+    },
+    {
+        id: "3",
+        title: "Notre-Dame Cathedral",
+        description: "Medieval Catholic cathedral on the Île de la Cité",
+        image: "/placeholder.svg?height=200&width=400",
+        time: "02:00 PM",
+    },
+    {
+        id: "4",
+        title: "Arc de Triomphe",
+        description: "One of the most famous monuments in Paris",
+        image: "/placeholder.svg?height=200&width=400",
+        time: "04:30 PM",
+    },
+];
+
+const initialState = null;
 
 export default function ItineraryPage() {
+    const [locations, setLocations] = useState<Location[]>(initialLocations);
+    // const [state, formAction] = useFormState(saveItinerary, initialState);
+
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    function handleDragEnd(event: DragEndEvent) {
+        const { active, over } = event;
+
+        if (over && active.id !== over.id) {
+            setLocations((items) => {
+                const oldIndex = items.findIndex(
+                    (item) => item.id === active.id
+                );
+                const newIndex = items.findIndex((item) => item.id === over.id);
+
+                return arrayMove(items, oldIndex, newIndex);
+            });
+        }
+    }
+
+    async function handleSave() {
+        const formData = new FormData();
+        formData.append("locations", JSON.stringify(locations));
+        await saveItinerary(formData);
+    }
+
     return (
-        <div className="flex min-h-screen flex-col">
-            {/* Hero Section */}
-            <section className="container px-4 py-12 md:py-24 lg:py-32">
-                <div className="mx-auto max-w-[980px] text-center">
-                    <div className="mb-4 inline-block rounded-lg bg-muted px-3 py-1 text-sm">
-                        ✨ Smart Trip Planning
-                    </div>
-                    <h1 className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-                        Plan your perfect{" "}
-                        <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-                            itinerary
-                        </span>
-                    </h1>
-                    <p className="mb-8 text-xl text-muted-foreground sm:text-2xl">
-                        Organize your travel schedule with intelligent
-                        suggestions and real-time collaboration.
-                    </p>
-                    <Button size="lg" className="text-base">
-                        Create New Itinerary
-                        <Plus className="ml-2 h-4 w-4" />
-                    </Button>
-                </div>
-            </section>
-
-            {/* Features Demo Section */}
-            <section className="container px-4 py-12 md:py-24 lg:py-32">
-                <div className="grid gap-12 lg:grid-cols-2">
-                    {/* Timeline Preview */}
-                    <div className="space-y-8">
-                        <div className="space-y-4">
-                            <h2 className="text-3xl font-bold tracking-tight">
-                                Interactive Timeline
-                            </h2>
-                            <p className="text-lg text-muted-foreground">
-                                Visualize your entire trip with our intuitive
-                                timeline view. Easily manage activities, events,
-                                and travel arrangements.
-                            </p>
-                        </div>
-                        <div className="space-y-4 rounded-lg border p-6">
-                            {[1, 2, 3].map((day) => (
-                                <div key={day} className="space-y-4">
-                                    <div className="flex items-center space-x-2">
-                                        <Calendar className="h-5 w-5 text-primary" />
-                                        <h3 className="font-semibold">
-                                            Day {day}
-                                        </h3>
-                                    </div>
-                                    <div className="ml-7 space-y-4">
-                                        <div className="rounded-lg border bg-background p-4">
-                                            <div className="flex items-start justify-between">
-                                                <div>
-                                                    <h4 className="font-medium">
-                                                        Morning City Tour
-                                                    </h4>
-                                                    <div className="mt-1 flex items-center space-x-2 text-sm text-muted-foreground">
-                                                        <Clock className="h-4 w-4" />
-                                                        <span>
-                                                            09:00 AM - 12:00 PM
-                                                        </span>
-                                                    </div>
-                                                    <div className="mt-1 flex items-center space-x-2 text-sm text-muted-foreground">
-                                                        <MapPin className="h-4 w-4" />
-                                                        <span>City Center</span>
-                                                    </div>
-                                                </div>
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                >
-                                                    Edit
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Smart Features */}
-                    <div className="space-y-8">
-                        <div className="space-y-4">
-                            <h2 className="text-3xl font-bold tracking-tight">
-                                Smart Scheduling
-                            </h2>
-                            <p className="text-lg text-muted-foreground">
-                                Let our AI help you optimize your schedule based
-                                on location, opening hours, and travel time.
-                            </p>
-                        </div>
-                        <div className="grid gap-6">
-                            {[
-                                {
-                                    title: "AI-Powered Suggestions",
-                                    description:
-                                        "Get intelligent recommendations based on your preferences and travel style.",
-                                },
-                                {
-                                    title: "Real-time Updates",
-                                    description:
-                                        "Stay synchronized with your travel companions as plans evolve.",
-                                },
-                                {
-                                    title: "Location-aware Planning",
-                                    description:
-                                        "Optimize your route with smart location-based scheduling.",
-                                },
-                            ].map((feature) => (
-                                <div
-                                    key={feature.title}
-                                    className="rounded-lg border p-6"
-                                >
-                                    <h3 className="mb-2 font-semibold">
-                                        {feature.title}
-                                    </h3>
-                                    <p className="text-muted-foreground">
-                                        {feature.description}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* CTA Section */}
-            <section className="bg-muted/50 py-12 md:py-24 lg:py-32">
-                <div className="container px-4">
-                    <div className="mx-auto max-w-[800px] text-center">
-                        <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-                            Ready to streamline your travel planning?
-                        </h2>
-                        <p className="mb-8 text-xl text-muted-foreground">
-                            Join thousands of travelers who are already using
-                            our smart itinerary planner.
+        <div className="min-h-screen bg-background p-6 md:p-12 flex items-center justify-items-center">
+            <div className="mx-auto max-w-6xl">
+                <div className="mb-8 flex items-center justify-between">
+                    <div>
+                        <h1 className="text-4xl font-bold tracking-tight">
+                            Paris Itinerary
+                        </h1>
+                        <p className="mt-2 text-muted-foreground">
+                            Drag and drop to reorder your itinerary for the day
                         </p>
-                        <Button size="lg" className="text-base">
-                            Start Planning Now
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="ml-2 h-4 w-4"
-                            >
-                                <line x1="5" y1="12" x2="19" y2="12" />
-                                <polyline points="12 5 19 12 12 19" />
-                            </svg>
-                        </Button>
                     </div>
                 </div>
-            </section>
+
+                <div className="grid gap-6 lg:grid-cols-[1fr,300px]">
+                    <div className="space-y-6">
+                        <div className="flex justify-between">
+                            <Input
+                                type="place"
+                                placeholder="Add a place"
+                                className="w-[490px]"
+                            />
+                            <Button onClick={handleSave}>
+                                <Save className="mr-2 h-4 w-4" />
+                                Edit Itinerary
+                            </Button>
+                        </div>
+                        <Card className="p-6">
+                            <DndContext
+                                sensors={sensors}
+                                collisionDetection={closestCenter}
+                                onDragEnd={handleDragEnd}
+                            >
+                                <SortableContext
+                                    items={locations}
+                                    strategy={verticalListSortingStrategy}
+                                >
+                                    <div className="space-y-4">
+                                        {locations.map((location) => (
+                                            <SortableLocationCard
+                                                key={location.id}
+                                                location={location}
+                                            />
+                                        ))}
+                                    </div>
+                                </SortableContext>
+                            </DndContext>
+                        </Card>
+                        <ExpenseSplitter />
+                    </div>
+                    <div>
+                        <ChatBox />
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
