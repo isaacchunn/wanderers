@@ -13,7 +13,9 @@ permissions: write-all
 
 jobs:
   deploy:
-    environment: ${{ github.ref == 'refs/heads/prd' && 'Production' || github.ref == 'refs/heads/stg' && 'Preview' || 'Development' }}
+    environment:
+      name: ${{ github.ref == 'refs/heads/prd' && 'Production' || github.ref == 'refs/heads/stg' && 'Preview' || 'Development' }}
+      url: ${{ github.ref == 'refs/heads/prd' && steps.show_page_url_prd_or_stg.outputs.new_page_url || github.ref == 'refs/heads/stg' && steps.show_page_url_prd_or_stg.outputs.new_page_url || steps.show_page_url_dev.outputs.new_page_url }}
     runs-on: ubuntu-latest
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     steps:
@@ -45,6 +47,7 @@ jobs:
           npx vercel build ${{ steps.prod_or_not.outputs.vercel-build }}
       - name: Deploy to Vercel [Branch]
         if: ${{ github.event_name == 'pull_request' }}
+        id: deploy_branch
         uses: amondnet/vercel-action@v25
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -55,6 +58,7 @@ jobs:
           working-directory: ./frontend
 
       - name: Deploy to Vercel [stg/prd]
+        id: deploy_prd_or_stg
         if: ${{ github.event_name == 'push' }}
         uses: amondnet/vercel-action@v25
         with:
@@ -66,3 +70,13 @@ jobs:
           working-directory: ./frontend
           alias-domains: |
             ${{ steps.prod_or_not.outputs.vercel-url }}
+
+      - name: Show page url in "Production" and "Preview" environment (Pull Request)
+        id: show_page_url_prd_or_stg
+        if: ${{ github.event_name == 'push' }}
+        run: echo "new_page_url=${{ steps.deploy_prd_or_stg.outputs.preview-url }}" >> $GITHUB_OUTPUT
+
+      - name: Show page url in Development environment
+        id: show_page_url_dev
+        if: ${{ github.event_name == 'pull_request' }}
+        run: echo "new_page_url=${{ steps.deploy_branch.outputs.preview-url }}" >> $GITHUB_OUTPUT
