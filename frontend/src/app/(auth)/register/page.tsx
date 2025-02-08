@@ -1,49 +1,40 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import Link from "next/link"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 export default function RegisterPage() {
-    const [name, setName] = useState("")
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
+    const [userEmail, setUserEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
+        e.preventDefault();
         // Here you would typically handle the registration logic
-        console.log("Registration attempt with:", { name, email, password })
-    }
+        console.log("Registration attempt with:", { userEmail, password });
+    };
 
     return (
-        <div className="container flex items-center justify-center min-h-screen px-4 py-12">
-            <div className="w-full max-w-md space-y-8">
+        <div className="flex min-h-full flex-1 flex-col items-center justify-center py-8">
+            <div className="w-full max-w-md space-y-4">
                 <div className="text-center">
-                    <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Create your account</h2>
+                    <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+                        Create your account
+                    </h2>
                     <p className="mt-2 text-sm text-gray-600">
                         Or{" "}
-                        <Link href="/login" className="font-medium text-primary hover:text-primary/80">
+                        <Link
+                            href="/login"
+                            className="font-medium text-primary hover:text-primary/80"
+                        >
                             sign in to your existing account
                         </Link>
                     </p>
                 </div>
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     <div className="space-y-4 rounded-md shadow-sm">
-                        <div>
-                            <Label htmlFor="name">Full Name</Label>
-                            <Input
-                                id="name"
-                                name="name"
-                                type="text"
-                                autoComplete="name"
-                                required
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="mt-1"
-                            />
-                        </div>
                         <div>
                             <Label htmlFor="email-address">Email address</Label>
                             <Input
@@ -52,8 +43,8 @@ export default function RegisterPage() {
                                 type="email"
                                 autoComplete="email"
                                 required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                value={userEmail}
+                                onChange={(e) => setUserEmail(e.target.value)}
                                 className="mt-1"
                             />
                         </div>
@@ -80,5 +71,5 @@ export default function RegisterPage() {
                 </form>
             </div>
         </div>
-    )
+    );
 }
