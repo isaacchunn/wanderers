@@ -8,6 +8,7 @@ permissions: write-all
 jobs:
   # Job to run change detection
   detect_file_changes:
+    name: "Detect file changes in branch"
     runs-on: ubuntu-latest
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
