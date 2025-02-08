@@ -25,7 +25,7 @@ export async function saveMessage(formData: FormData) {
         timestamp: new Date().toISOString(),
     };
 }
-
+/* eslint-disable no-unused-vars */
 export async function saveExpense(
     previousState: { success: boolean; message: string },
     formData: FormData
@@ -38,3 +38,4 @@ export async function saveExpense(
         return { success: false, message: "Error saving expense" };
     }
 }
+/* eslint-disable no-unused-vars */

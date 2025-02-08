@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useFormState } from "react-dom";
+// import { useFormState } from "react-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,7 @@ interface Message {
     timestamp: string;
 }
 
-const initialState = null;
+// const initialState = null;
 
 export function ChatBox() {
     const [messages, setMessages] = useState<Message[]>([]);

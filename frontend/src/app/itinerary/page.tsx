@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useFormState } from "react-dom";
+// import { useFormState } from "react-dom";
 import {
     DndContext,
     closestCenter,
@@ -67,7 +67,7 @@ const initialLocations: Location[] = [
     },
 ];
 
-const initialState = null;
+// const initialState = null;
 
 export default function ItineraryPage() {
     const [locations, setLocations] = useState<Location[]>(initialLocations);
