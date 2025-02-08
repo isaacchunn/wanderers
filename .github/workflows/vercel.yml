@@ -13,7 +13,7 @@ permissions: write-all
 
 jobs:
   deploy:
-    environment: Preview
+    environment: ${{ github.ref == 'refs/heads/prd' && 'Production' || 'Preview' }}
     runs-on: ubuntu-latest
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     steps:
@@ -53,6 +53,8 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           vercel-args: ${{ steps.prod_or_not.outputs.vercel-args }}
           working-directory: ./frontend
+          alias-domains: |
+            https://wanderers-prd.vercel.app/
 
       - name: Deploy to Vercel [stg/prd]
         if: ${{ github.event_name == 'push' }}
