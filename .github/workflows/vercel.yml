@@ -22,12 +22,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Find changes in branch
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+
       - name: Install dependencies
+        if: ${{ steps.changes.outputs.frontend == 'true' }}
         run: |
           npm ci
           npx vercel pull --yes --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Check prd or not
+        if: ${{ steps.changes.outputs.frontend == 'true' }}
         id: prod_or_not
         run: |
           if [ "$REF" == 'refs/heads/prd' ]
@@ -42,11 +52,14 @@ jobs:
           fi
         env:
           REF: ${{ github.ref }}
+
       - name: "Build next.js project"
+        if: ${{ steps.changes.outputs.frontend == 'true' }}
         run: |
           npx vercel build ${{ steps.prod_or_not.outputs.vercel-build }}
+
       - name: Deploy to Vercel [Branch]
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && steps.changes.outputs.frontend == 'true' }}
         id: deploy_branch
         uses: amondnet/vercel-action@v25
         with:
@@ -59,7 +72,7 @@ jobs:
 
       - name: Deploy to Vercel [stg/prd]
         id: deploy_prd_or_stg
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name == 'push' && steps.changes.outputs.frontend == 'true'}}
         uses: amondnet/vercel-action@v25
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -73,10 +86,10 @@ jobs:
 
       - name: Show page url in "Production" and "Preview" environment (Pull Request)
         id: show_page_url_prd_or_stg
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name == 'push' && steps.changes.outputs.frontend == 'true' }}
         run: echo "new_page_url=${{ steps.deploy_prd_or_stg.outputs.preview-url }}" >> $GITHUB_OUTPUT
 
       - name: Show page url in Development environment
         id: show_page_url_dev
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && steps.changes.outputs.frontend == 'true' }}
         run: echo "new_page_url=${{ steps.deploy_branch.outputs.preview-url }}" >> $GITHUB_OUTPUT
