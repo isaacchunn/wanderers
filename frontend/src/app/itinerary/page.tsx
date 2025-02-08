@@ -27,45 +27,8 @@ import { Input } from "@/components/ui/input";
 import { ExpenseSplitter } from "../../components/ui/expense-splitter";
 import { saveItinerary } from "../itinerary/actions";
 
-interface Location {
-    id: string;
-    title: string;
-    description: string;
-    image: string;
-    time: string;
-}
-
-const initialLocations: Location[] = [
-    {
-        id: "1",
-        title: "Eiffel Tower",
-        description: "Iconic iron lattice tower on the Champ de Mars in Paris",
-        image: "/placeholder.svg?height=200&width=400",
-        time: "09:00 AM",
-    },
-    {
-        id: "2",
-        title: "Louvre Museum",
-        description:
-            "World's largest art museum and historic monument in Paris",
-        image: "/placeholder.svg?height=200&width=400",
-        time: "11:30 AM",
-    },
-    {
-        id: "3",
-        title: "Notre-Dame Cathedral",
-        description: "Medieval Catholic cathedral on the Île de la Cité",
-        image: "/placeholder.svg?height=200&width=400",
-        time: "02:00 PM",
-    },
-    {
-        id: "4",
-        title: "Arc de Triomphe",
-        description: "One of the most famous monuments in Paris",
-        image: "/placeholder.svg?height=200&width=400",
-        time: "04:30 PM",
-    },
-];
+import { Location } from "../../lib/types";
+import { initialLocations } from "../../lib/utils";
 
 // const initialState = null;
 

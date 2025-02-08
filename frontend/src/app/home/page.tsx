@@ -12,63 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, MapPin, Plus, Users2 } from "lucide-react";
 
-interface Itinerary {
-    id: string;
-    title: string;
-    location: string;
-    date: string;
-    duration: string;
-    image: string;
-    participants: number;
-}
-
-const mockItineraries: Itinerary[] = [
-    {
-        id: "paris-2024",
-        title: "Paris Adventure",
-        location: "Paris, France",
-        date: "Mar 15-20, 2024",
-        duration: "6 days",
-        image: "/placeholder.svg?height=400&width=600",
-        participants: 4,
-    },
-    {
-        id: "tokyo-2024",
-        title: "Tokyo Explorer",
-        location: "Tokyo, Japan",
-        date: "Apr 1-8, 2024",
-        duration: "8 days",
-        image: "/placeholder.svg?height=400&width=600",
-        participants: 2,
-    },
-    {
-        id: "nyc-2024",
-        title: "New York City Trip",
-        location: "New York, USA",
-        date: "May 10-15, 2024",
-        duration: "6 days",
-        image: "/placeholder.svg?height=400&width=600",
-        participants: 3,
-    },
-    {
-        id: "rome-2024",
-        title: "Roman Holiday",
-        location: "Rome, Italy",
-        date: "Jun 20-25, 2024",
-        duration: "6 days",
-        image: "/placeholder.svg?height=400&width=600",
-        participants: 2,
-    },
-    {
-        id: "barcelona-2024",
-        title: "Barcelona Weekend",
-        location: "Barcelona, Spain",
-        date: "Jul 5-7, 2024",
-        duration: "3 days",
-        image: "/placeholder.svg?height=400&width=600",
-        participants: 6,
-    },
-];
+import { mockItineraries } from "../../lib/utils";
 
 export default function HomePage() {
     return (
