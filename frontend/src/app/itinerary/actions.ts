@@ -25,17 +25,18 @@ export async function saveMessage(formData: FormData) {
         timestamp: new Date().toISOString(),
     };
 }
-/* eslint-disable no-unused-vars */
+
 export async function saveExpense(
     previousState: { success: boolean; message: string },
     formData: FormData
 ) {
     try {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const expense = JSON.parse(formData.get("expense") as string);
+
         // Perform server action (e.g., saving to a database)
         return { success: true, message: "Expense saved successfully" };
     } catch (error) {
-        return { success: false, message: "Error saving expense" };
+        return { success: false, message: "Error saving expense", error };
     }
 }
-/* eslint-disable no-unused-vars */

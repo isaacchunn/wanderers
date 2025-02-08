@@ -32,12 +32,11 @@ export function ExpenseSplitter() {
     const [paidBy, setPaidBy] = useState("");
     const [splitWith, setSplitWith] = useState<string[]>([]);
 
-    /* eslint-disable no-unused-vars */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [state, formAction, isPending] = useActionState(
         saveExpense,
         initialState
     );
-    /* eslint-disable no-unused-vars */
 
     const calculateBalances = () => {
         const balances: Record<string, number> = {};
