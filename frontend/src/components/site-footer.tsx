@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { MapPinned } from "lucide-react";
 
 export function SiteFooter() {
     return (
