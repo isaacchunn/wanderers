@@ -7,13 +7,13 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
 export default function LoginPage() {
-    const [email, setEmail] = useState("");
+    const [userEmail, setUserEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         // Here you would typically handle the login logic
-        console.log("Login attempt with:", { email, password });
+        console.log("Login attempt with:", { userEmail, password });
     };
 
     return (
@@ -43,8 +43,8 @@ export default function LoginPage() {
                                 type="email"
                                 autoComplete="email"
                                 required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                value={userEmail}
+                                onChange={(e) => setUserEmail(e.target.value)}
                                 className="mt-1"
                             />
                         </div>
