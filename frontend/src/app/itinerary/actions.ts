@@ -3,9 +3,6 @@
 import { revalidatePath } from "next/cache";
 
 export async function saveItinerary(formData: FormData) {
-    // Simulate a delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
     const locations = JSON.parse(formData.get("locations") as string);
 
     // Here you would typically save to a database
@@ -16,9 +13,6 @@ export async function saveItinerary(formData: FormData) {
 }
 
 export async function saveMessage(formData: FormData) {
-    // Simulate a delay
-    // await new Promise((resolve) => setTimeout(resolve, 500));
-
     const message = formData.get("message") as string;
 
     // Here you would typically save to a database
