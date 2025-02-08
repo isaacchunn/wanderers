@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server": "nodemon backend/index.ts",
-    "client": "npm start --prefix frontend",
+    "server": "nodemon index.ts",
+    "client": "npm start --prefix ../frontend",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "format": "prettier --write ."
   },
@@ -27,6 +27,7 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^11.0.5",
+    "wanderers": "file:",
     "zod": "^3.24.1"
   },
   "devDependencies": {
