@@ -7,18 +7,18 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 
 export default function LoginPage() {
-    const [email, setEmail] = useState("");
+    const [userEmail, setUserEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         // Here you would typically handle the login logic
-        console.log("Login attempt with:", { email, password });
+        console.log("Login attempt with:", { userEmail, password });
     };
 
     return (
-        <div className="container flex items-center justify-center min-h-screen px-4 py-12">
-            <div className="w-full max-w-md space-y-8">
+        <div className="flex h-[700px] flex-col items-center justify-center py-12">
+            <div className="w-full max-w-md space-y-4">
                 <div className="text-center">
                     <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
                         Sign in to your account
@@ -43,8 +43,8 @@ export default function LoginPage() {
                                 type="email"
                                 autoComplete="email"
                                 required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                value={userEmail}
+                                onChange={(e) => setUserEmail(e.target.value)}
                                 className="mt-1"
                             />
                         </div>
