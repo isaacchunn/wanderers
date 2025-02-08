@@ -1,4 +1,4 @@
-name: Deploy on Vercel
+name: Vercel
 on:
   push:
     branches: [prd, stg] # We also want to deploy and update stg and prd website per push
@@ -8,6 +8,8 @@ on:
 defaults:
   run:
     working-directory: ./frontend
+
+permissions: write-all
 
 jobs:
   deploy:
@@ -50,8 +52,6 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           vercel-args: ${{ steps.prod_or_not.outputs.vercel-args }}
           working-directory: ./frontend
-          alias-domains: | # This is a custom domain
-            wanderers.pr-{{PR_NUMBER}}.vercel.app
 
       - name: Deploy to Vercel [stg/prd]
         if: ${{ github.event_name == 'push' }}
