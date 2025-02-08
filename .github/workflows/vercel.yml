@@ -1,9 +1,10 @@
 name: Vercel
 on:
+  # push:
+  #   branches: [prd, stg] # We also want to deploy and update stg and prd website per push
+  # pull_request:
+  #   types: [opened, synchronize, reopened]
   push:
-    branches: [prd, stg] # We also want to deploy and update stg and prd website per push
-  pull_request:
-    types: [opened, synchronize, reopened]
 
 defaults:
   run:
