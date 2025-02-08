@@ -75,13 +75,13 @@ export default function HomePage() {
         <div className="min-h-screen bg-background">
             <main className="container px-4 py-12">
                 <div className="mb-12 flex items-center justify-between">
-                    <div>
+                    <div className="flex flex-col space-y-1">
                         <h1 className="text-4xl font-bold tracking-tight">
                             Your Itineraries
                         </h1>
-                        <p className="mt-2 text-muted-foreground">
+                        <text className="text-muted-foreground">
                             Plan and organize your upcoming adventures
-                        </p>
+                        </text>
                     </div>
                     <Link href="/create-itinerary">
                         <Button>
@@ -165,8 +165,8 @@ export default function HomePage() {
                 </Carousel>
 
                 <div className="mt-12">
-                    <h2 className="mb-6 text-2xl font-semibold tracking-tight">
-                        Suggested Destinations
+                    <h2 className="mb-6 text-4xl font-bold tracking-tight">
+                        Explore
                     </h2>
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {mockItineraries.slice(0, 3).map((itinerary) => (
