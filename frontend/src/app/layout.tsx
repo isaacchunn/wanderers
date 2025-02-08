@@ -24,7 +24,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`${inter.className} wanderers-body`}>
-                <div className="relative flex min-h-screen flex-col">
+                <div className="flex min-h-screen flex-col justify-center">
                     {authenticatedSession ? (
                         <AuthenticatedHeader />
                     ) : (
