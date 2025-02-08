@@ -23,7 +23,7 @@ export function AuthenticatedHeader() {
                 <div className="flex-1 flex justify-center mr-24">
                     <nav className="hidden md:flex items-center space-x-10 text-sm font-medium">
                         <Link
-                            href="/Home"
+                            href="/home"
                             className="transition-colors hover:text-foreground/80"
                         >
                             Home
