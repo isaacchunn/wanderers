@@ -63,14 +63,16 @@ export const registerUser = async (req: Request, res: Response) => {
   }
 
   if (errorFlag) {
+    // Return 400 status code for bad request
     res.status(400).json({
       message: errorMessage,
     });
+  } else {
+    // Return 201 status code for successful creation
+    res.status(201).json({
+      message: "Confirmation email sent!",
+    });
   }
-
-  res.status(201).json({
-    message: "Confirmation email sent!",
-  });
 };
 
 // @desc    Authenticate a user
@@ -133,21 +135,21 @@ export const loginUser = async (req: Request, res: Response) => {
   }
 
   if (errorFlag) {
-    console.log("hi1");
+    // Return 400 status code for bad request
     res.status(400).json({
       message: errorMessage,
     });
+  } else {
+    // Return 200 status code for successful request
+    res.status(200).json({
+      token,
+      user,
+    });
   }
-
-  console.log("hi2");
-  res.status(200).json({
-    token,
-    user,
-  });
 };
 
 // @desc    Confirm user account
-// @route   GET /api/auth/confirm-account/:token
+// @route   GET /api/auth/confirmaccount/:token
 // @access  Public
 export const confirmAccount = async (req: Request, res: Response) => {
   let errorFlag = false;
@@ -195,20 +197,22 @@ export const confirmAccount = async (req: Request, res: Response) => {
   }
 
   if (errorFlag) {
+    // Return 400 status code for bad request
     res.status(400).json({
       message: errorMessage,
     });
+  } else {
+    // Return 200 status code for successful request
+    res.status(200).json({
+      message: "Account confirmed",
+    });
   }
-
-  res.status(200).json({
-    message: "Account confirmed",
-  });
 };
 
-// // @desc    Update user password
-// // @route   POST /api/auth/update-password/:token
-// // @access  Public
-// const updatePassword = async (req: Request, res: Response) => {
+// @desc    Update user password
+// @route   POST /api/auth/update-password/:token
+// @access  Public
+// export const updatePassword = async (req: Request, res: Response) => {
 //     try {
 //         await authService.updatePassword(req.params.token, req.body.password);
 //         res.status(200).json({message: "Password updated"})
@@ -217,10 +221,10 @@ export const confirmAccount = async (req: Request, res: Response) => {
 //     }
 // }
 
-// // @desc    Sends account confirmation email to active/confirm user account
-// // @route   POST /api/auth/request-confirmation
-// // @access  Public
-// const requestConfirmationEmail = async (req: Request, res: Response) => {
+// @desc    Sends account confirmation email to active/confirm user account
+// @route   POST /api/auth/request-confirmation
+// @access  Public
+// export const requestConfirmationEmail = async (req: Request, res: Response) => {
 //     try {
 //         await authService.requestConfirmationEmail(req.body);
 //         res.status(200).json({ message: "Confirmation email sent" });
@@ -229,10 +233,10 @@ export const confirmAccount = async (req: Request, res: Response) => {
 //     }
 // };
 
-// // @desc    Sends forget password email to user
-// // @route   POST /api/auth/forget-password
-// // @access  Public
-// const requestForgetPasswordEmail = async (req: Request, res: Response) => {
+// @desc    Sends forget password email to user
+// @route   POST /api/auth/forget-password
+// @access  Public
+// export const requestForgetPasswordEmail = async (req: Request, res: Response) => {
 //     try {
 //         await authService.requestForgetPasswordEmail(req.body);
 //         res.status(200).json({ message: "Forget password email sent" });

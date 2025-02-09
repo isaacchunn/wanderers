@@ -58,7 +58,7 @@ router.post("/login", loginUser);
 
 // router.post('/request-confirmation', authController.requestConfirmationEmail)
 // router.post('/forgot-password', authController.requestForgetPasswordEmail)
-router.get("/confirmaccount/:token", confirmAccount);
+router.get("/confirm-account/:token", confirmAccount);
 // router.post('/update-password/:token', authController.updatePassword)
 // router.post('/reset-password/:token', authController.updatePassword)
 
