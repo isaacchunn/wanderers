@@ -33,7 +33,10 @@ function itineraryFixture(overrides = {}) {
     collaborators: [],
     activities: [],
     votes: [],
-    visibility: Math.random() < 0.5 ? ItineraryVisbility.public : ItineraryVisbility.private,
+    visibility:
+      Math.random() < 0.5
+        ? ItineraryVisbility.public
+        : ItineraryVisbility.private,
     start_date: new Date("2022-01-01"),
     end_date: new Date("2022-01-10"),
   };

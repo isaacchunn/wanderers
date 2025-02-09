@@ -27,9 +27,13 @@ const router = express.Router();
  *         - title
  *         - description
  *         - itinerary_id
+ *         - lat
+ *         - lon
  *         - expense
  *         - split
  *         - sequence
+ *         - start_date
+ *         - end_date
  *       properties:
  *         id:
  *           type: integer
@@ -43,6 +47,12 @@ const router = express.Router();
  *         itinerary_id:
  *           type: integer
  *           description: The ID of the itinerary the activity belongs to
+ *         lat:
+ *           type: number
+ *           description: The latitude of the activity
+ *         lon:
+ *           type: number
+ *           description: The longitude of the activity
  *         expense:
  *           type: number
  *           description: The cost of the activity
@@ -53,14 +63,26 @@ const router = express.Router();
  *         sequence:
  *           type: integer
  *           description: The order of the activity in the itinerary
+ *         start_date:
+ *           type: string
+ *           format: date
+ *           description: The start date of the activity
+ *         end_date:
+ *           type: string
+ *           format: date
+ *           description: The end date of the activity
  *       example:
  *         id: 1
  *         title: "Hiking at Mount Fuji"
  *         description: "A guided hiking tour"
  *         itinerary_id: 123
+ *         lat: 35.3606
+ *         lon: 138.7274
  *         expense: 200
- *         split: "equal"
+ *         split: "split"
  *         sequence: 1
+ *         start_date: 2025-12-21T00:00:00.000Z
+ *         end_date: 2025-12-21T00:00:00.000Z
  */
 
 /**
@@ -205,6 +227,5 @@ router.put("/:id", updateActivityController);
  *         description: Internal server error
  */
 router.delete("/:id", deleteActivityController);
-
 
 export { router as default };

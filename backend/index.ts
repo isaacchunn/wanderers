@@ -86,7 +86,9 @@ if (process.env.NODE_ENV !== "test") {
   // sequelize.sync().then(() => {
   app.listen(Number(port), "0.0.0.0", () => {
     console.log(`[server]: Server is running at ${port}`);
-    console.log(`[server]: Swagger docs available at http://localhost:${port}/docs`);
+    console.log(
+      `[server]: Swagger docs available at http://localhost:${port}/docs`,
+    );
   });
   // });
 }

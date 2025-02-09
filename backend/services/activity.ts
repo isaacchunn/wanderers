@@ -5,18 +5,26 @@ export const createActivity = async (
   title: string,
   description: string,
   itinerary_id: number,
+  lat: number,
+  lon: number,
   expense: number,
   split: ExpenseSplitType,
   sequence: number,
+  start_date: Date,
+  end_date: Date,
 ) => {
   let activity = await db.activity.create({
     data: {
       title,
       description,
       itinerary_id,
+      lat,
+      lon,
       expense,
       split,
       sequence,
+      start_date,
+      end_date,
     },
   });
   return activity;
@@ -45,9 +53,13 @@ export const updateActivity = async (
   title: string,
   description: string,
   itinerary_id: number,
+  lat: number,
+  lon: number,
   expense: number,
   split: ExpenseSplitType,
   sequence: number,
+  start_date: Date,
+  end_date: Date,
 ) => {
   let activity = await db.activity.update({
     where: {
@@ -57,19 +69,26 @@ export const updateActivity = async (
       title,
       description,
       itinerary_id,
+      lat,
+      lon,
       expense,
       split,
       sequence,
+      start_date,
+      end_date,
     },
   });
   return activity;
 };
 
 export const deleteActivity = async (id: number) => {
-  let activity = await db.activity.delete({
+  let activity = await db.activity.update({
     where: {
       id,
-    }
+    },
+    data: {
+      active: false,
+    },
   });
   return activity;
 };

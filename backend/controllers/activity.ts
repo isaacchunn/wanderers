@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 import {
   createActivity,
   getActivityById,
@@ -21,15 +21,29 @@ export const createActivityController = async (req: Request, res: Response) => {
           .join(", "),
       });
     } else {
-      const { title, description, itinerary_id, expense, split, sequence } =
-        parsed.data;
+      const {
+        title,
+        description,
+        itinerary_id,
+        lat,
+        lon,
+        expense,
+        split,
+        sequence,
+        start_date,
+        end_date,
+      } = parsed.data;
       let activity = await createActivity(
         title,
         description,
         itinerary_id,
+        lat,
+        lon,
         expense,
         split,
         sequence,
+        start_date,
+        end_date,
       );
 
       res.status(201).json(activity);
@@ -88,16 +102,30 @@ export const updateActivityController = async (req: Request, res: Response) => {
           .join(", "),
       });
     } else {
-      const { title, description, itinerary_id, expense, split, sequence } =
-        parsed.data;
+      const {
+        title,
+        description,
+        itinerary_id,
+        lat,
+        lon,
+        expense,
+        split,
+        sequence,
+        start_date,
+        end_date,
+      } = parsed.data;
       let activity = await updateActivity(
         parseInt(req.params.id),
         title,
         description,
         itinerary_id,
+        lat,
+        lon,
         expense,
         split,
         sequence,
+        start_date,
+        end_date,
       );
 
       res.status(200).json(activity);
