@@ -15,10 +15,10 @@ datasource db {
 }
 
 enum UserRole {
-  UV  // Unverified
-  L1  // Basic
-  L2  
-  L3  
+  UV // Unverified
+  L1 // Basic
+  L2
+  L3
   L4
   L5
 }
@@ -28,7 +28,7 @@ enum TokenContext {
   reset_password
 }
 
-enum ItineraryVisbility {
+enum ItineraryVisibility {
   public
   private
 }
@@ -39,97 +39,107 @@ enum ExpenseSplitType {
 }
 
 model UserToken {
-  id                        String          @id @default(uuid())
-  context                   TokenContext
-  token                     String          @db.VarChar(255)
-  sent_to                   String          @db.VarChar(255)
-  created_at                DateTime        @db.Timestamptz(6)
-  updated_at                DateTime        @db.Timestamptz(6)
+  id         String       @id @default(uuid())
+  context    TokenContext
+  token      String       @db.VarChar(255)
+  sent_to    String       @db.VarChar(255)
+  created_at DateTime     @db.Timestamptz(6)
+  updated_at DateTime     @db.Timestamptz(6)
 
   @@unique([id, token])
   @@map("UserTokens")
 }
 
 model User {
-  id                        Int             @id @default(autoincrement())
-  username                  String
-  email                     String
-  password                  String
-  media                     String
-  role                      UserRole
-  email_verified            DateTime?
-  user_photo             String?
-  created_at                DateTime        @db.Timestamptz(6)
-  itineraries               Itinerary[]     @relation("OwnerItineraries")
-  collaborated_itineraries   Itinerary[]     @relation("Collaborators")
-  chat_messages                ChatMessage[] @relation("ChatMessages")
-  itinerary_votes                     ItineraryVote[]
-  
+  id                       Int             @id @default(autoincrement())
+  username                 String
+  email                    String
+  password                 String
+  media                    String
+  role                     UserRole
+  email_verified           DateTime?
+  user_photo               String?
+  profile_description      String?
+  created_at               DateTime        @db.Timestamptz(6)
+  itineraries              Itinerary[]     @relation("OwnerItineraries")
+  collaborated_itineraries Itinerary[]     @relation("Collaborators")
+  chat_messages            ChatMessage[]   @relation("ChatMessages")
+  itinerary_votes          ItineraryVote[]
+
   @@map("Users")
 }
 
 model Itinerary {
-  id            Int          @id @default(autoincrement())
+  id            Int                 @id @default(autoincrement())
   title         String
   location      String
-  owner         User         @relation("OwnerItineraries", fields: [owner_id], references: [id])
-  owner_id       Int
-  collaborators User[]       @relation("Collaborators")
+  owner         User                @relation("OwnerItineraries", fields: [owner_id], references: [id])
+  owner_id      Int
+  collaborators User[]              @relation("Collaborators")
   activities    Activity[]
   votes         ItineraryVote[]
-  visibility    ItineraryVisbility
+  visibility    ItineraryVisibility
   photos        ItineraryPhoto[]
   chat_messages ChatMessage[]
-  created_at     DateTime     @default(now())
-  updated_at     DateTime     @updatedAt
+  start_date    DateTime
+  end_date      DateTime
+  active        Boolean             @default(true)
+  created_at    DateTime            @default(now())
+  updated_at    DateTime            @updatedAt
 
   @@map("Itineraries")
 }
 
 model Activity {
-  id           Int          @id @default(autoincrement())
+  id           Int              @id @default(autoincrement())
   title        String
   description  String?
-  itinerary    Itinerary    @relation(fields: [itinerary_id], references: [id])
-  itinerary_id  Int
-  expense       Float
+  lat          Float
+  lon          Float
+  itinerary    Itinerary        @relation(fields: [itinerary_id], references: [id])
+  itinerary_id Int
+  expense      Float
   split        ExpenseSplitType
   sequence     Int
+  start_date   DateTime
+  end_date     DateTime
+  active       Boolean          @default(true)
+  created_at   DateTime         @default(now())
 
   @@map("Activities")
 }
 
 model ItineraryPhoto {
-  id           Int          @id @default(autoincrement())
+  id           Int       @id @default(autoincrement())
   url          String
-  activity     Itinerary     @relation(fields: [activity_id], references: [id])
-  activity_id   Int
-  created_at    DateTime     @default(now())
+  itinerary    Itinerary @relation(fields: [itinerary_id], references: [id])
+  itinerary_id Int
+  created_at   DateTime  @default(now())
 
-  @@map("ActivityPhotos")
+  @@map("ItineraryPhotos")
 }
 
 model ItineraryVote {
-  id           Int          @id @default(autoincrement())
-  user         User         @relation(fields: [user_id], references: [id])
-  user_id       Int
-  // Votes are applied at the itinerary level.
-  itinerary    Itinerary    @relation(fields: [itinerary_id], references: [id])
-  itinerary_id  Int
-  created_at    DateTime     @default(now())
+  id           Int       @id @default(autoincrement())
+  user         User      @relation(fields: [user_id], references: [id])
+  user_id      Int
+  itinerary    Itinerary @relation(fields: [itinerary_id], references: [id])
+  itinerary_id Int
+  created_at   DateTime  @default(now())
 
   @@unique([user_id, itinerary_id])
   @@map("ItineraryVotes")
 }
 
 model ChatMessage {
-  id           Int          @id @default(autoincrement())
-  chat_message String
-  chat_message_by      User         @relation("ChatMessages", fields: [chat_message_by_id], references: [id])
-  chat_message_by_id    Int
-  itinerary    Itinerary    @relation(fields: [itinerary_id], references: [id])
-  itinerary_id  Int 
-  created_at DateTime @default(now())
+  id                 Int       @id @default(autoincrement())
+  chat_message       String
+  chat_message_by    User      @relation("ChatMessages", fields: [chat_message_by_id], references: [id])
+  chat_message_by_id Int
+  itinerary          Itinerary @relation(fields: [itinerary_id], references: [id])
+  itinerary_id       Int
+  active             Boolean   @default(true)
+  created_at         DateTime  @default(now())
 
   @@map("ChatMessages")
 }
