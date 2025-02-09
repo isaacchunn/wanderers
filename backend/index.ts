@@ -13,6 +13,7 @@ import errorHandler from "./middleware/error";
 
 // Import routers
 import authRouter from "./routes/auth";
+import activityRouter from "./routes/activity";
 
 const port = process.env.PORT || 4000;
 const app = express();
@@ -69,6 +70,7 @@ app.use(cookieParser());
 // API Routes
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/auth", authRouter);
+app.use("/api/activity", activityRouter);
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "../frontend/build")));
