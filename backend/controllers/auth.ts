@@ -63,10 +63,12 @@ export const registerUser = async (req: Request, res: Response) => {
   }
 
   if (errorFlag) {
+    // Return 400 status code for bad request
     res.status(400).json({
       message: errorMessage,
     });
   } else {
+    // Return 201 status code for successful creation
     res.status(201).json({
       message: "Confirmation email sent!",
     });
@@ -133,10 +135,12 @@ export const loginUser = async (req: Request, res: Response) => {
   }
 
   if (errorFlag) {
+    // Return 400 status code for bad request
     res.status(400).json({
       message: errorMessage,
     });
   } else {
+    // Return 200 status code for successful request
     res.status(200).json({
       token,
       user,
@@ -193,14 +197,16 @@ export const confirmAccount = async (req: Request, res: Response) => {
   }
 
   if (errorFlag) {
+    // Return 400 status code for bad request
     res.status(400).json({
       message: errorMessage,
     });
+  } else {
+    // Return 200 status code for successful request
+    res.status(200).json({
+      message: "Account confirmed",
+    });
   }
-
-  res.status(200).json({
-    message: "Account confirmed",
-  });
 };
 
 // @desc    Update user password
