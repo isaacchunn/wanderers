@@ -1,5 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
-import { UserRole, ItineraryVisbility } from "@prisma/client";
+import { UserRole, ItineraryVisibility } from "@prisma/client";
 const { generateEmailToken } = require("../../controllers/auth");
 
 function userFixture(overrides = {}) {
@@ -35,8 +35,8 @@ function itineraryFixture(overrides = {}) {
     votes: [],
     visibility:
       Math.random() < 0.5
-        ? ItineraryVisbility.public
-        : ItineraryVisbility.private,
+        ? ItineraryVisibility.public
+        : ItineraryVisibility.private,
     start_date: new Date("2022-01-01"),
     end_date: new Date("2022-01-10"),
   };
