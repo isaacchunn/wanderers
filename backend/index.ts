@@ -20,23 +20,6 @@ import itineraryPublicRouter from "./routes/itineraryPublic";
 const port = process.env.PORT || 4000;
 const app = express();
 
-// Set up options
-var allowedDomains = ["http://localhost:4000"];
-
-const corsOptions = {
-  origin: function (
-    origin: string | undefined,
-    callback: (err: Error | null, allow?: boolean) => void,
-  ) {
-    if (!origin || allowedDomains.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  optionsSuccessStatus: 200,
-};
-
 // Swagger options
 const swaggerDefinition = {
   openapi: "3.0.0",
@@ -72,7 +55,8 @@ const swaggerSpec = swaggerJSDoc(options);
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors(corsOptions));
+// WARNING: This is a security risk. Do not use this in production
+app.use(cors({origin: '*'})) 
 
 // Middlewares
 app.use(errorHandler);
