@@ -14,6 +14,8 @@ import errorHandler from "./middleware/error";
 // Import routers
 import authRouter from "./routes/auth";
 import activityRouter from "./routes/activity";
+import itineraryProtectedRouter from "./routes/itineraryProtected";
+import itineraryPublicRouter from "./routes/itineraryPublic";
 
 const port = process.env.PORT || 4000;
 const app = express();
@@ -48,6 +50,15 @@ const swaggerDefinition = {
       description: "Development server",
     },
   ],
+  components: {
+    securitySchemes: {
+      BearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+      },
+    },
+  },
 };
 
 const options = {
@@ -71,6 +82,8 @@ app.use(cookieParser());
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/auth", authRouter);
 app.use("/api/activity", activityRouter);
+app.use("/api/itinerary", itineraryProtectedRouter);
+app.use("/api/public/itinerary", itineraryPublicRouter);
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "../frontend/build")));
