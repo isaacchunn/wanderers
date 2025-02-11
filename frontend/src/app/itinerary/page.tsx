@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-// import { useFormState } from "react-dom";
 import {
     DndContext,
     closestCenter,
@@ -30,11 +29,11 @@ import { saveItinerary } from "../itinerary/actions";
 import { Location } from "../../lib/types";
 import { initialLocations } from "../../lib/utils";
 
-// const initialState = null;
-
-export default function ItineraryPage() {
+export default async function ItineraryPage() {
     const [locations, setLocations] = useState<Location[]>(initialLocations);
-    // const [state, formAction] = useFormState(saveItinerary, initialState);
+    const [destination, setDestination] = useState("");
+    const [startDate, setStartDate] = useState<Date | undefined>();
+    const [endDate, setEndDate] = useState<Date | undefined>();
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -42,6 +41,18 @@ export default function ItineraryPage() {
             coordinateGetter: sortableKeyboardCoordinates,
         })
     );
+
+    try {
+        const response = await fetch("http://localhost:4000/api/activity/itinerary/1");
+        if (!response.ok) {
+            throw new Error("Failed to fetch itinerary");
+        }
+        const data = await response.json();
+        setLocations(data.locations); // Update state with fetched locations
+        console.log("Fetched itinerary:", data);
+    } catch (error) {
+        console.error("Error fetching itinerary:", error);
+    }
 
     function handleDragEnd(event: DragEndEvent) {
         const { active, over } = event;
@@ -58,14 +69,14 @@ export default function ItineraryPage() {
         }
     }
 
-    async function handleSave() {
+    function handleSave() {
         const formData = new FormData();
         formData.append("locations", JSON.stringify(locations));
-        await saveItinerary(formData);
+        saveItinerary(formData);
     }
 
     return (
-        <div className=" bg-background p-6 md:p-12 flex items-center justify-items-center">
+        <div className="bg-background p-6 md:p-12 flex items-center justify-items-center">
             <div className="mx-auto max-w-6xl">
                 <div className="mb-8 flex items-center justify-between">
                     <div>
