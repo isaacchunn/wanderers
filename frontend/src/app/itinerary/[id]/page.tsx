@@ -2,7 +2,6 @@ import { ChatBox } from "../../../components/ui/chat-box";
 import { ExpenseSplitter } from "@/components/ui/expense-splitter";
 import { SortableItinerary } from "@/components/sortable-itinerary";
 import { fetchItinerary } from "@/lib/itineraryHandler";
-import { useSearchParams } from "next/navigation";
 
 export default async function ItineraryPage({
     params,

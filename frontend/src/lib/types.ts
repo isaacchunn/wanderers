@@ -29,7 +29,15 @@ export interface BE_Itinerary {
     };
 }
 
-export interface Itinerary {}
+export interface Itinerary {
+    id: string;
+    title: string;
+    location: string;
+    date: string;
+    duration: string;
+    image: string;
+    participants: number;
+}
 
 export interface Location {
     id: string;

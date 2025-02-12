@@ -3,7 +3,7 @@ import { Itinerary, BE_Itinerary } from "@/lib/types";
 // To fetch an itinerary from the server using the itinerary ID
 export async function fetchItinerary(
     itineraryId: string | null
-): Promise<Itinerary | undefined> {
+): Promise<BE_Itinerary | undefined> {
     try {
         const response = await fetch(
             `http://localhost:4000/api/public/itinerary/${itineraryId}`,
