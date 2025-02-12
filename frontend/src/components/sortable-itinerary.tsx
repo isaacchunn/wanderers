@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
 import { SortableLocationCard } from "../components/ui/sortable-location-card";
 import { Input } from "@/components/ui/input";
-import { saveItinerary } from "@/app/itinerary/actions";
+import { saveItinerary } from "@/app/itinerary/[id]/actions";
 
 import { Location } from "@/lib/types";
 import { initialLocations } from "@/lib/utils";
