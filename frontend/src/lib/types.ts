@@ -12,18 +12,12 @@ export interface BE_Itinerary {
     start_date: Date;
     end_date: Date;
     active: boolean;
-    photos: [
-        {
-            id: number;
-            url: string;
-        },
-    ];
-    collaborators: [
-        {
-            id: number;
-            email: string;
-        },
-    ];
+    photos: {
+        id: number;
+        url: string;
+    }[];
+    collaborators: { id: number; email: string }[];
+
     _count: {
         votes: number;
     };
