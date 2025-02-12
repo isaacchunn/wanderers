@@ -1,4 +1,4 @@
-import { Itinerary, BE_Itinerary } from "@/lib/types";
+import { BE_Itinerary } from "@/lib/types";
 
 // To fetch an itinerary from the server using the itinerary ID
 export async function fetchItinerary(
