@@ -12,7 +12,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { saveExpense } from "../../app/itinerary/actions";
+import { saveExpense } from "@/app/itinerary/[id]/actions";
 
 interface Expense {
     id: string;
