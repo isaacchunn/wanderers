@@ -1,12 +1,35 @@
-export interface Itinerary {
-    id: string;
+// [TODO] : Types to be updated as per the backend response [PLACEHOLDER INTERFACE FOR NOW]
+// This file contains the types that are used in the frontend
+
+export interface BE_Itinerary {
+    id: number;
+    created_at: Date;
+    updated_at: Date;
     title: string;
     location: string;
-    date: string;
-    duration: string;
-    image: string;
-    participants: number;
+    owner_id: number;
+    visibility: string;
+    start_date: Date;
+    end_date: Date;
+    active: boolean;
+    photos: [
+        {
+            id: number;
+            url: string;
+        },
+    ];
+    collaborators: [
+        {
+            id: number;
+            email: string;
+        },
+    ];
+    _count: {
+        votes: number;
+    };
 }
+
+export interface Itinerary {}
 
 export interface Location {
     id: string;

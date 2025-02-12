@@ -1,4 +1,4 @@
-import { Itinerary } from "@/lib/types";
+import { Itinerary, BE_Itinerary } from "@/lib/types";
 
 // To fetch an itinerary from the server using the itinerary ID
 export async function fetchItinerary(
@@ -22,7 +22,7 @@ export async function fetchItinerary(
             );
         }
 
-        const data = await response.json();
+        const data: BE_Itinerary = await response.json();
         console.log("ItineraryHandler - Fetched itinerary:", data);
         return data;
     } catch (error) {
