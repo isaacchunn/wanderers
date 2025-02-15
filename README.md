@@ -52,10 +52,12 @@
 ```bash
   cd frontend
 ```
+
 2. Install dependencies using npm
 ```bash
   npm install
 ```
+
 3. Running of local development server
 ```bash
   npm run dev
@@ -66,15 +68,19 @@
 ```bash
   cd backend
 ```
+
 2. Install dependencies using npm
 ```bash
   npm install
 ```
+
 3. Set up your .env file
 
   - Duplicate .env.example to .env
-3. Configure environment variables in the `.env` file. Create a cloud-based postgres instance (for e.g. Supabase) and replace the database `DATABASE_URL`, `DIRECT_URL` strings
-4. Running of local development server
+
+4. Configure environment variables in the `.env` file. Create a cloud-based postgres instance (for e.g. Supabase) and replace the database `DATABASE_URL`, `DIRECT_URL` strings
+
+5. Running of local development server
 ```bash
-  npm run dev
+  npm run server
 ```
