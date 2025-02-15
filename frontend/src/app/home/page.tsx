@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, MapPin, Plus, Users2 } from "lucide-react";
-import { fetchUserItinerary } from "@/lib/itineraryUser";
-import { fetchPublicItinerary } from "@/lib/itineraryPublic";
+import { fetchUserItinerary } from "@/lib/itineraryHandler";
+import { fetchPublicItinerary } from "@/lib/itineraryHandler";
 
 import { BE_Itinerary } from "@/lib/types";
 import { getDate, getYear } from "date-fns";
@@ -21,7 +21,7 @@ export default async function HomePage() {
     const userItinerary: BE_Itinerary[] = await fetchUserItinerary(ownerId);
     const publicItinerary: BE_Itinerary[] = await fetchPublicItinerary();
 
-    if ((userItinerary) === undefined) {
+    if (userItinerary === undefined) {
         // Handle the case when data is undefined
         console.error("No data found for this ownerId");
         return;
@@ -78,19 +78,23 @@ export default async function HomePage() {
                                         <Card className="overflow-hidden transition-colors hover:bg-muted/50">
                                             <CardContent className="p-0">
                                                 <div className="relative aspect-[4/3] w-full">
-                                                    {userI.photos.map((image) => (
-                                                        <Image
-                                                            src={
-                                                                image.url ||
-                                                                "/placeholder.svg"
-                                                            }
-                                                            alt={userI.title}
-                                                            fill
-                                                            className="object-cover"
-                                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                                            priority
-                                                        />
-                                                    ))}
+                                                    {userI.photos.map(
+                                                        (image) => (
+                                                            <Image
+                                                                src={
+                                                                    image.url ||
+                                                                    "/placeholder.svg"
+                                                                }
+                                                                alt={
+                                                                    userI.title
+                                                                }
+                                                                fill
+                                                                className="object-cover"
+                                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                                priority
+                                                            />
+                                                        )
+                                                    )}
                                                 </div>
                                                 <div className="space-y-3 p-4">
                                                     <h2 className="line-clamp-1 text-xl font-semibold tracking-tight">
@@ -118,14 +122,17 @@ export default async function HomePage() {
                                                         </div>
                                                         <div className="flex items-center gap-2">
                                                             <Users2 className="h-4 w-4" />
-                                                            {userI.collaborators.map((colab) => (
-                                                                <span>
-                                                                    {
-                                                                        colab.email
-                                                                    }{"\n"}
-                                                                    participants
-                                                                </span>
-                                                            ))}
+                                                            {userI.collaborators.map(
+                                                                (colab) => (
+                                                                    <span>
+                                                                        {
+                                                                            colab.email
+                                                                        }
+                                                                        {"\n"}
+                                                                        participants
+                                                                    </span>
+                                                                )
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>
