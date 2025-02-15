@@ -62,4 +62,19 @@
 ```
 
 ### Back-end
-TO ADD @albert
+1. From the root directory, run the command
+```bash
+  cd backend
+```
+2. Install dependencies using npm
+```bash
+  npm install
+```
+3. Set up your .env file
+
+  - Duplicate .env.example to .env
+3. Configure environment variables in the `.env` file. Create a cloud-based postgres instance (for e.g. Supabase) and replace the database `DATABASE_URL`, `DIRECT_URL` strings
+4. Running of local development server
+```bash
+  npm run dev
+```
