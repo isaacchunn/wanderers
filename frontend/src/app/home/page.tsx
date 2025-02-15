@@ -13,19 +13,14 @@ import { Calendar, Clock, MapPin, Plus, Users2 } from "lucide-react";
 import { fetchUserItinerary } from "@/lib/itineraryHandler";
 import { fetchPublicItinerary } from "@/lib/itineraryHandler";
 
-import { BE_Itinerary } from "@/lib/types";
-import { getDate, getYear } from "date-fns";
+import { Itinerary } from "@/lib/types";
+import { getDate } from "date-fns";
 
 export default async function HomePage() {
     const ownerId = 1;
-    const userItinerary: BE_Itinerary[] = await fetchUserItinerary(ownerId);
-    const publicItinerary: BE_Itinerary[] = await fetchPublicItinerary();
-
-    if (userItinerary === undefined) {
-        // Handle the case when data is undefined
-        console.error("No data found for this ownerId");
-        return;
-    }
+    const userItinerary: Itinerary[] =
+        (await fetchUserItinerary(ownerId)) || [];
+    const publicItinerary: Itinerary[] = (await fetchPublicItinerary()) || [];
 
     if (!(userItinerary || publicItinerary)) {
         return (
@@ -40,7 +35,6 @@ export default async function HomePage() {
             </div>
         );
     } else {
-        // console.log(data);
         return (
             <div className="min-h-screen bg-background">
                 <main className="container px-4 py-12">
@@ -79,8 +73,9 @@ export default async function HomePage() {
                                             <CardContent className="p-0">
                                                 <div className="relative aspect-[4/3] w-full">
                                                     {userI.photos.map(
-                                                        (image) => (
+                                                        (image, index) => (
                                                             <Image
+                                                                key={index}
                                                                 src={
                                                                     image.url ||
                                                                     "/placeholder.svg"
@@ -122,17 +117,18 @@ export default async function HomePage() {
                                                         </div>
                                                         <div className="flex items-center gap-2">
                                                             <Users2 className="h-4 w-4" />
-                                                            {userI.collaborators.map(
-                                                                (colab) => (
-                                                                    <span>
-                                                                        {
-                                                                            colab.email
-                                                                        }
-                                                                        {"\n"}
-                                                                        participants
-                                                                    </span>
-                                                                )
-                                                            )}
+                                                            <span>
+                                                                {
+                                                                    userI
+                                                                        .collaborators
+                                                                        .length
+                                                                }{" "}
+                                                                {userI
+                                                                    .collaborators
+                                                                    .length > 1
+                                                                    ? "Participants"
+                                                                    : "Participant"}
+                                                            </span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -159,19 +155,22 @@ export default async function HomePage() {
                                     <Card className="overflow-hidden transition-colors hover:bg-muted/50">
                                         <CardContent className="p-0">
                                             <div className="relative aspect-[4/3] w-full">
-                                                {publicI.photos.map((image) => (
-                                                    <Image
-                                                        src={
-                                                            image.url ||
-                                                            "/placeholder.svg"
-                                                        }
-                                                        alt={publicI.title}
-                                                        fill
-                                                        className="object-cover"
-                                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                                        priority
-                                                    />
-                                                ))}
+                                                {publicI.photos.map(
+                                                    (image, index) => (
+                                                        <Image
+                                                            key={index}
+                                                            src={
+                                                                image.url ||
+                                                                "/placeholder.svg"
+                                                            }
+                                                            alt={publicI.title}
+                                                            fill
+                                                            className="object-cover"
+                                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                            priority
+                                                        />
+                                                    )
+                                                )}
                                             </div>
                                             <div className="space-y-3 p-4">
                                                 <h3 className="line-clamp-1 text-xl font-semibold tracking-tight">
