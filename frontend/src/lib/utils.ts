@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { Location, Itinerary, PlaceDetails } from "./types";
+import { Location, PlaceDetails } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
