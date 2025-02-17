@@ -75,102 +75,107 @@ export const createItinerary = async (
     }
   }
 
-  const itinerary = await db.itinerary.findFirst({
-    where: {
-      id: createdItinerary.id,
-      active: true,
-    },
-    include: {
-      photos: {
-        select: {
-          id: true,
-          url: true,
+    const itinerary = await db.itinerary.findFirst({
+        where: { 
+            id: createdItinerary.id,
+            active: true,
         },
-      },
-      collaborators: {
-        select: {
-          id: true,
-          email: true,
+        include: {
+            owner: {
+              select: {
+                username: true,
+                user_photo: true,
+              },
+            },
+            collaborators: {
+                select: {
+                    id: true,
+                    email: true,
+                    username: true,
+                    user_photo: true,
+                },
+            },
+            _count: {
+                select: {
+                    votes: true,
+                },
+            },
         },
-      },
-      _count: {
-        select: {
-          votes: true,
-        },
-      },
-    },
-  });
-
-  return itinerary;
-};
+    });
+    
+    return itinerary;
+}
 
 export const getItineraries = async (page: number = 1, limit: number = 10) => {
-  const skip = (page - 1) * limit;
-  const itineraries = await db.itinerary.findMany({
-    where: {
-      active: true,
-      visibility: "public",
-    },
-    include: {
-      photos: {
-        select: {
-          id: true,
-          url: true,
+    const skip = (page - 1) * limit;
+    const itineraries = await db.itinerary.findMany({
+        where: { 
+            active: true,
+            visibility: "public",
         },
-      },
-      _count: {
-        select: {
-          votes: true,
+        include: {
+            owner: {
+                select: {
+                  username: true,
+                  user_photo: true,
+                },
+            },
+            collaborators: {
+                select: {
+                    id: true,
+                    email: true,
+                    username: true,
+                    user_photo: true,
+                },
+            },
+            _count: {
+                select: {
+                    votes: true,
+                },
+            },
         },
-      },
-    },
-    orderBy: {
-      created_at: "desc",
-    },
-    skip,
-    take: limit,
-  });
+        orderBy: {
+            created_at: 'desc',
+        },
+        skip,
+        take: limit,
+    }); 
 
   return itineraries;
 };
 
-export const getItineraryById = async (
-  itineraryId: number,
-  requesterUserId: number | null,
-) => {
-  const itinerary = await db.itinerary.findFirst({
-    where: {
-      id: itineraryId,
-      active: true,
-    },
-    include: {
-      photos: {
-        select: {
-          id: true,
-          url: true,
+export const getItineraryById = async (itineraryId: number, requesterUserId: number | null) => {
+    const itinerary = await db.itinerary.findFirst({
+        where: { 
+            id: itineraryId,
+            active: true,
         },
-      },
-      collaborators: {
-        select: {
-          id: true,
-          email: true,
-        },
-      },
-      _count: {
-        select: {
-          votes: true,
-        },
-      },
-    },
-  });
+        include: {
+            owner: {
+                select: {
+                  username: true,
+                  user_photo: true,
+                },
+            },
+            collaborators: {
+                select: {
+                    id: true,
+                    email: true,
+                    username: true,
+                    user_photo: true,
+                },
+            },
+            _count: {
+                select: {
+                    votes: true,
+                }
+            },
+        }
+    }); 
 
-  if (itinerary && itinerary.visibility === "private") {
-    return requesterUserId
-      ? (await isUserAuthorized(requesterUserId, itineraryId))
-        ? itinerary
-        : null
-      : null;
-  }
+    if (itinerary && itinerary.visibility === 'private') {
+        return requesterUserId ? await isUserAuthorized(requesterUserId, itineraryId) ? itinerary : null : null;
+    }
 
   return itinerary;
 };
@@ -181,136 +186,139 @@ export const getCreatedItineraries = async (
   page: number = 1,
   limit: number = 10,
 ) => {
-  const skip = (page - 1) * limit;
-  const user = await db.user.findFirst({
-    where: {
-      id: userId,
-    },
-    include: {
-      itineraries: {
-        where: isOwner
-          ? {
-              active: true,
-            }
-          : {
-              active: true,
-              visibility: "public",
-            },
-        include: {
-          photos: {
-            select: {
-              id: true,
-              url: true,
-            },
-          },
-          collaborators: {
-            select: {
-              id: true,
-              email: true,
-            },
-          },
-          _count: {
-            select: {
-              votes: true,
-            },
-          },
-        },
-        orderBy: {
-          created_at: "desc",
-        },
-        skip,
-        take: limit,
-      },
-    },
-  });
-  return user?.itineraries;
-};
-
-export const getCollabItineraries = async (
-  userId: number,
-  page: number = 1,
-  limit: number = 10,
-) => {
-  const skip = (page - 1) * limit;
-  const user = await db.user.findFirst({
-    where: {
-      id: userId,
-    },
-    include: {
-      collaborated_itineraries: {
+    const skip = (page - 1) * limit;
+    const user = await db.user.findFirst({
         where: {
-          active: true,
+            id: userId,
         },
         include: {
-          photos: {
-            select: {
-              id: true,
-              url: true,
+            itineraries: {
+                where: isOwner ? {
+                    active: true,
+                }: 
+                {
+                    active: true,
+                    visibility: 'public'
+                },
+                include: {
+                    owner: {
+                        select: {
+                          username: true,
+                          user_photo: true,
+                        },
+                    },
+                    collaborators: {
+                        select: {
+                            id: true,
+                            email: true,
+                            username: true,
+                            user_photo: true,
+                        },
+                    },
+                    _count: {
+                        select: {
+                            votes: true,
+                        },
+                    },
+                },
+                orderBy: {
+                    created_at: 'desc',
+                },
+                skip,
+                take: limit,
             },
-          },
-          collaborators: {
-            select: {
-              id: true,
-              email: true,
-            },
-          },
-          _count: {
-            select: {
-              votes: true,
-            },
-          },
         },
-        orderBy: {
-          created_at: "desc",
+    });
+    return user?.itineraries;
+}
+
+export const getCollabItineraries = async (userId: number, page: number = 1, limit: number = 10) => {
+    const skip = (page - 1) * limit;
+    const user = await db.user.findFirst({
+        where: {
+            id: userId,
         },
-        skip,
-        take: limit,
-      },
-    },
-  });
-  return user?.collaborated_itineraries;
-};
+        include: {
+            collaborated_itineraries: {
+                where: {
+                    active: true,
+                },
+                include: {
+                    owner: {
+                        select: {
+                          username: true,
+                          user_photo: true,
+                        },
+                    },
+                    collaborators: {
+                        select: {
+                            id: true,
+                            email: true,
+                            username: true,
+                            user_photo: true,
+                        },
+                    },
+                    _count: {
+                        select: {
+                            votes: true,
+                        },
+                    },
+                },
+                orderBy: {
+                    created_at: 'desc',
+                },
+                skip,
+                take: limit,
+            },
+        },
+    });
+    return user?.collaborated_itineraries;
+}
 
 export const updateItinerary = async (
-  itineraryId: number,
-  title: string,
-  location: string,
-  visibility: ItineraryVisibility,
-  start_date: Date,
-  end_date: Date,
+    itineraryId: number,
+    title: string,
+    location: string,
+    photo_url: string | null,
+    visibility: ItineraryVisibility,
+    start_date: Date,
+    end_date: Date,
 ) => {
-  let itinerary = await db.itinerary.update({
-    where: {
-      id: itineraryId,
-      active: true,
-    },
-    data: {
-      title,
-      location,
-      visibility,
-      start_date,
-      end_date,
-    },
-    include: {
-      photos: {
-        select: {
-          id: true,
-          url: true,
+    let itinerary = await db.itinerary.update({
+        where: {
+            id: itineraryId,
+            active: true,
         },
-      },
-      collaborators: {
-        select: {
-          id: true,
-          email: true,
+        data: {
+            title,
+            location,
+            photo_url,
+            visibility,
+            start_date,
+            end_date,
         },
-      },
-      _count: {
-        select: {
-          votes: true,
+        include: {
+            owner: {
+                select: {
+                  username: true,
+                  user_photo: true,
+                },
+            },
+            collaborators: {
+                select: {
+                    id: true,
+                    email: true,
+                    username: true,
+                    user_photo: true,
+                },
+            },
+            _count: {
+                select: {
+                    votes: true,
+                },
+            },
         },
-      },
-    },
-  });
+    });
 
   return itinerary;
 };

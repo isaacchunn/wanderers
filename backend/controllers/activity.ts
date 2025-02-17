@@ -32,6 +32,7 @@ export const createActivityController = async (req: Request, res: Response) => {
         sequence,
         start_date,
         end_date,
+        photo_url
       } = parsed.data;
       let activity = await createActivity(
         title,
@@ -42,6 +43,7 @@ export const createActivityController = async (req: Request, res: Response) => {
         expense,
         split,
         sequence,
+        photo_url || null,
         start_date,
         end_date,
       );
@@ -111,6 +113,7 @@ export const updateActivityController = async (req: Request, res: Response) => {
         expense,
         split,
         sequence,
+        photo_url,
         start_date,
         end_date,
       } = parsed.data;
@@ -124,6 +127,7 @@ export const updateActivityController = async (req: Request, res: Response) => {
         expense,
         split,
         sequence,
+        photo_url || null,
         start_date,
         end_date,
       );

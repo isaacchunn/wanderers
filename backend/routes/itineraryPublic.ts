@@ -46,7 +46,7 @@ const router = express.Router();
  *       500:
  *         description: Internal Server Error.
  */
-router.get("/", getItinerariesPublicApi);
+router.route("/").get(getItinerariesPublicApi);
 
 /**
  * @swagger

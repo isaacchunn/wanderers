@@ -79,8 +79,8 @@ model Itinerary {
   activities    Activity[]
   votes         ItineraryVote[]
   visibility    ItineraryVisibility
-  photos        ItineraryPhoto[]
   chat_messages ChatMessage[]
+  photo_url     String?
   start_date    DateTime
   end_date      DateTime
   active        Boolean             @default(true)
@@ -101,22 +101,13 @@ model Activity {
   expense      Float
   split        ExpenseSplitType
   sequence     Int
+  photo_url    String?
   start_date   DateTime
   end_date     DateTime
   active       Boolean          @default(true)
   created_at   DateTime         @default(now())
 
   @@map("Activities")
-}
-
-model ItineraryPhoto {
-  id           Int       @id @default(autoincrement())
-  url          String
-  itinerary    Itinerary @relation(fields: [itinerary_id], references: [id])
-  itinerary_id Int
-  created_at   DateTime  @default(now())
-
-  @@map("ItineraryPhotos")
 }
 
 model ItineraryVote {

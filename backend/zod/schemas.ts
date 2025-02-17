@@ -28,6 +28,7 @@ export const activitySchema = z.object({
   sequence: z.number(),
   start_date: z.coerce.date(),
   end_date: z.coerce.date(),
+  photo_url: z.string().url().optional(),
 });
 
 export const createItinerarySchema = z.object({
@@ -45,10 +46,5 @@ export const updateItinerarySchema = z.object({
   visibility: z.enum(["public", "private"]),
   start_date: z.coerce.date(),
   end_date: z.coerce.date(),
-  // photo_urls: z.array(
-  //   z.object({
-  //     id: z.number(),
-  //     url: z.string(),
-  //   })
-  // ).optional(),
+  photo_url: z.string().url().optional(),
 });

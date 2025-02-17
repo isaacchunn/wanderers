@@ -30,10 +30,11 @@ const router = express.Router();
  *         - visibility
  *         - start_date
  *         - end_date
+ *         - photo_url
  *         - active
  *         - created_at
- *         - updated_at
- *         - photos
+ *         - updated_at 
+ *         - owner
  *         - collaborators
  *         - _count
  *       properties:
@@ -61,6 +62,10 @@ const router = express.Router();
  *           type: string
  *           format: date-time
  *           description: The end date of the itinerary
+ *         photo_url:
+ *           type: string
+ *           nullable: true
+ *           description: URL of photo associated with the itinerary
  *         active:
  *           type: boolean
  *           description: Indicates if the itinerary is active
@@ -71,17 +76,17 @@ const router = express.Router();
  *         updated_at:
  *           type: string
  *           format: date-time
- *           description: Timestamp when the itinerary was last updated
- *         photos:
- *           type: array
- *           description: List of photos associated with the itinerary
- *           items:
- *             type: object
- *             properties:
- *               url:
- *                 type: string
- *                 format: uri
- *                 description: URL of the photo
+ *           description: Timestamp when the itinerary was last updated 
+ *         owner:
+ *           type: object
+ *           properties:
+ *             username:
+ *               type: string
+ *               description: The username of the owner
+ *             user_photo:
+ *               type: string
+ *               nullable: true
+ *               description: User's profile image URL
  *         collaborators:
  *           type: array
  *           description: List of collaborators associated with the itinerary
@@ -95,6 +100,12 @@ const router = express.Router();
  *                 type: string
  *                 format: email
  *                 description: Email of the collaborator
+ *               username:
+ *                 type: string
+ *                 description: The username of the collaborator
+ *               user_photo:
+ *                 type: string
+ *                 description: Collaborator's profile image URL
  *         _count:
  *           type: object
  *           properties:
@@ -103,25 +114,28 @@ const router = express.Router();
  *               description: The count of votes associated with the itinerary
  *       example:
  *         id: 123
- *         created_at: "2025-02-10T12:00:00Z"
- *         updated_at: "2025-02-10T12:30:00Z"
  *         title: "My Travel Itinerary"
- *         location: "Paris, France"
+ *         location: "FR"
  *         owner_id: 456
  *         visibility: "public"
+ *         photo_url: "https://example.com/photo1.jpg"
  *         start_date: "2025-03-01T00:00:00Z"
  *         end_date: "2025-03-10T00:00:00Z"
  *         active: true
- *         photos:
- *           - id: 1
- *             url: "https://example.com/photo1.jpg"
- *           - id: 2
- *             url: "https://example.com/photo2.jpg"
+ *         created_at: "2025-02-10T12:00:00Z"
+ *         updated_at: "2025-02-10T12:30:00Z"
+ *         owner:
+ *           username: "owner456"
+ *           user_photo: "https://example.com/photo1.jpg"
  *         collaborators:
  *           - id: 1
  *             email: "collaborator1@example.com"
+ *             username: "collaborator1"
+ *             user_photo: "https://example.com/photo1.jpg"
  *           - id: 2
  *             email: "collaborator2@example.com"
+ *             username: "collaborator2"
+ *             user_photo: "https://example.com/photo2.jpg"
  *         _count:
  *           votes: 3
  */
