@@ -73,16 +73,18 @@ export const createItinerary = async (
             active: true,
         },
         include: {
-            photos: {
-                select: {
-                    id: true,
-                    url: true,
-                }
+            owner: {
+              select: {
+                username: true,
+                user_photo: true,
+              }  
             },
             collaborators: {
                 select: {
                     id: true,
                     email: true,
+                    username: true,
+                    user_photo: true,
                 }
             },
             _count: {
@@ -104,10 +106,18 @@ export const getItineraries = async (page: number = 1, limit: number = 10) => {
             visibility: "public",
         },
         include: {
-            photos: {
+            owner: {
+                select: {
+                  username: true,
+                  user_photo: true,
+                }  
+            },
+            collaborators: {
                 select: {
                     id: true,
-                    url: true,
+                    email: true,
+                    username: true,
+                    user_photo: true,
                 }
             },
             _count: {
@@ -133,16 +143,18 @@ export const getItineraryById = async (itineraryId: number, requesterUserId: num
             active: true,
         },
         include: {
-            photos: {
+            owner: {
                 select: {
-                    id: true,
-                    url: true,
-                }
+                  username: true,
+                  user_photo: true,
+                }  
             },
             collaborators: {
                 select: {
                     id: true,
                     email: true,
+                    username: true,
+                    user_photo: true,
                 }
             },
             _count: {
@@ -181,16 +193,18 @@ export const getCreatedItineraries = async (
                     visibility: 'public'
                 },
                 include: {
-                    photos: {
+                    owner: {
                         select: {
-                            id: true,
-                            url: true,
-                        }
+                          username: true,
+                          user_photo: true,
+                        }  
                     },
                     collaborators: {
                         select: {
                             id: true,
                             email: true,
+                            username: true,
+                            user_photo: true,
                         }
                     },
                     _count: {
@@ -222,16 +236,18 @@ export const getCollabItineraries = async (userId: number, page: number = 1, lim
                     active: true,
                 },
                 include: {
-                    photos: {
+                    owner: {
                         select: {
-                            id: true,
-                            url: true,
-                        }
+                          username: true,
+                          user_photo: true,
+                        }  
                     },
                     collaborators: {
                         select: {
                             id: true,
                             email: true,
+                            username: true,
+                            user_photo: true,
                         }
                     },
                     _count: {
@@ -255,6 +271,7 @@ export const updateItinerary = async (
     itineraryId: number,
     title: string,
     location: string,
+    photo_url: string | null,
     visibility: ItineraryVisibility,
     start_date: Date,
     end_date: Date,
@@ -267,21 +284,24 @@ export const updateItinerary = async (
         data: {
             title,
             location,
+            photo_url,
             visibility,
             start_date,
             end_date,
         },
         include: {
-            photos: {
+            owner: {
                 select: {
-                    id: true,
-                    url: true,
-                }
+                  username: true,
+                  user_photo: true,
+                }  
             },
             collaborators: {
                 select: {
                     id: true,
                     email: true,
+                    username: true,
+                    user_photo: true,
                 }
             },
             _count: {

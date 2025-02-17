@@ -10,6 +10,7 @@ export const createActivity = async (
   expense: number,
   split: ExpenseSplitType,
   sequence: number,
+  photo_url: string | null,
   start_date: Date,
   end_date: Date,
 ) => {
@@ -23,6 +24,7 @@ export const createActivity = async (
       expense,
       split,
       sequence,
+      photo_url,
       start_date,
       end_date,
     },
@@ -58,6 +60,7 @@ export const updateActivity = async (
   expense: number,
   split: ExpenseSplitType,
   sequence: number,
+  photo_url: string | null,
   start_date: Date,
   end_date: Date,
 ) => {
@@ -74,6 +77,7 @@ export const updateActivity = async (
       expense,
       split,
       sequence,
+      photo_url,
       start_date,
       end_date,
     },

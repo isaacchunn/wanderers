@@ -142,9 +142,9 @@ export const updateItineraryApi = async (req: Request, res: Response) => {
                   .join(", "),
               }); 
         } else {
-            const { title, location, visibility, start_date, end_date } = validatedFields.data;
+            const { title, location, visibility, photo_url, start_date, end_date } = validatedFields.data;
             const itineraryId = parseInt(req.params.itineraryId);
-            let itinerary = await updateItinerary(itineraryId, title, location, visibility, start_date, end_date);
+            let itinerary = await updateItinerary(itineraryId, title, location, photo_url || null, visibility, start_date, end_date);
             res.status(200).json(itinerary);
         }
     } catch (error: any) {

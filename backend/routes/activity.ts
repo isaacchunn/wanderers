@@ -32,6 +32,7 @@ const router = express.Router();
  *         - expense
  *         - split
  *         - sequence
+ *         - photo_url
  *         - start_date
  *         - end_date
  *       properties:
@@ -63,6 +64,10 @@ const router = express.Router();
  *         sequence:
  *           type: integer
  *           description: The order of the activity in the itinerary
+ *         photo_url:
+ *           type: string
+ *           nullable: true
+ *           description: URL of photo associated with the activity
  *         start_date:
  *           type: string
  *           format: date
@@ -81,6 +86,7 @@ const router = express.Router();
  *         expense: 200
  *         split: "split"
  *         sequence: 1
+ *         photo_url: "https://example.com/photo1.jpg"
  *         start_date: 2025-12-21T00:00:00.000Z
  *         end_date: 2025-12-21T00:00:00.000Z
  */
