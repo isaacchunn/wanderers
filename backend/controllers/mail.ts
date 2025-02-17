@@ -49,7 +49,13 @@ export const deliverItineraryCollabEmail = async (
   await mailService.sendMail(
     email,
     `Wanderers - Invitation to collaborate in \"${itineraryName}\"`,
-    await itineraryCollabBody(`${process.env.FRONTEND_URL as string}`, username, inviterUsername, itineraryName, itineraryLocation),
+    await itineraryCollabBody(
+      `${process.env.FRONTEND_URL as string}`,
+      username,
+      inviterUsername,
+      itineraryName,
+      itineraryLocation,
+    ),
   );
 };
 
@@ -96,7 +102,13 @@ const confirmemailbody = (url: string, username: string, token: string) => {
     `;
 };
 
-const itineraryCollabBody = (url: string, username: string, inviterUsername: string, itineraryName: string, itineraryLocation: string) => {
+const itineraryCollabBody = (
+  url: string,
+  username: string,
+  inviterUsername: string,
+  itineraryName: string,
+  itineraryLocation: string,
+) => {
   return `
 	Hi ${username}!
 
@@ -108,7 +120,7 @@ const itineraryCollabBody = (url: string, username: string, inviterUsername: str
 	<br/><br/>
 	Your ${itineraryLocation} trip starts now!
     `;
-}
+};
 
 export default {
   deliverConfirmationEmail,

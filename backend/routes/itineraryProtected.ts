@@ -1,6 +1,13 @@
 import express from "express";
 
-import { createItineraryApi, getCollabItinerariesApi, updateItineraryApi, deleteItineraryApi, getCreatedItinerariesProtectedApi, getItineraryProtectedApi } from "../controllers/itinerary";
+import {
+  createItineraryApi,
+  getCollabItinerariesApi,
+  updateItineraryApi,
+  deleteItineraryApi,
+  getCreatedItinerariesProtectedApi,
+  getItineraryProtectedApi,
+} from "../controllers/itinerary";
 
 const router = express.Router();
 /**
@@ -25,7 +32,7 @@ const router = express.Router();
  *         - end_date
  *         - active
  *         - created_at
- *         - updated_at 
+ *         - updated_at
  *         - photos
  *         - collaborators
  *         - _count
@@ -64,7 +71,7 @@ const router = express.Router();
  *         updated_at:
  *           type: string
  *           format: date-time
- *           description: Timestamp when the itinerary was last updated 
+ *           description: Timestamp when the itinerary was last updated
  *         photos:
  *           type: array
  *           description: List of photos associated with the itinerary
@@ -109,7 +116,7 @@ const router = express.Router();
  *           - id: 1
  *             url: "https://example.com/photo1.jpg"
  *           - id: 2
- *             url: "https://example.com/photo2.jpg" 
+ *             url: "https://example.com/photo2.jpg"
  *         collaborators:
  *           - id: 1
  *             email: "collaborator1@example.com"
@@ -146,11 +153,11 @@ const router = express.Router();
  *               start_date:
  *                 type: date-time
  *                 description: Start date of the itinerary
- *                 example: 2025-12-21T00:00:00.000Z   
+ *                 example: 2025-12-21T00:00:00.000Z
  *               end_date:
  *                 type: date-time
  *                 description: End date of the itinerary
- *                 example: 2025-12-21T00:00:00.000Z   
+ *                 example: 2025-12-21T00:00:00.000Z
  *               visibility:
  *                 type: string
  *                 description: Visibility of the itinerary (e.g., public or private)
@@ -339,7 +346,7 @@ router.route("/:itineraryId").get(getItineraryProtectedApi);
  *               start_date:
  *                 type: date-time
  *                 description: Start date of the itinerary
- *                 example: 2025-12-21T00:00:00.000Z   
+ *                 example: 2025-12-21T00:00:00.000Z
  *               end_date:
  *                 type: date-time
  *                 description: End date of the itinerary

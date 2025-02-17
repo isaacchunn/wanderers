@@ -1,6 +1,10 @@
 import express from "express";
 
-import { getItinerariesPublicApi ,getCreatedItinerariesPublicApi, getItineraryPublicApi } from "../controllers/itinerary";
+import {
+  getItinerariesPublicApi,
+  getCreatedItinerariesPublicApi,
+  getItineraryPublicApi,
+} from "../controllers/itinerary";
 
 const router = express.Router();
 /**
@@ -90,7 +94,7 @@ router.route("/:ownerId/created").get(getCreatedItinerariesPublicApi);
  *   get:
  *     summary: Access an existing public itinerary
  *     description: Retrieve an existing itinerary by its ID.
- *     tags: [Itinerary (Public)]     
+ *     tags: [Itinerary (Public)]
  *     parameters:
  *       - in: path
  *         name: itineraryId
