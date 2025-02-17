@@ -65,7 +65,7 @@ model User {
   collaborated_itineraries Itinerary[]     @relation("Collaborators")
   chat_messages            ChatMessage[]   @relation("ChatMessages")
   itinerary_votes          ItineraryVote[]
-  
+
   @@map("Users")
 }
 
