@@ -14,18 +14,17 @@ import {
     Star,
 } from "lucide-react";
 import Image from "next/image";
-import { mockPlaceDetails } from "@/lib/utils";
-import { Location } from "@/lib/types";
+import { Activity } from "@/lib/types";
 
 interface SortableLocationCardProps {
-    location: Location;
+    activity: Activity;
 }
 
 function getPriceLevelText(level: number): string {
     return "€".repeat(level);
 }
 
-export function SortableLocationCard({ location }: SortableLocationCardProps) {
+export function SortableLocationCard({ activity }: SortableLocationCardProps) {
     const {
         attributes,
         listeners,
@@ -33,15 +32,27 @@ export function SortableLocationCard({ location }: SortableLocationCardProps) {
         transform,
         transition,
         isDragging,
-    } = useSortable({ id: location.id });
+    } = useSortable({ id: activity.id });
 
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
     };
+    const placeDetails = activity.placeDetails;
 
-    const placeDetails = location.placeDetails || mockPlaceDetails;
-
+    if (!placeDetails) {
+        return (
+            <div className="bg-background p-6 md:p-12 flex items-center justify-items-center">
+                <div className="mx-auto max-w-6xl">
+                    <h1 className="text-4xl font-bold tracking-tight">Error</h1>
+                    <p className="mt-2 text-muted-foreground">
+                        There was an error fetching the itinerary data. Please
+                        try again later.
+                    </p>
+                </div>
+            </div>
+        );
+    }
     return (
         <Card
             ref={setNodeRef}
@@ -61,8 +72,8 @@ export function SortableLocationCard({ location }: SortableLocationCardProps) {
                     <div className="flex flex-1 gap-4 overflow-hidden sm:flex-row">
                         <div className="relative h-[200px] w-[300px] flex-none overflow-hidden rounded-md">
                             <Image
-                                src={location.image || "/placeholder.svg"}
-                                alt={location.title}
+                                src={activity.image || "/placeholder.svg"}
+                                alt={activity.title}
                                 className="object-cover"
                                 fill
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -98,10 +109,10 @@ export function SortableLocationCard({ location }: SortableLocationCardProps) {
                             <div>
                                 <div className="flex items-start justify-between gap-4">
                                     <h3 className="font-semibold leading-none tracking-tight">
-                                        {location.title}
+                                        {activity.title}
                                     </h3>
                                     <div className="text-sm text-muted-foreground">
-                                        {location.time}
+                                        {activity.time}
                                     </div>
                                 </div>
                                 <div className="mt-2 flex flex-wrap gap-1">

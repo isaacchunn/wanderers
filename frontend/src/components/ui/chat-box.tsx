@@ -37,7 +37,7 @@ export function ChatBox() {
     }
 
     return (
-        <Card className="h-96 w-96 flex flex-col p-0">
+        <Card className="h-auto w-auto flex flex-col">
             <CardHeader>
                 <CardTitle>Group Chat</CardTitle>
             </CardHeader>

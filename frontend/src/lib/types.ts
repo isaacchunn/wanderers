@@ -23,7 +23,7 @@ export interface Itinerary {
     };
 }
 
-export interface Location {
+export interface Activity {
     id: string;
     title: string;
     description: string;
@@ -70,4 +70,9 @@ export interface PlaceDetails {
         profile_photo_url: string;
     }[];
     types?: string[];
+}
+
+export interface Search {
+    search: string;
+    country: string;
 }

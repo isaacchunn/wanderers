@@ -1,7 +1,7 @@
 import { ChatBox } from "../../../components/ui/chat-box";
 import { ExpenseSplitter } from "@/components/ui/expense-splitter";
-import { SortableItinerary } from "@/components/sortable-itinerary";
 import { fetchItinerary } from "@/lib/itineraryHandler";
+import { ActivityContainer } from "@/components/activity-container";
 
 export default async function ItineraryPage({
     params,
@@ -26,7 +26,7 @@ export default async function ItineraryPage({
     } else {
         return (
             <div className="bg-background p-6 md:p-12 flex items-center justify-items-center">
-                <div className="mx-auto max-w-6xl">
+                <div className="mx-auto max-w-6xl w-full">
                     <div className="mb-8 flex items-center justify-between">
                         <div>
                             <h1 className="text-4xl font-bold tracking-tight">
@@ -38,13 +38,13 @@ export default async function ItineraryPage({
                             </p>
                         </div>
                     </div>
-                    <div className="space-y-6">
-                        <div className="grid gap-6 lg:grid-cols-[1fr,300px]">
-                            <SortableItinerary />
-                            <ChatBox />
-                        </div>
-                        <div>
+                    <div className="grid gap-6 lg:grid-cols-[1fr,400px] min-h-[600px]">
+                        <div className="flex flex-col gap-6">
+                            <ActivityContainer />
                             <ExpenseSplitter />
+                        </div>
+                        <div className="h-full">
+                            <ChatBox />
                         </div>
                     </div>
                 </div>
