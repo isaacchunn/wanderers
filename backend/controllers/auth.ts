@@ -3,6 +3,7 @@ import { registerUserSchema, loginUserschema } from "../zod/schemas";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { db } from "../controllers/db";
+import { HttpCode } from "../lib/httpCodes"
 
 import { createUser, getUserByEmail } from "../services/user";
 import { deliverConfirmationEmail } from "../controllers/mail";
@@ -18,7 +19,7 @@ const tokenExpirationPeriod = 60 * 60 * 1000 * 24; // 1 day
 // @route   POST /api/auth
 // @access  Public
 export const registerUser = async (req: Request, res: Response) => {
-  let responseCode = 201;
+  let responseCode = HttpCode.ResourceCreated;
   let responseBody: any = {};
 
   try {
@@ -55,7 +56,7 @@ export const registerUser = async (req: Request, res: Response) => {
       responseBody = { message: "Confirmation email sent!" };
     }
   } catch (error: any) {
-    responseCode = 400;
+    responseCode = HttpCode.BadRequest;
     responseBody = { message: error.message };
   }
 
@@ -67,7 +68,7 @@ export const registerUser = async (req: Request, res: Response) => {
 // @route   POST /api/auth/login
 // @access  Public
 export const loginUser = async (req: Request, res: Response) => {
-  let responseCode = 200;
+  let responseCode = HttpCode.OK;
   let responseBody: any = {};
 
   try {
@@ -114,7 +115,7 @@ export const loginUser = async (req: Request, res: Response) => {
       },
     };
   } catch (error: any) {
-    responseCode = 400;
+    responseCode = HttpCode.BadRequest;
     responseBody = { message: error.message };
   }
 
@@ -126,7 +127,7 @@ export const loginUser = async (req: Request, res: Response) => {
 // @route   GET /api/auth/confirmaccount/:token
 // @access  Public
 export const confirmAccount = async (req: Request, res: Response) => {
-  let responseCode = 200;
+  let responseCode = HttpCode.OK;
   let responseBody: any = {};
 
   try {
@@ -162,7 +163,7 @@ export const confirmAccount = async (req: Request, res: Response) => {
 
     responseBody = { message: "Account confirmed" };
   } catch (error: any) {
-    responseCode = 400;
+    responseCode = HttpCode.BadRequest;
     responseBody = { message: error.message };
   }
 
