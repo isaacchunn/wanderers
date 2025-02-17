@@ -12,10 +12,7 @@ export interface Itinerary {
     start_date: Date;
     end_date: Date;
     active: boolean;
-    photos: {
-        id: number;
-        url: string;
-    }[];
+    photo_url: string;
     collaborators: { id: number; email: string }[];
 
     _count: {
