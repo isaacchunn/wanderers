@@ -26,7 +26,6 @@ const getAutocompletePredictions = async (
   return predictions.slice(0, 5);
 };
 
-
 const getPlaceDetails = async (placeId: string): Promise<any> => {
   const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,geometry,photos&key=${GOOGLE_PLACES_API_KEY}`;
   const detailsResponse = await axios.get(detailsUrl);
