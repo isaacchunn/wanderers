@@ -22,6 +22,8 @@ import placeRouter from "./routes/place";
 const port = process.env.PORT || 4000;
 const app = express();
 
+app.use(cors({origin: '*'}))
+
 // Swagger options
 const swaggerDefinition = {
   openapi: "3.0.0",
