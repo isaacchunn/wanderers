@@ -1,8 +1,6 @@
 import express from "express";
 
-import {
-  searchPlaceController
-} from "../controllers/place";
+import { searchPlaceController } from "../controllers/place";
 
 const router = express.Router();
 
