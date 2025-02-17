@@ -77,7 +77,8 @@
 3. Set up your .env file
 
   - Duplicate .env.example to .env
-
+  - To enable Places API, go to https://console.cloud.google.com/, Enable API & Service for Places API and obtain the API key.
+    - For production/staging environments, do set `Key restrictions` in the Google Console to only accept requests from the frontend service.
 4. Configure environment variables in the `.env` file. Create a cloud-based postgres instance (for e.g. Supabase) and replace the database `DATABASE_URL`, `DIRECT_URL` strings
 
 5. Running of local development server

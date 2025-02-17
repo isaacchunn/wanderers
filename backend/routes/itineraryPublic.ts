@@ -1,6 +1,10 @@
 import express from "express";
 
-import { getItinerariesPublicApi ,getCreatedItinerariesPublicApi, getItineraryPublicApi } from "../controllers/itinerary";
+import {
+  getItinerariesPublicApi,
+  getCreatedItinerariesPublicApi,
+  getItineraryPublicApi,
+} from "../controllers/itinerary";
 
 const router = express.Router();
 /**
@@ -42,7 +46,7 @@ const router = express.Router();
  *       500:
  *         description: Internal Server Error.
  */
-router.get("/", getItinerariesPublicApi);
+router.route("/").get(getItinerariesPublicApi);
 
 /**
  * @swagger
@@ -90,7 +94,7 @@ router.route("/:ownerId/created").get(getCreatedItinerariesPublicApi);
  *   get:
  *     summary: Access an existing public itinerary
  *     description: Retrieve an existing itinerary by its ID.
- *     tags: [Itinerary (Public)]     
+ *     tags: [Itinerary (Public)]
  *     parameters:
  *       - in: path
  *         name: itineraryId

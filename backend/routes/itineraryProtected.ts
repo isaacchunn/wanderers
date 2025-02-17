@@ -1,6 +1,13 @@
 import express from "express";
 
-import { createItineraryApi, getCollabItinerariesApi, updateItineraryApi, deleteItineraryApi, getCreatedItinerariesProtectedApi, getItineraryProtectedApi } from "../controllers/itinerary";
+import {
+  createItineraryApi,
+  getCollabItinerariesApi,
+  updateItineraryApi,
+  deleteItineraryApi,
+  getCreatedItinerariesProtectedApi,
+  getItineraryProtectedApi,
+} from "../controllers/itinerary";
 
 const router = express.Router();
 /**
@@ -160,11 +167,11 @@ const router = express.Router();
  *               start_date:
  *                 type: date-time
  *                 description: Start date of the itinerary
- *                 example: 2025-12-21T00:00:00.000Z   
+ *                 example: 2025-12-21T00:00:00.000Z
  *               end_date:
  *                 type: date-time
  *                 description: End date of the itinerary
- *                 example: 2025-12-21T00:00:00.000Z   
+ *                 example: 2025-12-21T00:00:00.000Z
  *               visibility:
  *                 type: string
  *                 description: Visibility of the itinerary (e.g., public or private)
@@ -353,7 +360,7 @@ router.route("/:itineraryId").get(getItineraryProtectedApi);
  *               start_date:
  *                 type: date-time
  *                 description: Start date of the itinerary
- *                 example: 2025-12-21T00:00:00.000Z   
+ *                 example: 2025-12-21T00:00:00.000Z
  *               end_date:
  *                 type: date-time
  *                 description: End date of the itinerary
