@@ -20,6 +20,7 @@ export default async function HomePage() {
     const ownerId = 1;
     const userItinerary: Itinerary[] =
         (await fetchUserItinerary(ownerId)) || [];
+    console.log("User Itinerary:", userItinerary);
     const publicItinerary: Itinerary[] = (await fetchPublicItinerary()) || [];
 
     if (!(userItinerary || publicItinerary)) {
@@ -43,9 +44,9 @@ export default async function HomePage() {
                             <h1 className="text-4xl font-bold tracking-tight">
                                 Your Itineraries
                             </h1>
-                            <text className="mt-2 text-muted-foreground">
+                            <p className="mt-2 text-muted-foreground">
                                 Plan and organize your upcoming adventures
-                            </text>
+                            </p>
                         </div>
                         <Link href="/create-itinerary">
                             <Button>
@@ -72,24 +73,17 @@ export default async function HomePage() {
                                         <Card className="overflow-hidden transition-colors hover:bg-muted/50">
                                             <CardContent className="p-0">
                                                 <div className="relative aspect-[4/3] w-full">
-                                                    {userI.photos.map(
-                                                        (image, index) => (
-                                                            <Image
-                                                                key={index}
-                                                                src={
-                                                                    image.url ||
-                                                                    "/placeholder.svg"
-                                                                }
-                                                                alt={
-                                                                    userI.title
-                                                                }
-                                                                fill
-                                                                className="object-cover"
-                                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                                                priority
-                                                            />
-                                                        )
-                                                    )}
+                                                    <Image
+                                                        src={
+                                                            userI.photo_url ||
+                                                            "/placeholder.svg"
+                                                        }
+                                                        alt={userI.title}
+                                                        fill
+                                                        className="object-cover"
+                                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                        priority
+                                                    />
                                                 </div>
                                                 <div className="space-y-3 p-4">
                                                     <h2 className="line-clamp-1 text-xl font-semibold tracking-tight">
@@ -155,8 +149,20 @@ export default async function HomePage() {
                                     <Card className="overflow-hidden transition-colors hover:bg-muted/50">
                                         <CardContent className="p-0">
                                             <div className="relative aspect-[4/3] w-full">
-                                                {publicI.photos.map(
-                                                    (image, index) => (
+                                                <Image
+                                                    src={
+                                                        publicI.photo_url ||
+                                                        "/placeholder.svg"
+                                                    }
+                                                    alt={publicI.title}
+                                                    fill
+                                                    className="object-cover"
+                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                    priority
+                                                />
+
+                                                {/* {publicI.photo_url.map(
+                                                    (index) => (
                                                         <Image
                                                             key={index}
                                                             src={
@@ -170,7 +176,7 @@ export default async function HomePage() {
                                                             priority
                                                         />
                                                     )
-                                                )}
+                                                )} */}
                                             </div>
                                             <div className="space-y-3 p-4">
                                                 <h3 className="line-clamp-1 text-xl font-semibold tracking-tight">
