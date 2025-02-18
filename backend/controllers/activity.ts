@@ -7,6 +7,7 @@ import {
   deleteActivity,
 } from "../services/activity";
 import { activitySchema } from "../zod/schemas";
+import { HttpCode } from "../lib/httpCodes";
 
 // @desc    Create new activity
 // @route   POST /api/activity
@@ -15,7 +16,7 @@ export const createActivityController = async (req: Request, res: Response) => {
   try {
     const parsed = activitySchema.safeParse(req.body);
     if (!parsed.success) {
-      res.status(400).json({
+      res.status(HttpCode.BadRequest).json({
         message: parsed.error.errors
           .map((err) => `${err.path.join(".")}: ${err.message}`)
           .join(", "),
@@ -48,7 +49,7 @@ export const createActivityController = async (req: Request, res: Response) => {
         end_date,
       );
 
-      res.status(201).json(activity);
+      res.status(HttpCode.ResourceCreated).json(activity);
     }
   } catch (error: any) {
     res.status(500).json({ message: error.message || "Internal Server Error" });
@@ -65,12 +66,12 @@ export const getActivityByIdController = async (
   try {
     let activity = await getActivityById(parseInt(req.params.id));
     if (!activity) {
-      res.status(404).json({ message: "Activity not found" });
+      res.status(HttpCode.NotFound).json({ message: "Activity not found" });
     } else {
-      res.status(200).json(activity);
+      res.status(HttpCode.OK).json(activity);
     }
   } catch (error: any) {
-    res.status(500).json({ message: error.message || "Internal Server Error" });
+    res.status(HttpCode.InternalServerError).json({ message: error.message || "Internal Server Error" });
   }
 };
 
@@ -85,9 +86,9 @@ export const getActivitiesByItineraryIdController = async (
     let activities = await getActivitiesByItineraryId(
       parseInt(req.params.itinerary_id),
     );
-    res.status(200).json(activities);
+    res.status(HttpCode.OK).json(activities);
   } catch (error: any) {
-    res.status(500).json({ message: error.message || "Internal Server Error" });
+    res.status(HttpCode.InternalServerError).json({ message: error.message || "Internal Server Error" });
   }
 };
 
@@ -98,7 +99,7 @@ export const updateActivityController = async (req: Request, res: Response) => {
   try {
     const parsed = activitySchema.safeParse(req.body);
     if (!parsed.success) {
-      res.status(400).json({
+      res.status(HttpCode.BadRequest).json({
         message: parsed.error.errors
           .map((err) => `${err.path.join(".")}: ${err.message}`)
           .join(", "),
@@ -132,10 +133,10 @@ export const updateActivityController = async (req: Request, res: Response) => {
         end_date,
       );
 
-      res.status(200).json(activity);
+      res.status(HttpCode.OK).json(activity);
     }
   } catch (error: any) {
-    res.status(500).json({ message: error.message || "Internal Server Error" });
+    res.status(HttpCode.InternalServerError).json({ message: error.message || "Internal Server Error" });
   }
 };
 
@@ -146,11 +147,11 @@ export const deleteActivityController = async (req: Request, res: Response) => {
   try {
     let activity = await deleteActivity(parseInt(req.params.id));
     if (!activity) {
-      res.status(404).json({ message: "Activity not found" });
+      res.status(HttpCode.NotFound).json({ message: "Activity not found" });
     } else {
-      res.status(200).json(activity);
+      res.status(HttpCode.OK).json(activity);
     }
   } catch (error: any) {
-    res.status(500).json({ message: error.message || "Internal Server Error" });
+    res.status(HttpCode.InternalServerError).json({ message: error.message || "Internal Server Error" });
   }
 };
