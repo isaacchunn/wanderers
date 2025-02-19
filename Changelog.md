@@ -9,12 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Itinerary and Activity related tables to schema.prisma
-- Local backend environment setup guide to README
 - CRUD routes for backend Itinerary API
 - CRUD routes for backend Activity API
 - Query Google Places API through backend (rate-limit protected)
-- Swagger documentation for backend APIs
 - Base layout web pages for Home, Login, Register, Itinerary viewing/creation and Activity viewing/creation
 - Itinerary handler for frontend to access backend Itinerary API for CRUD
 - Activity handler for frontend to access backend Activity API for CRUD and Google Places API
@@ -25,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Registration, Login and Confirm Account flow for Backend API
+- An issue with Registration, Login and Confirm Account Backend API setting multiple HTTP responses
 - Bypass CORS error with wildcard
 
 ### Changed
