@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Fixed
+
+### Changed
+
+### Removed
+
+## [0.0.4] - 2025-02-19
+
+### Added
+
 - (BE) CRUD routes for backend Itinerary API
 - (BE) CRUD routes for backend Activity API
 - (BE) Query Google Places API through backend (rate-limit protected)
@@ -28,8 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - (BE) Moved backend package.json to correct directory
-
-### Removed
 
 ## [0.0.3] - 2025-02-01
 
@@ -65,7 +73,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CODEOWNERS file to track mandatory reviewers of certain PRs
 
 ---
-[unreleased]: https://github.com/isaacchunn/wanderers/compare/v0.0.3...HEAD
+[unreleased]: https://github.com/isaacchunn/wanderers/compare/v0.0.4...HEAD
+[0.0.4]: https://github.com/isaacchunn/wanderers/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/isaacchunn/wanderers/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/isaacchunn/wanderers/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/isaacchunn/wanderers/releases/tag/v0.0.1
