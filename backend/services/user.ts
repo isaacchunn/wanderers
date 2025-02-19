@@ -1,15 +1,13 @@
 import { db } from "../controllers/db";
-import bcrypt from "bcryptjs";
 import { UserRole } from "prisma/prisma-client";
 
 // create user
 export const createUser = async (
   username: string,
   email: string,
-  password: string,
+  hashedPassword: string,
 ) => {
   const lowercaseEmail = email.toLowerCase();
-  const hashedPassword = await bcrypt.hash(password, 10);
 
   let user = await db.user.create({
     data: {

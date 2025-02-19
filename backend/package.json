@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "server": "nodemon backend/index.ts",
-    "client": "npm start --prefix frontend",
+    "server": "nodemon index.ts",
+    "client": "npm start --prefix ../frontend",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "format": "prettier --write ."
   },
@@ -14,11 +14,13 @@
   "dependencies": {
     "@prisma/client": "^6.3.0",
     "@supabase/supabase-js": "^2.48.1",
+    "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
     "jest": "^29.7.0",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.10.0",
@@ -27,6 +29,7 @@
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^11.0.5",
+    "wanderers": "file:",
     "zod": "^3.24.1"
   },
   "devDependencies": {

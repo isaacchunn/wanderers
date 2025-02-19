@@ -1,7 +1,11 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+    images: {
+        domains: [
+            "hebbkx1anhila5yf.public.blob.vercel-storage.com",
+            "media.istockphoto.com",
+        ],
+    },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

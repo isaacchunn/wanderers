@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+
+permissions: write-all
+
+jobs:
+  # Job to run change detection
+  detect_file_changes:
+    name: "Detect file changes in branch"
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+      scripts: ${{ steps.filter.outputs.scripts }}
+    steps:
+      - name: "checkout repo"
+        uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+            frontend:
+              - 'frontend/**'
+            scripts:
+              - 'scripts/**'
+
+  # Job to test and lint backend code only if backend files were changed
+  backend:
+    needs: detect_file_changes
+    if: ${{ needs.detect_file_changes.outputs.backend == 'true' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    name: Run backend tests and lint
+    steps:
+      - name: "checkout repo"
+        uses: actions/checkout@v4
+
+      - name: "setup node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: "install npm@latest"
+        run: npm i -g npm@latest
+
+      - name: "install dependencies"
+        uses: bahmutov/npm-install@v1.10.5
+        with:
+          working-directory: ./backend
+
+      # Test and lint is not enabled for backend for now
+
+  # Job to test and lint frontend code only if frontend files were changed
+  frontend:
+    needs: detect_file_changes
+    if: ${{ needs.detect_file_changes.outputs.frontend == 'true' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./frontend
+    name: Run frontend tests and lint
+    steps:
+      - name: "checkout repo"
+        uses: actions/checkout@v4
+
+      - name: "setup node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: "install npm@latest"
+        run: npm i -g npm@latest
+
+      - name: "install dependencies"
+        uses: bahmutov/npm-install@v1.10.5
+        with:
+          working-directory: ./frontend
+
+      - name: "run tests"
+        run: npm run test
+
+      - name: "Run eslint"
+        run: npm run lint
+
+  scripts:
+    needs: detect_file_changes
+    if: ${{ needs.detect_file_changes.outputs.scripts == 'true' }}
+    name: "Run pylint on scripts"
+    uses: ./.github/workflows/pylint.yml

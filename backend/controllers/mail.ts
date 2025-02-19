@@ -39,6 +39,26 @@ export const deliverPasswordResetSuccessfulEmail = async (
   );
 };
 
+export const deliverItineraryCollabEmail = async (
+  email: string,
+  username: string,
+  inviterUsername: string,
+  itineraryName: string,
+  itineraryLocation: string,
+) => {
+  await mailService.sendMail(
+    email,
+    `Wanderers - Invitation to collaborate in \"${itineraryName}\"`,
+    await itineraryCollabBody(
+      `${process.env.FRONTEND_URL as string}`,
+      username,
+      inviterUsername,
+      itineraryName,
+      itineraryLocation,
+    ),
+  );
+};
+
 const forgetpasswordbody = (url: string, username: string, token: string) => {
   var date = new Date();
   date.setDate(date.getDate() + 1);
@@ -79,6 +99,26 @@ const confirmemailbody = (url: string, username: string, token: string) => {
 
 	<br/><br/>
 	Have fun, and don't hesitate to contact us with your feedback.
+    `;
+};
+
+const itineraryCollabBody = (
+  url: string,
+  username: string,
+  inviterUsername: string,
+  itineraryName: string,
+  itineraryLocation: string,
+) => {
+  return `
+	Hi ${username}!
+
+	<br/><br/>
+	You have been invited to collaborate with ${inviterUsername} on their "${itineraryName}" trip.
+	<br/>
+	Click <a href="${url}">here</a> to start collaborating.
+	<br/>
+	<br/><br/>
+	Your ${itineraryLocation} trip starts now!
     `;
 };
 
