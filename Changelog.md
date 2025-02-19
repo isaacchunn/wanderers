@@ -9,25 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- CRUD routes for backend Itinerary API
-- CRUD routes for backend Activity API
-- Query Google Places API through backend (rate-limit protected)
-- Base layout web pages for Home, Login, Register, Itinerary viewing/creation and Activity viewing/creation
-- Itinerary handler for frontend to access backend Itinerary API for CRUD
-- Activity handler for frontend to access backend Activity API for CRUD and Google Places API
-- Mock Google Autocomplete for searching of activities in Itinerary page
-- Integration for viewing of Itineraries in Home page
-- CI/CD check for running tests and ESLint
-- Deployment to Vercel via Github Actions
+- [BE] CRUD routes for backend Itinerary API
+- [BE] CRUD routes for backend Activity API
+- [BE] Query Google Places API through backend (rate-limit protected)
+- [FE] Base layout web pages for Home, Login, Register, Itinerary viewing/creation and Activity viewing/creation
+- [FE] Itinerary handler for frontend to access backend Itinerary API for CRUD
+- [FE] Activity handler for frontend to access backend Activity API for CRUD and Google Places API
+- [FE] Mock Google Autocomplete for searching of activities in Itinerary page
+- [FE] Integration for viewing of Itineraries in Home page
+- [BE] CI/CD check for running tests and ESLint
+- [BE] Deployment to Vercel via Github Actions
 
 ### Fixed
 
-- An issue with Registration, Login and Confirm Account Backend API setting multiple HTTP responses
-- Bypass CORS error with wildcard
+- [BE] An issue with Registration, Login and Confirm Account Backend API setting multiple HTTP responses
+- [BE] Bypass CORS error with wildcard
 
 ### Changed
 
-- Moved backend package.json to correct directory
+- [BE] Moved backend package.json to correct directory
 
 ### Removed
 
