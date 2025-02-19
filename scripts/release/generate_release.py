@@ -23,7 +23,8 @@ config_path = Path.cwd() / "scripts" / "logging_config.ini"
 
 logging.config.fileConfig(config_path)
 
-"""Typically, the release process for Git is as follows:
+# pylint: disable=pointless-string-statement
+"""Typically, the release process for Git is as follows: 
 1. Create a release branch
 2. Update changelog
 3. Commit changelog changes
@@ -32,6 +33,7 @@ logging.config.fileConfig(config_path)
 6. Make release on GitHub
 7. Create PR to merge the release branch into the main branch
 """
+# pylint: enable=pointless-string-statement
 
 REPO_NAME = "wanderers"
 
