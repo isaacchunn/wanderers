@@ -16,7 +16,10 @@
 ## Important Links
 
 - JIRA board: [Wanderers](https://isaacchunn.atlassian.net/jira/software/projects/SCEL/boards/1/backlog)
-  - Accessible only by developers for now
+- Websites for preview:
+  - The following websites are automatically updated through Vercel when a corresponding push is done to the branches.
+  - prd: https://wanderers-prd.vercel.app/
+  - stg: https://wanderers-stg.vercel.app/
 
 ## Folder Structure
 
