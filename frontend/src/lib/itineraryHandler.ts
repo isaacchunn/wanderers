@@ -43,6 +43,7 @@ export async function fetchPublicItinerary(): Promise<Itinerary[] | undefined> {
                     "Content-Type": "application/json",
                 },
                 cache: "no-store",
+                next: { revalidate: 10 },
             }
         );
 
@@ -77,6 +78,7 @@ export async function fetchUserItinerary(
                     "Content-Type": "application/json",
                 },
                 cache: "no-store",
+                next: { revalidate: 10 },
             }
         );
 
