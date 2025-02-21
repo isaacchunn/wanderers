@@ -42,7 +42,7 @@ export default function LoginPage() {
         setError(errorData.message || "Login failed. Please try again.");
       }
     } catch (err) {
-      setError("An error occurred. Please try again later.");
+      setError("An error occurred" + err);
     } finally {
       setIsLoading(false);
     }

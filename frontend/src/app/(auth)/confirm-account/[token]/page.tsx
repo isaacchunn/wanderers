@@ -12,7 +12,6 @@ export default function ConfirmAccountPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [error, setError] = useState("");
-  const [isRequestingSent, setIsRequestingSent] = useState(false);
 
   useEffect(() => {
     const confirmAccount = async () => {
@@ -30,7 +29,7 @@ export default function ConfirmAccountPage() {
           setError("Token is not valid");
         }
       } catch (error) {
-        setError("An error occurred");
+        setError("An error occurred: " + error);
       } finally {
         setIsLoading(false);
       }
@@ -59,18 +58,12 @@ export default function ConfirmAccountPage() {
         <p className="mt-2 text-sm text-gray-600">
           {isConfirmed
             ? "Your account has been successfully confirmed."
-            : isRequestingSent
-              ? "A new confirmation email has been sent. Please check your inbox."
-              : `${error}. Please request a new confirmation link.`}
+            : `${error}. Please request a new confirmation link.`}
         </p>
         <div className="mt-4 space-y-4">
           {isConfirmed ? (
             <Link href="/login">
               <Button className="w-full">Go to Login</Button>
-            </Link>
-          ) : isRequestingSent ? (
-            <Link href="/login">
-              <Button className="w-full">Return to Login Page</Button>
             </Link>
           ) : (
             <>

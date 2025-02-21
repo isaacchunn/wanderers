@@ -3,7 +3,7 @@
 import type React from "react";
 
 import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,6 @@ const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}`;
 
 export default function ResetPasswordPage() {
   const { token } = useParams();
-  const router = useRouter();
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -44,7 +43,7 @@ export default function ResetPasswordPage() {
         setError("Token is not valid");
       }
     } catch (error) {
-      setError("An error occurred");
+      setError("An error occurred: " + error);
     }
   };
 
