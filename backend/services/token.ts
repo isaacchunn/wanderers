@@ -101,3 +101,12 @@ export const generateConfirmAccountToken = async (email: string) => {
 
   return confirmAccountToken;
 };
+
+export const deleteToken = async (id: string) => {
+
+  await db.userToken.delete({
+    where: {
+      id,
+    },
+  });
+};
