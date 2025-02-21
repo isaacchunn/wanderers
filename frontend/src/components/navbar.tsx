@@ -12,26 +12,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useUserStore } from "@/store/userStore";
 
-export function AuthenticatedHeader() {
+export function Navbar() {
   const router = useRouter();
-  let token;
-  // check if user is authenticated
-  if (typeof window !== "undefined") {
-    token = localStorage.getItem("token");
-    if (!token) {
-      return null;
-    }
-  }
+  const { user, clearUser } = useUserStore();
 
   const handleLogout = () => {
     // Clear token from localStorage
     if (typeof window !== "undefined") {
       localStorage.removeItem("token");
     }
+    clearUser();
     // Redirect to home page
     router.push("/");
-    router.refresh();
   };
 
   return (
@@ -71,7 +65,7 @@ export function AuthenticatedHeader() {
         </div>
         <div className="flex items-center gap-2">
           {/* temporary solution until state management is added */}
-          {token ? (
+          {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">

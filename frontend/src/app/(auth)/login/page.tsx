@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-
+import { useUserStore } from "@/store/userStore";
 const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}`;
 
 export default function LoginPage() {
@@ -17,6 +17,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const setUser = useUserStore((state) => state.setUser);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +38,7 @@ export default function LoginPage() {
         if (typeof window !== "undefined") {
           window.localStorage.setItem("token", JSON.stringify(data));
         }
-
+        setUser(data.user);
         router.push("/"); // Redirect to home page on successful login
         router.refresh(); // Refresh the page to update the navigation
       } else {
