@@ -34,7 +34,10 @@ export default function LoginPage() {
 
       if (response.ok) {
         const data = await response.json();
-        window.localStorage.setItem("token", JSON.stringify(data));
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem("token", JSON.stringify(data));
+        }
+
         router.push("/"); // Redirect to home page on successful login
         router.refresh(); // Refresh the page to update the navigation
       } else {

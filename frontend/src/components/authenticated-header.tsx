@@ -15,13 +15,20 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export function AuthenticatedHeader() {
   const router = useRouter();
-
+  let token;
   // check if user is authenticated
-  const token = localStorage.getItem("token");
+  if (typeof window !== "undefined") {
+    token = localStorage.getItem("token");
+    if (!token) {
+      return null;
+    }
+  }
 
   const handleLogout = () => {
     // Clear token from localStorage
-    localStorage.removeItem("token");
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("token");
+    }
     // Redirect to home page
     router.push("/");
     router.refresh();
