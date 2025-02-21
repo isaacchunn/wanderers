@@ -27,7 +27,8 @@ const getAutocompletePredictions = async (
 };
 
 const getPlaceDetails = async (placeId: string): Promise<any> => {
-  const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,geometry,photos&key=${GOOGLE_PLACES_API_KEY}`;
+  // Include additional fields in the details request
+  const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,geometry,photos,types,international_phone_number,website,formatted_address,user_ratings_total,rating&key=${GOOGLE_PLACES_API_KEY}`;
   const detailsResponse = await axios.get(detailsUrl);
   const result = detailsResponse.data.result;
 
@@ -38,11 +39,21 @@ const getPlaceDetails = async (placeId: string): Promise<any> => {
     imageUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${GOOGLE_PLACES_API_KEY}`;
   }
 
+  // Construct a Google Maps URL using the place_id
+  const googleMapsUrl = `https://www.google.com/maps/place/?q=place_id:${placeId}`;
+
   return {
     title: result.name,
     lat: result.geometry.location.lat,
     lon: result.geometry.location.lng,
     image: imageUrl,
+    types: result.types, // Array of types
+    internationalPhoneNumber: result.international_phone_number,
+    website: result.website,
+    formattedAddress: result.formatted_address,
+    userRatingsTotal: result.user_ratings_total,
+    rating: result.rating,
+    googleMapsUrl,
   };
 };
 
