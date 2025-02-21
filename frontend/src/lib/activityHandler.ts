@@ -1,9 +1,10 @@
 import { Search } from "@/lib/types";
+import { BACKEND_URL } from "@/lib/utils";
 
 export async function addActivity(search: Search): Promise<object | undefined> {
     console.log("Activity - Adding activity:", search);
     try {
-        const response = await fetch(`http://localhost:4000/api/place/search`, {
+        const response = await fetch(`${BACKEND_URL}/api/place/search`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -33,7 +34,7 @@ export async function getActivity(id: string): Promise<object[] | undefined> {
     console.log("Activity - Retrieving activity:", id);
     try {
         const response = await fetch(
-            `http://localhost:4000/api/activity/itinerary/${id}`,
+            `${BACKEND_URL}/api/activity/itinerary/${id}`,
             {
                 method: "POST",
                 headers: {
@@ -65,7 +66,7 @@ export async function deleteActivity(id: string): Promise<boolean> {
     console.log("Activity - Deleting activity:", id);
     try {
         const response = await fetch(
-            `http://localhost:4000/api/activity/${id}`,
+            `${BACKEND_URL}/api/activity/${id}`,
             {
                 method: "POST",
                 headers: {

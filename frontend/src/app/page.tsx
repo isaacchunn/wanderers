@@ -1,6 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Calendar, Users, Map } from "lucide-react";
 import Image from "next/image";
+import path from "path";
+import dotenv from "dotenv";
+
+dotenv.config({ path: path.resolve(__dirname, "./.env") });
 
 export default function LandingPage() {
     return (

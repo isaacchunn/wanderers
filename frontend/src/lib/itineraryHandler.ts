@@ -1,4 +1,5 @@
 import { Itinerary } from "@/lib/types";
+import { BACKEND_URL } from "@/lib/utils";
 
 //Retrieve an existing itinerary by its ID.
 export async function fetchItinerary(
@@ -6,7 +7,7 @@ export async function fetchItinerary(
 ): Promise<Itinerary | undefined> {
     try {
         const response = await fetch(
-            `http://localhost:4000/api/public/itinerary/${itineraryId}`,
+            `${BACKEND_URL}/api/public/itinerary/${itineraryId}`,
             {
                 method: "GET",
                 headers: {
@@ -35,7 +36,7 @@ export async function fetchItinerary(
 export async function fetchPublicItinerary(): Promise<Itinerary[] | undefined> {
     try {
         const response = await fetch(
-            `http://localhost:4000/api/public/itinerary/`,
+            `${BACKEND_URL}/api/public/itinerary/`,
             {
                 method: "GET",
                 headers: {
@@ -69,7 +70,7 @@ export async function fetchUserItinerary(
 ): Promise<Itinerary[] | undefined> {
     try {
         const response = await fetch(
-            `http://localhost:4000/api/itinerary/${ownerId}/created`,
+            `${BACKEND_URL}/api/itinerary/${ownerId}/created`,
             {
                 method: "GET",
                 headers: {
