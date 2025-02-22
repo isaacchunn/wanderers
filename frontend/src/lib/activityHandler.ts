@@ -11,6 +11,7 @@ export async function addActivity(search: Search): Promise<object | undefined> {
             },
             body: JSON.stringify(search),
             cache: "no-store",
+            next: { revalidate: 10 },
         });
 
         if (!response.ok) {
@@ -41,6 +42,7 @@ export async function getActivity(id: string): Promise<object[] | undefined> {
                     "Content-Type": "application/json",
                 },
                 cache: "no-store",
+                next: { revalidate: 10 },
             }
         );
 
@@ -73,6 +75,7 @@ export async function deleteActivity(id: string): Promise<boolean> {
                     "Content-Type": "application/json",
                 },
                 cache: "no-store",
+                next: { revalidate: 10 },
             }
         );
 

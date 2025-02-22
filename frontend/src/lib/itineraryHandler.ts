@@ -14,6 +14,7 @@ export async function fetchItinerary(
                     "Content-Type": "application/json",
                 },
                 cache: "no-store",
+                next: { revalidate: 10 },
             }
         );
 
