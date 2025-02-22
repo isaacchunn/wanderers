@@ -28,10 +28,7 @@ export const registerUser = async (req: Request, res: Response) => {
   try {
     const validatedFields = registerUserSchema.safeParse(req.body);
     if (!validatedFields.success) {
-      const errorMessage = validatedFields.error.errors
-        .map((err) => `${err.path.join(".")}: ${err.message}`)
-        .join(", ");
-      throw new Error(errorMessage);
+      throw new Error(validatedFields.error.errors.map((err) => err.message).join(", "));
     }
 
     const { username, email, password } = validatedFields.data;
@@ -77,7 +74,7 @@ export const loginUser = async (req: Request, res: Response) => {
   try {
     const validatedFields = loginUserschema.safeParse(req.body);
     if (!validatedFields.success) {
-      throw new Error(validatedFields.error.message);
+      throw new Error(validatedFields.error.errors.map((err) => err.message).join(", "));
     }
 
     const { email, password } = validatedFields.data;
