@@ -167,7 +167,7 @@ export default function RegisterPage() {
               {errors.password && (
                 <ul className="text-red-500 text-xs mt-1 list-disc list-inside">
                   {errors.password.map((error, index) => (
-                    <li key={index}>{error}</li>
+                    <li key={`errors-key-${index}`}>{error}</li>
                   ))}
                 </ul>
               )}

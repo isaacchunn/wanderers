@@ -66,13 +66,11 @@ export default function ConfirmAccountPage() {
               <Button className="w-full">Go to Login</Button>
             </Link>
           ) : (
-            <>
-              <p className="text-sm text-gray-600">
-                <Link href="/login" className="text-primary hover:underline">
-                  Click here to return to login page
-                </Link>
-              </p>
-            </>
+            <p className="text-sm text-gray-600">
+              <Link href="/login" className="text-primary hover:underline">
+                Click here to return to login page
+              </Link>
+            </p>
           )}
         </div>
       </div>
