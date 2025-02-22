@@ -69,7 +69,7 @@ const forgetpasswordbody = (url: string, username: string, token: string) => {
 	<br/>
 	We received a request to reset your account password. Please use the following link to verify yourself. This link is valid for 1 day till ${date}.
 	<br/><br/>
-	Click on this <a href="${url}/auth/reset-password/${token}">${url}/auth/reset-password/${token}</a> to reset your password
+	Click on this <a href="${url}/reset-password/${token}">${url}/reset-password/${token}</a> to reset your password
 	<br/><br/>
 	If you didn't initiate this action or if you think you received this email by mistake, please contact support@wanderers.com
     `;
@@ -95,7 +95,7 @@ const confirmemailbody = (url: string, username: string, token: string) => {
 	<br/>
 	You must follow this link to activate your account:
 	<br/>
-    Click on this <a href="${url}/auth/confirm-account/${token}">${url}/auth/confirm-account/${token}</a> to confirm your email
+    Click on this <a href="${url}/confirm-account/${token}">${url}/confirm-account/${token}</a> to confirm your email
 
 	<br/><br/>
 	Have fun, and don't hesitate to contact us with your feedback.

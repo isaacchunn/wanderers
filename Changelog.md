@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Global user state (UserProvider and UserStore) with zustand implemented
+- Authentication and User state integrated
+
 ### Fixed
 
 ### Changed
@@ -73,6 +76,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CODEOWNERS file to track mandatory reviewers of certain PRs
 
 ---
+
 [unreleased]: https://github.com/isaacchunn/wanderers/compare/v0.0.4...HEAD
 [0.0.4]: https://github.com/isaacchunn/wanderers/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/isaacchunn/wanderers/compare/v0.0.2...v0.0.3
