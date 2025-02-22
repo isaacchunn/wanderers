@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import axios from "axios";
 
 const GOOGLE_PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
+const GOOGLE_PLACES_API_URL = "https://maps.googleapis.com/maps/api/place";
 
 const getAutocompletePredictions = async (
   search: string,
@@ -12,7 +13,7 @@ const getAutocompletePredictions = async (
     components = `&components=country:${encodeURIComponent(country)}`;
   }
 
-  const autocompleteUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
+  const autocompleteUrl = `${GOOGLE_PLACES_API_URL}/autocomplete/json?input=${encodeURIComponent(
     search,
   )}${components}&key=${GOOGLE_PLACES_API_KEY}`;
 
@@ -28,7 +29,7 @@ const getAutocompletePredictions = async (
 
 const getPlaceDetails = async (placeId: string): Promise<any> => {
   // Include additional fields in the details request
-  const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,geometry,photos,types,international_phone_number,website,formatted_address,user_ratings_total,rating&key=${GOOGLE_PLACES_API_KEY}`;
+  const detailsUrl = `${GOOGLE_PLACES_API_URL}/details/json?place_id=${placeId}&fields=name,geometry,photos,types,international_phone_number,website,formatted_address,user_ratings_total,rating&key=${GOOGLE_PLACES_API_KEY}`;
   const detailsResponse = await axios.get(detailsUrl);
   const result = detailsResponse.data.result;
 
@@ -36,7 +37,7 @@ const getPlaceDetails = async (placeId: string): Promise<any> => {
   let imageUrl = null;
   if (result.photos && result.photos.length > 0) {
     const photoReference = result.photos[0].photo_reference;
-    imageUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${GOOGLE_PLACES_API_KEY}`;
+    imageUrl = `${GOOGLE_PLACES_API_URL}/photo?maxwidth=400&photoreference=${photoReference}&key=${GOOGLE_PLACES_API_KEY}`;
   }
 
   // Construct a Google Maps URL using the place_id
