@@ -1,6 +1,4 @@
 import { Request, Response } from "express";
-import { registerUserSchema, loginUserschema } from "../zod/schemas";
-import jwt from "jsonwebtoken";
 import { HttpCode } from "../lib/httpCodes"
 import { getUserById } from "../services/user";
 
