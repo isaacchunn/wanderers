@@ -11,76 +11,39 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-import { Itinerary } from "@/lib/types";
 import { toast } from "sonner";
-import { updateItinerary } from "@/lib/itineraryHandler";
 
-export default function StartEndDateCalendar({
-    itinerary,
-}: {
-    itinerary: Itinerary;
-}) {
-    const [startDate, setStartDate] = useState<Date | undefined>(
-        itinerary.start_date
-    );
-    const [endDate, setEndDate] = useState<Date | undefined>(
-        itinerary.end_date
-    );
-    const [saveStatus, setSaveStatus] = useState<"idle" | "saving">("idle");
+interface DatePickerProps {
+    onDateChange: (dates: {
+        startDate: Date | undefined;
+        endDate: Date | undefined;
+    }) => void;
+}
 
-    const handleUpdateTitle = async (
-        dateType: "start_date" | "end_date",
-        date: Date | undefined
-    ) => {
-        if (!itinerary) return;
-
-        setSaveStatus("saving");
-        toast.info("Saving changes...", { duration: 2000 });
-
-        setTimeout(async () => {
-            const updatedItinerary: Itinerary = {
-                ...itinerary,
-                [dateType]: date,
-            };
-            const data = await updateItinerary(updatedItinerary);
-            if (!data) {
-                toast.error(
-                    `Failed to update ${dateType === "start_date" ? "start" : "end"} date!`
-                );
-                if (dateType === "start_date")
-                    setStartDate(itinerary.start_date);
-                else {
-                    setEndDate(itinerary.end_date);
-                }
-            } else {
-                toast.success(
-                    `${dateType === "start_date" ? "Start" : "End"} date updated successfully!`
-                );
-            }
-            setSaveStatus("idle");
-        }, 1500);
-    };
+export default function CreateCalendar({ onDateChange }: DatePickerProps) {
+    const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+    const [endDate, setEndDate] = useState<Date | undefined>(undefined);
 
     const handleStartDateSelect = (date: Date | undefined) => {
-        if (saveStatus === "saving") return;
         if (date && endDate && date > endDate) {
             toast.error("Start date cannot be later than end date!");
             setEndDate(undefined); // Reset end date if start date is later
         } else {
             setStartDate(date);
-            handleUpdateTitle("start_date", date);
+            onDateChange({ startDate: date, endDate });
         }
+        return;
     };
 
     const handleEndDateSelect = (date: Date | undefined) => {
-        if (saveStatus === "saving") return;
         if (date && startDate && date < startDate) {
             toast.error("End date cannot be earlier than start date!");
-            return; // Prevent selecting an end date earlier than start date
+            setEndDate(undefined); // Prevent selecting an end date earlier than start date
         } else {
             setEndDate(date);
-            handleUpdateTitle("end_date", date);
+            onDateChange({ startDate, endDate: date });
         }
+        return;
     };
 
     return (

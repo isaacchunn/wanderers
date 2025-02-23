@@ -1,10 +1,7 @@
 import { Itinerary } from "@/lib/types";
-import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
 
 const NEXT_PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-//Retrieve an existing public itinerary by its ID.
 export async function fetchItineraryById(
     itineraryId: string | null
 ): Promise<Itinerary | undefined> {
@@ -169,13 +166,13 @@ export async function fetchCollabItinerary(): Promise<Itinerary[] | undefined> {
 
 // Create an Itinerary.
 export async function createItinerary(
-    title: string | null,
-    location: string | null,
-    visibility: "public" | "private" | null,
-    start_date: Date | null,
-    end_date: Date | null,
-    collaborators: string[] | null
-): Promise<Itinerary[] | undefined> {
+    title: string | undefined,
+    location: string | undefined,
+    visibility: "public" | "private" | undefined,
+    start_date: Date | undefined,
+    end_date: Date | undefined,
+    collaborators: string[] | undefined
+): Promise<Itinerary | undefined> {
     try {
         const response = await fetch(
             `${NEXT_PUBLIC_BACKEND_URL}/api/itinerary/`,
@@ -210,12 +207,7 @@ export async function createItinerary(
         if (!data || !data.id) {
             throw new Error("No ID returned from API.");
         }
-
-        const itineraryId = data.id;
-
-        window.alert("Itinerary successfully created!");
-        revalidatePath("/home");
-        redirect(`/itinerary/${itineraryId}`);
+        return data;
     } catch (error) {
         console.error("Error creating itinerary:", error);
         return undefined;
@@ -306,46 +298,3 @@ export async function updateItinerary(
         return undefined;
     }
 }
-
-// Update an Itinerary with auto-save
-// export async function updateItinerary(
-//     id: string,
-//     updates: Partial<
-//         Pick<
-//             Itinerary,
-//             "title" | "location" | "visibility" | "start_date" | "end_date"
-//         >
-//     >
-// ): Promise<Itinerary | undefined> {
-//     try {
-//         const response = await fetch(
-//             `${NEXT_PUBLIC_BACKEND_URL}/api/itinerary/${id}`,
-//             {
-//                 method: "PUT",
-//                 headers: {
-//                     "Content-Type": "application/json",
-//                 },
-//                 body: JSON.stringify(updates),
-//                 cache: "no-store",
-//             }
-//         );
-
-//         console.log(
-//             "Request URL:",
-//             `${NEXT_PUBLIC_BACKEND_URL}/api/itinerary/${id}`
-//         );
-//         console.log("Request Payload:", JSON.stringify(updates, null, 2));
-
-//         if (!response.ok) {
-//             console.error(
-//                 `Failed to update itinerary: ${response.status} ${response.statusText}`
-//             );
-//             return undefined;
-//         }
-
-//         return await response.json();
-//     } catch (error) {
-//         console.error("Error updating itinerary:", error);
-//         return undefined;
-//     }
-// }

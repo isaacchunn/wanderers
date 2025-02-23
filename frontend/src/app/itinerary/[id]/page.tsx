@@ -3,7 +3,7 @@ import { ExpenseSplitter } from "@/components/ui/expense-splitter";
 import { ActivityContainer } from "@/components/activity-container";
 import { DropdownSetting } from "@/components/dropdown-menu";
 import { ItineraryTitle } from "@/components/itinerary-title";
-import StartEndDateCalendar from "@/components/calendar";
+import StartEndDateCalendar from "@/components/update-itinerary-calendar";
 
 import { fetchItineraryById } from "@/lib/itineraryHandler";
 
