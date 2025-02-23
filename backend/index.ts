@@ -18,11 +18,12 @@ import activityRouter from "./routes/activity";
 import itineraryProtectedRouter from "./routes/itineraryProtected";
 import itineraryPublicRouter from "./routes/itineraryPublic";
 import placeRouter from "./routes/place";
+import userRouter from "./routes/user";
 
 const port = process.env.PORT || 4000;
 const app = express();
 
-app.use(cors({origin: '*'}))
+app.use(cors({ origin: '*' }))
 
 // Swagger options
 const swaggerDefinition = {
@@ -81,6 +82,7 @@ app.use("/api/activity", activityRouter);
 app.use("/api/itinerary", itineraryProtectedRouter);
 app.use("/api/public/itinerary", itineraryPublicRouter);
 app.use("/api/place", limiter, placeRouter);
+app.use("/api/user", userRouter);
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "../frontend/build")));
 

@@ -8,8 +8,8 @@ export const registerUserSchema = z.object({
 });
 
 export const loginUserschema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
+  email: z.string().email({ message: "Please enter a valid email address" }),
+  password: z.string({ message: "Please enter password" }),
 });
 
 export const activitySchema = z.object({

@@ -1,15 +1,12 @@
 import { Inter } from "next/font/google";
-import { UnauthenticatedHeader } from "@/components/unauthenticated-header";
-import { AuthenticatedHeader } from "@/components/authenticated-header";
+import { Navbar } from "@/components/navbar";
 import "./globals.css";
 import type React from "react";
+import { UserProvider } from "@/providers/UserProvider";
 import { SiteFooter } from "@/components/site-footer";
 import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
-
-// This is a placeholder for the session state of the user [TODO]
-const authenticatedSession = true;
 
 export const metadata = {
     title: "Wanderers - Plan Your Travel Together",
@@ -25,15 +22,12 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`${inter.className} wanderers-body`}>
-                <Toaster position="bottom-left" />
                 <div className="flex min-h-screen flex-col justify-center">
-                    {authenticatedSession ? (
-                        <AuthenticatedHeader />
-                    ) : (
-                        <UnauthenticatedHeader />
-                    )}
-                    <main className="flex-1">{children}</main>
-                    <SiteFooter />
+                    <UserProvider>
+                        <Navbar />
+                        <main className="flex-1">{children}</main>
+                        <SiteFooter />
+                    </UserProvider>
                 </div>
             </body>
         </html>
