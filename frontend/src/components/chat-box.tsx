@@ -15,11 +15,10 @@ interface Message {
     sender: string;
     timestamp: string;
 }
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function ChatBox({ itinerary }: { itinerary: Itinerary }) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState("");
-    console.log(itinerary);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();

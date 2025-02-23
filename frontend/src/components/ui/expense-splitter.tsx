@@ -25,14 +25,13 @@ interface Expense {
 
 const MEMBERS = ["Alice", "Bob", "Charlie", "David"];
 const initialState = { success: false, message: "" };
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function ExpenseSplitter({ itinerary }: { itinerary: Itinerary }) {
     const [expenses, setExpenses] = useState<Expense[]>([]);
     const [description, setDescription] = useState("");
     const [amount, setAmount] = useState("");
     const [paidBy, setPaidBy] = useState("");
     const [splitWith, setSplitWith] = useState<string[]>([]);
-    console.log(itinerary);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [state, formAction, isPending] = useActionState(
         saveExpense,
