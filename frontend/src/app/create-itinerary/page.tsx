@@ -31,9 +31,7 @@ export default function TripPlannerForm() {
         "private"
     );
 
-    useEffect(() => {
-        console.log(title, country, dateRange, visibility, collaborators);
-    }, [title, country, dateRange, visibility, collaborators]);
+    useEffect(() => {}, [title, country, dateRange, visibility, collaborators]);
 
     const handleFormSubmit = async () => {
         const errors: Record<string, string | undefined> = {

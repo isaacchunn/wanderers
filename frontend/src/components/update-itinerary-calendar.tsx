@@ -43,13 +43,13 @@ export default function UpdateCalendar({
                 [dateType]: date,
             };
             const data = await updateItinerary(updatedItinerary);
-            if (!data) {
+            if (!data || saveStatus === "saving") {
                 toast.error(
                     `Failed to update ${dateType === "start_date" ? "start" : "end"} date!`
                 );
-                if (dateType === "start_date")
+                if (dateType === "start_date") {
                     setStartDate(itinerary.start_date);
-                else {
+                } else {
                     setEndDate(itinerary.end_date);
                 }
             } else {
@@ -62,7 +62,6 @@ export default function UpdateCalendar({
     };
 
     const handleStartDateSelect = (date: Date | undefined) => {
-        if (saveStatus === "saving") return;
         if (date && endDate && date > endDate) {
             toast.error("Start date cannot be later than end date!");
             setEndDate(undefined); // Reset end date if start date is later
@@ -73,7 +72,6 @@ export default function UpdateCalendar({
     };
 
     const handleEndDateSelect = (date: Date | undefined) => {
-        if (saveStatus === "saving") return;
         if (date && startDate && date < startDate) {
             toast.error("End date cannot be earlier than start date!");
             return; // Prevent selecting an end date earlier than start date
