@@ -100,7 +100,7 @@ export async function fetchPublicItinerary(): Promise<Itinerary[] | undefined> {
 
 // Fetches all itineraries where the user is the owner.
 export async function fetchUserItinerary(
-    ownerId: number | null
+    ownerId: string | undefined
 ): Promise<Itinerary[] | undefined> {
     try {
         const response = await fetch(

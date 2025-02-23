@@ -23,6 +23,7 @@ export default function RootLayout({
         <html lang="en">
             <body className={`${inter.className} wanderers-body`}>
                 <div className="flex min-h-screen flex-col justify-center">
+                    <Toaster />
                     <UserProvider>
                         <Navbar />
                         <main className="flex-1">{children}</main>

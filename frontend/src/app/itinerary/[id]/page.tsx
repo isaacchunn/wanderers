@@ -1,4 +1,4 @@
-import { ChatBox } from "@/components/ui/chat-box";
+import { ChatBox } from "@/components/chat-box";
 import { ExpenseSplitter } from "@/components/ui/expense-splitter";
 import { ActivityContainer } from "@/components/activity-container";
 import { DropdownSetting } from "@/components/dropdown-menu";
@@ -11,7 +11,7 @@ interface ItineraryPageProps {
     params: { id: string };
 }
 export default async function ItineraryPage({ params }: ItineraryPageProps) {
-    const itineraryId = params.id;
+    const itineraryId = await params.id;
     const itinerary = await fetchItineraryById(itineraryId);
 
     if (!itinerary) {
