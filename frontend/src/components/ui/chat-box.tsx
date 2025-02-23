@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { saveMessage } from "@/app/itinerary/[id]/actions";
+import { Itinerary } from "@/lib/types";
 
 interface Message {
     id: string;
@@ -15,12 +16,10 @@ interface Message {
     timestamp: string;
 }
 
-// const initialState = null;
-
-export function ChatBox() {
+export function ChatBox({ itinerary }: { itinerary: Itinerary }) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState("");
-    // const [state, formAction] = useFormState(saveMessage, initialState);
+    console.log(itinerary);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();

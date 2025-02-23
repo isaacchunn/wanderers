@@ -4,6 +4,7 @@ import { AuthenticatedHeader } from "@/components/authenticated-header";
 import "./globals.css";
 import type React from "react";
 import { SiteFooter } from "@/components/site-footer";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,6 +25,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`${inter.className} wanderers-body`}>
+                <Toaster position="bottom-left" />
                 <div className="flex min-h-screen flex-col justify-center">
                     {authenticatedSession ? (
                         <AuthenticatedHeader />

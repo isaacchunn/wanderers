@@ -4,8 +4,10 @@ import React from "react";
 import { CountrySearch } from "@/components/autocomplete-search";
 import { SortableItinerary } from "./sortable-itinerary";
 import { addActivity } from "@/lib/activityHandler";
+import { Itinerary } from "@/lib/types";
 
-export function ActivityContainer() {
+export function ActivityContainer({ itinerary }: { itinerary: Itinerary }) {
+    console.log(itinerary);
     const handleSearch = async (searchTerm: string) => {
         const search = { search: searchTerm, country: "kr" }; //hardcoded country code for now.
         const activity = await addActivity(search);

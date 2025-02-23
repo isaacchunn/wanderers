@@ -73,3 +73,15 @@ export interface Search {
     search: string;
     country: string;
 }
+
+export interface Country {
+    id: number;
+    alpha2: string;
+    alpha3: string;
+    name: string;
+}
+
+export interface SelectedCountry {
+    name: string;
+    code: string;
+}

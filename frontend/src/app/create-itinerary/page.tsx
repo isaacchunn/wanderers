@@ -11,7 +11,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useState, useEffect } from "react";
@@ -19,19 +19,25 @@ import { createItinerary } from "@/lib/itineraryHandler";
 import countriesData from "@/lib/constants/countries.json";
 
 interface Country {
-    id: number
-    alpha2: string
-    alpha3: string
-    name: string
+    id: number;
+    alpha2: string;
+    alpha3: string;
+    name: string;
 }
 
 interface SelectedCountry {
-    name: string
-    code: string
+    name: string;
+    code: string;
 }
 
-const EmailInput = ({ emails, setEmails }: { emails: string[], setEmails: (emails: string[]) => void }) => {
-    const [input, setInput] = useState('');
+const EmailInput = ({
+    emails,
+    setEmails,
+}: {
+    emails: string[];
+    setEmails: (emails: string[]) => void;
+}) => {
+    const [input, setInput] = useState("");
 
     const isValidEmail = (email: string) => {
         const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -43,15 +49,15 @@ const EmailInput = ({ emails, setEmails }: { emails: string[], setEmails: (email
     };
 
     const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' && input.trim()) {
+        if (e.key === "Enter" && input.trim()) {
             e.preventDefault();
             if (isValidEmail(input.trim())) {
                 setEmails([...emails, input.trim()]);
-                setInput('');
+                setInput("");
             } else {
-                alert('Please enter a valid email address');
+                alert("Please enter a valid email address");
             }
-        } else if (e.key === 'Backspace' && input === '' && emails.length > 0) {
+        } else if (e.key === "Backspace" && input === "" && emails.length > 0) {
             e.preventDefault();
             const newEmails = [...emails];
             newEmails.pop();
@@ -60,15 +66,21 @@ const EmailInput = ({ emails, setEmails }: { emails: string[], setEmails: (email
     };
 
     const removeEmail = (emailToRemove: string) => {
-        setEmails(emails.filter(email => email !== emailToRemove));
+        setEmails(emails.filter((email) => email !== emailToRemove));
     };
 
     return (
         <div className="flex flex-wrap items-center gap-2 p-2 border rounded">
-            {emails.map(email => (
-                <div key={email} className="flex items-center bg-gray-200 text-gray-700 px-2 py-1 rounded-full">
+            {emails.map((email) => (
+                <div
+                    key={email}
+                    className="flex items-center bg-gray-200 text-gray-700 px-2 py-1 rounded-full"
+                >
                     <span>{email}</span>
-                    <button onClick={() => removeEmail(email)} className="ml-1 text-gray-500 hover:text-gray-700">
+                    <button
+                        onClick={() => removeEmail(email)}
+                        className="ml-1 text-gray-500 hover:text-gray-700"
+                    >
                         <X size={14} />
                     </button>
                 </div>
@@ -89,91 +101,107 @@ export default function TripPlannerForm() {
     const [startDate, setStartDate] = useState<Date | null>(null);
     const [endDate, setEndDate] = useState<Date | null>(null);
     const [title, setTitle] = useState("");
-    const [country, setCountry] = useState<SelectedCountry>({ name: "", code: "" });
+    const [country, setCountry] = useState<SelectedCountry>({
+        name: "",
+        code: "",
+    });
     const [countryInput, setCountryInput] = useState("");
-    const [visibility, setVisibility] = useState<"public" | "private">("private")
+    const [visibility, setVisibility] = useState<"public" | "private">(
+        "private"
+    );
     const [showDropdown, setShowDropdown] = useState(false);
     const [activeIndex, setActiveIndex] = useState(-1);
     const [collaborators, setCollaborators] = useState<string[]>([]);
 
-    const filteredCountries = (countriesData.countries as Country[]).filter((c) =>
-        countryInput ? c.name.toLowerCase().includes(countryInput.toLowerCase()) : true,
-    )
+    const filteredCountries = (countriesData.countries as Country[]).filter(
+        (c) =>
+            countryInput
+                ? c.name.toLowerCase().includes(countryInput.toLowerCase())
+                : true
+    );
 
-    const handleCountrySelect = (selectedCountry: Country, e?: React.MouseEvent) => {
-        e?.preventDefault() // Prevent any default behavior
-        e?.stopPropagation() // Stop event from bubbling up
-        setCountry({ name: selectedCountry.name, code: selectedCountry.alpha2 })
-        setCountryInput(selectedCountry.name)
-        setShowDropdown(false)
-        setActiveIndex(-1)
-    }
+    const handleCountrySelect = (
+        selectedCountry: Country,
+        e?: React.MouseEvent
+    ) => {
+        e?.preventDefault(); // Prevent any default behavior
+        e?.stopPropagation(); // Stop event from bubbling up
+        setCountry({
+            name: selectedCountry.name,
+            code: selectedCountry.alpha2,
+        });
+        setCountryInput(selectedCountry.name);
+        setShowDropdown(false);
+        setActiveIndex(-1);
+    };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (!showDropdown) return
+        if (!showDropdown) return;
 
         if (e.key === "ArrowDown") {
-            e.preventDefault()
-            setActiveIndex((prev) => Math.min(prev + 1, filteredCountries.length - 1))
+            e.preventDefault();
+            setActiveIndex((prev) =>
+                Math.min(prev + 1, filteredCountries.length - 1)
+            );
         } else if (e.key === "ArrowUp") {
-            e.preventDefault()
-            setActiveIndex((prev) => Math.max(prev - 1, 0))
+            e.preventDefault();
+            setActiveIndex((prev) => Math.max(prev - 1, 0));
         } else if (e.key === "Enter" && activeIndex !== -1) {
-            e.preventDefault()
+            e.preventDefault();
             // Make sure we have a valid index and pass the specific country
             if (filteredCountries.length > 0 && activeIndex >= 0) {
-                const selectedCountry = filteredCountries[activeIndex]
-                handleCountrySelect(selectedCountry)
+                const selectedCountry = filteredCountries[activeIndex];
+                handleCountrySelect(selectedCountry);
             }
         } else if (e.key === "Escape") {
-            setShowDropdown(false)
-            setActiveIndex(-1)
+            setShowDropdown(false);
+            setActiveIndex(-1);
         }
-    }
+    };
 
     const handleCountryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value
-        setCountryInput(value)
+        const value = e.target.value;
+        setCountryInput(value);
         // Reset the selected country if input changes
-        setCountry({ name: "", code: "" })
+        setCountry({ name: "", code: "" });
 
         if (value.trim()) {
-            const filtered = (countriesData.countries as Country[]).filter((c) =>
-                c.name.toLowerCase().includes(value.toLowerCase()),
-            )
-            setShowDropdown(filtered.length > 0)
+            const filtered = (countriesData.countries as Country[]).filter(
+                (c) => c.name.toLowerCase().includes(value.toLowerCase())
+            );
+            setShowDropdown(filtered.length > 0);
         } else {
-            setShowDropdown(false)
+            setShowDropdown(false);
         }
-        setActiveIndex(-1)
-    }
+        setActiveIndex(-1);
+    };
 
     // Update click outside handler
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            const target = event.target as HTMLElement
-            const countrySelector = document.querySelector(".country-selector")
+            const target = event.target as HTMLElement;
+            const countrySelector = document.querySelector(".country-selector");
             if (countrySelector && !countrySelector.contains(target)) {
-                setShowDropdown(false)
-                setActiveIndex(-1)
+                setShowDropdown(false);
+                setActiveIndex(-1);
             }
-        }
+        };
 
         // Add escape key handler
         const handleEscapeKey = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
-                setShowDropdown(false)
-                setActiveIndex(-1)
+                setShowDropdown(false);
+                setActiveIndex(-1);
             }
-        }
+        };
 
-        document.addEventListener("mousedown", handleClickOutside)
-        document.addEventListener("keydown", handleEscapeKey)
+        document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener("keydown", handleEscapeKey);
 
         return () => {
-            document.removeEventListener("mousedown", handleClickOutside)
-            document.removeEventListener("keydown", handleEscapeKey)
-        }
+            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("keydown", handleEscapeKey);
+        };
     }, []);
 
     const handleFormSubmit = async () => {
@@ -212,7 +240,8 @@ export default function TripPlannerForm() {
                     <p className="text-sm text-red-500">
                         Choose a destination to start planning
                     </p>
-                    <div onClick={(e) => e.stopPropagation()} // Add this to prevent click from bubbling
+                    <div
+                        onClick={(e) => e.stopPropagation()} // Add this to prevent click from bubbling
                     >
                         <Input
                             id="country"
@@ -223,8 +252,11 @@ export default function TripPlannerForm() {
                             onChange={handleCountryChange}
                             onKeyDown={handleKeyDown}
                             onFocus={() => {
-                                if (countryInput.trim() && filteredCountries.length > 0) {
-                                    setShowDropdown(true)
+                                if (
+                                    countryInput.trim() &&
+                                    filteredCountries.length > 0
+                                ) {
+                                    setShowDropdown(true);
                                 }
                             }}
                         />
@@ -235,10 +267,15 @@ export default function TripPlannerForm() {
                                         key={country.id}
                                         className={cn(
                                             "px-3 py-2 cursor-pointer hover:bg-secondary hover:text-secondary-foreground",
-                                            activeIndex === index && "bg-secondary text-secondary-foreground",
+                                            activeIndex === index &&
+                                                "bg-secondary text-secondary-foreground"
                                         )}
-                                        onClick={(e) => handleCountrySelect(country, e)}
-                                        onMouseEnter={() => setActiveIndex(index)}
+                                        onClick={(e) =>
+                                            handleCountrySelect(country, e)
+                                        }
+                                        onMouseEnter={() =>
+                                            setActiveIndex(index)
+                                        }
                                     >
                                         {country.name}
                                     </div>
@@ -305,10 +342,15 @@ export default function TripPlannerForm() {
                 </div>
 
                 <div className="space-y-2">
-                    <Label>Choose 'Public' to share your plan with the world!</Label>
+                    <Label>
+                        Choose &apos;Public&apos; to share your plan with the
+                        world!
+                    </Label>
                     <RadioGroup
                         value={visibility}
-                        onValueChange={(value: "public" | "private") => setVisibility(value)}
+                        onValueChange={(value: "public" | "private") =>
+                            setVisibility(value)
+                        }
                         className="flex gap-4"
                     >
                         <div className="flex items-center space-x-2">
@@ -330,12 +372,17 @@ export default function TripPlannerForm() {
                     <label className="text-sm text-muted-foreground">
                         Invite tripmates
                     </label>
-                    <EmailInput emails={collaborators} setEmails={setCollaborators} />
+                    <EmailInput
+                        emails={collaborators}
+                        setEmails={setCollaborators}
+                    />
                 </div>
 
                 <div className="space-y-4">
-
-                    <Button onClick={handleFormSubmit} className="w-full py-6 text-base bg-[#FF5D51] hover:bg-[#FF5D51]/90">
+                    <Button
+                        onClick={handleFormSubmit}
+                        className="w-full py-6 text-base bg-[#FF5D51] hover:bg-[#FF5D51]/90"
+                    >
                         Start planning
                     </Button>
                 </div>
