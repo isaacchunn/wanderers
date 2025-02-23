@@ -26,6 +26,32 @@ export function ItineraryTitle({ itinerary }: { itinerary: Itinerary }) {
         }
     }, [title]);
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = e.target.value;
+        setTitle(newValue);
+        // Use requestAnimationFrame to ensure DOM updates are complete
+        requestAnimationFrame(() => {
+            if (titleInputRef.current) {
+                titleInputRef.current.scrollLeft =
+                    titleInputRef.current.scrollWidth;
+            }
+        });
+    };
+    const scrollToEnd = () => {
+        if (titleInputRef.current) {
+            // Set cursor to end
+            titleInputRef.current.setSelectionRange(title.length, title.length);
+            // Scroll to end
+            titleInputRef.current.scrollLeft =
+                titleInputRef.current.scrollWidth;
+        }
+    };
+
+    // Handle both focus and click events
+    const handleInteraction = () => {
+        setTimeout(scrollToEnd, 0);
+    };
+
     const handleUpdateTitle = async () => {
         if (!itinerary && saveStatus === "idle") return;
         setSaveStatus("saving"); // Show saving toast
@@ -47,11 +73,13 @@ export function ItineraryTitle({ itinerary }: { itinerary: Itinerary }) {
         <Input
             ref={titleInputRef}
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="text-3xl font-bold border-hidden shadow-none bg-transparent p-0 focus-visible:ring-0 focus-visible:ring-offset-0 overflow-hidden text-ellipsis whitespace-nowrap hover:bg-slate-100"
+            onChange={handleChange}
+            onClick={handleInteraction}
+            onFocus={handleInteraction}
+            className="text-3xl font-bold border-hidden shadow-none bg-transparent p-0 focus-visible:ring-0 focus-visible:ring-offset-0 overflow-ellipsis whitespace-nowrap hover:bg-slate-100"
             placeholder="Enter trip title..."
             onBlur={handleUpdateTitle} // Trigger update on blur
-            style={{ width: inputWidth, minWidth: "50px" }}
+            style={{ width: inputWidth, minWidth: "100px", maxWidth: "500px" }}
         />
     );
 }

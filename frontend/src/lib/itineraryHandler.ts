@@ -281,7 +281,6 @@ export async function updateItinerary(
     itinerary: Itinerary
 ): Promise<Itinerary | undefined> {
     try {
-        console.log("this", itinerary);
         const response = await fetch(
             `${NEXT_PUBLIC_BACKEND_URL}/api/itinerary/${itinerary.id}`,
             {
