@@ -1,5 +1,4 @@
 import { Itinerary } from "@/lib/types";
-import { BACKEND_URL } from "@/lib/utils";
 
 const NEXT_PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -8,7 +7,6 @@ export async function fetchItineraryById(
 ): Promise<Itinerary | undefined> {
     try {
         const response = await fetch(
-
             `${NEXT_PUBLIC_BACKEND_URL}/api/itinerary/${itineraryId}`,
             {
                 method: "GET",
