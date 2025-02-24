@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 interface EmailProps {
     onEmailChange: (emails: string[]) => void;
 }
-export function EmailInput({ onEmailChange }: EmailProps) {
+export function EmailInput({ onEmailChange }: Readonly<EmailProps>) {
     const [input, setInput] = useState("");
     const [emails, setEmails] = useState<string[]>([]);
 

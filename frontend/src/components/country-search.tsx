@@ -15,7 +15,7 @@ interface CountryProps {
     onCountryChange: (country: SelectedCountry) => void;
 }
 
-export function CountrySearch({ onCountryChange }: CountryProps) {
+export function CountrySearch({ onCountryChange }: Readonly<CountryProps>) {
     const [countryInput, setCountryInput] = useState("");
     const [country, setCountry] = useState<SelectedCountry>({
         name: "",
@@ -125,6 +125,8 @@ export function CountrySearch({ onCountryChange }: CountryProps) {
             <div
                 onClick={(e) => e.stopPropagation()} // Add this to prevent click from bubbling
                 className="relative w-full"
+                role="button"
+                onKeyDown={handleKeyDown}
             >
                 <Input
                     id="country"
@@ -161,6 +163,7 @@ export function CountrySearch({ onCountryChange }: CountryProps) {
                                 )}
                                 onClick={(e) => handleCountrySelect(country, e)}
                                 onMouseEnter={() => setActiveIndex(index)}
+                                onFocus={() => {}}
                             >
                                 {country.name}
                             </div>

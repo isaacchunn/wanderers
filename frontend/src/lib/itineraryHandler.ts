@@ -204,7 +204,7 @@ export async function createItinerary(
 
         const data = await response.json();
 
-        if (!data || !data.id) {
+        if (!data.id) {
             throw new Error("No ID returned from API.");
         }
         return data;

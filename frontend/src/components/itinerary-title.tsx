@@ -6,7 +6,11 @@ import { Itinerary } from "@/lib/types";
 import { toast } from "sonner";
 import { updateItinerary } from "@/lib/itineraryHandler";
 
-export function ItineraryTitle({ itinerary }: { itinerary: Itinerary }) {
+export function ItineraryTitle({
+    itinerary,
+}: {
+    itinerary: Readonly<Itinerary>;
+}) {
     const titleInputRef = useRef<HTMLInputElement>(null);
     const [title, setTitle] = useState(itinerary.title);
     const [inputWidth, setInputWidth] = useState("auto");

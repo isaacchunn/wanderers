@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
-
 import { Button } from "@/components/ui/button";
 import { ItineraryCarousel } from "@/components/itinerary-carousel";
-
-import { fetchUserItinerary } from "@/lib/itineraryHandler";
-import { fetchPublicItinerary } from "@/lib/itineraryHandler";
-import { fetchCollabItinerary } from "@/lib/itineraryHandler";
+import {
+    fetchUserItinerary,
+    fetchPublicItinerary,
+    fetchCollabItinerary,
+} from "@/lib/itineraryHandler";
 import { Itinerary } from "@/lib/types";
 import { Plus } from "lucide-react";
 

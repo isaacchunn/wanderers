@@ -6,7 +6,11 @@ import { SortableItinerary } from "./sortable-itinerary";
 import { addActivity } from "@/lib/activityHandler";
 import { Itinerary } from "@/lib/types";
 
-export function ActivityContainer({ itinerary }: { itinerary: Itinerary }) {
+export function ActivityContainer({
+    itinerary,
+}: {
+    itinerary: Readonly<Itinerary>;
+}) {
     console.log(itinerary);
     const handleSearch = async (searchTerm: string) => {
         const search = { search: searchTerm, country: "kr" }; //hardcoded country code for now.

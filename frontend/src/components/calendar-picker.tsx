@@ -31,7 +31,7 @@ If no itinerary is provided, it will function as a simple date picker with an on
 export function DateRangePicker({
     itinerary,
     onDateChange,
-}: DateRangePickerProps) {
+}: Readonly<DateRangePickerProps>) {
     const initialStartDate = itinerary?.start_date;
     const initialEndDate = itinerary?.end_date;
     const [startDate, setStartDate] = useState<Date | undefined>(

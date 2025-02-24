@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-// import { useFormState } from "react-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +15,7 @@ interface Message {
     timestamp: string;
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function ChatBox({ itinerary }: { itinerary: Itinerary }) {
+export function ChatBox({ itinerary }: { itinerary: Readonly<Itinerary> }) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState("");
 

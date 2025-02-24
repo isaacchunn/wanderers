@@ -6,7 +6,9 @@ interface VisibilityProps {
     onVisibilityChange: (visibility: "private" | "public") => void;
 }
 
-export function VisibilitySelector({ onVisibilityChange }: VisibilityProps) {
+export function VisibilitySelector({
+    onVisibilityChange,
+}: Readonly<VisibilityProps>) {
     const [visibility, setVisibility] = useState<"private" | "public">(
         "private"
     );
@@ -18,9 +20,9 @@ export function VisibilitySelector({ onVisibilityChange }: VisibilityProps) {
 
     return (
         <div className="flex flex-col gap-3">
-            <label className="font-medium text-sm text-black">
+            <span className="font-medium text-sm text-black">
                 Choose &apos;Public&apos; to share your plan with the world!
-            </label>
+            </span>
             <RadioGroup
                 value={visibility}
                 onValueChange={(value: "public" | "private") =>
