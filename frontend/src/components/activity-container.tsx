@@ -11,7 +11,6 @@ export function ActivityContainer({
 }: {
     itinerary: Readonly<Itinerary>;
 }) {
-    console.log(itinerary);
     const handleSearch = async (searchTerm: string) => {
         const search = { search: searchTerm, country: "kr" }; //hardcoded country code for now.
         const activity = await addActivity(search);

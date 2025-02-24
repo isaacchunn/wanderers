@@ -104,9 +104,9 @@ export default function TripPlannerForm() {
                 </div>
 
                 <div className="space-y-2">
-                    <span className="font-medium text-sm text-black">
+                    <p className="font-medium text-sm text-black">
                         Enter the start and end dates of the your desired trip
-                    </span>
+                    </p>
 
                     <DateRangePicker
                         onDateChange={(dates) => setDateRange(dates)}
@@ -122,9 +122,9 @@ export default function TripPlannerForm() {
                 </div>
 
                 <div>
-                    <span className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                         Invite tripmates
-                    </span>
+                    </p>
                     <EmailInput
                         onEmailChange={(emails) => {
                             setCollaborators(emails);

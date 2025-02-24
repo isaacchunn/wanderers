@@ -122,12 +122,7 @@ export function CountrySearch({ onCountryChange }: Readonly<CountryProps>) {
 
     return (
         <div>
-            <div
-                onClick={(e) => e.stopPropagation()} // Add this to prevent click from bubbling
-                className="relative w-full"
-                role="button"
-                onKeyDown={handleKeyDown}
-            >
+            <div className="relative w-full">
                 <Input
                     id="country"
                     type="text"
@@ -161,6 +156,7 @@ export function CountrySearch({ onCountryChange }: Readonly<CountryProps>) {
                                     activeIndex === index &&
                                         "bg-secondary text-secondary-foreground"
                                 )}
+                                role="option"
                                 onClick={(e) => handleCountrySelect(country, e)}
                                 onMouseEnter={() => setActiveIndex(index)}
                                 onFocus={() => {}}
