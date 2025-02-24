@@ -158,7 +158,7 @@ export function CountrySearch({ onCountryChange }: Readonly<CountryProps>) {
                                 )}
                                 onClick={(e) => handleCountrySelect(country, e)}
                                 onMouseEnter={() => setActiveIndex(index)}
-                                onFocus={() => {}}
+                                onKeyDown={handleKeyDown}
                             >
                                 {country.name}
                             </div>
