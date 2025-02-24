@@ -3,9 +3,8 @@ import { ExpenseSplitter } from "@/components/ui/expense-splitter";
 import { ActivityContainer } from "@/components/activity-container";
 import { DropdownSetting } from "@/components/dropdown-menu";
 import { ItineraryTitle } from "@/components/itinerary-title";
-import StartEndDateCalendar from "@/components/update-itinerary-calendar";
-
 import { fetchItineraryById } from "@/lib/itineraryHandler";
+import { DateRangePicker } from "@/components/calendar-picker";
 
 interface ItineraryPageProps {
     params: { id: string };
@@ -27,7 +26,7 @@ export default async function ItineraryPage({ params }: ItineraryPageProps) {
             <div className="flex flex-row justify-between">
                 <div className="flex flex-col gap-2">
                     <ItineraryTitle itinerary={itinerary} />
-                    <StartEndDateCalendar itinerary={itinerary} />
+                    <DateRangePicker itinerary={itinerary} />
                 </div>
                 <DropdownSetting itineraryId={itineraryId} />
             </div>

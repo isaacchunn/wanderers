@@ -55,7 +55,7 @@ export function ItineraryTitle({ itinerary }: { itinerary: Itinerary }) {
     const handleUpdateTitle = async () => {
         if (!itinerary && saveStatus === "idle") return;
         setSaveStatus("saving"); // Show saving toast
-        toast.info("Saving changes...", { duration: 2000 });
+        toast.info("Saving changes...", { duration: 1500 });
 
         setTimeout(async () => {
             const updatedItinerary: Itinerary = { ...itinerary, title: title };

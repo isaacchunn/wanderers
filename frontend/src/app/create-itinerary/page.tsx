@@ -6,12 +6,12 @@ import { Input } from "@/components/ui/input";
 
 import { useState, useEffect } from "react";
 import { createItinerary } from "@/lib/itineraryHandler";
-import CreateCalendar from "@/components/create-itinerary-calendar";
 import { VisibilitySelector } from "@/components/visibility-selector";
 import { CountrySearch } from "@/components/country-search";
 import { EmailInput } from "@/components/email-input";
 import { SelectedCountry } from "@/lib/types";
 import { toast } from "sonner";
+import { DateRangePicker } from "@/components/calendar-picker";
 
 export default function TripPlannerForm() {
     const router = useRouter();
@@ -31,7 +31,9 @@ export default function TripPlannerForm() {
         "private"
     );
 
-    useEffect(() => {}, [title, country, dateRange, visibility, collaborators]);
+    useEffect(() => {
+        console.log(title, country, dateRange, visibility, collaborators);
+    }, [title, country, dateRange, visibility, collaborators]);
 
     const handleFormSubmit = async () => {
         const errors: Record<string, string | undefined> = {
@@ -106,7 +108,7 @@ export default function TripPlannerForm() {
                         Enter the start and end dates of the your desired trip
                     </label>
 
-                    <CreateCalendar
+                    <DateRangePicker
                         onDateChange={(dates) => setDateRange(dates)}
                     />
                 </div>
