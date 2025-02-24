@@ -6,12 +6,11 @@ import { ItineraryTitle } from "@/components/itinerary-title";
 import { fetchItineraryById } from "@/lib/itineraryHandler";
 import { DateRangePicker } from "@/components/calendar-picker";
 
-interface ItineraryPageProps {
-    readonly params: { id: string };
-}
 export default async function ItineraryPage({
     params,
-}: Readonly<ItineraryPageProps>) {
+}: {
+    params: { id: string };
+}) {
     const itineraryId = params.id;
     const itinerary = await fetchItineraryById(itineraryId);
 
