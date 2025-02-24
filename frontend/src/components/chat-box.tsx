@@ -14,8 +14,12 @@ interface Message {
     sender: string;
     timestamp: string;
 }
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function ChatBox({ itinerary }: { itinerary: Readonly<Itinerary> }) {
+/* eslint-disable */
+export function ChatBox({
+    itinerary,
+}: {
+    readonly itinerary: Readonly<Itinerary>;
+}) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState("");
 

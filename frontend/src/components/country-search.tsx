@@ -156,7 +156,6 @@ export function CountrySearch({ onCountryChange }: Readonly<CountryProps>) {
                                     activeIndex === index &&
                                         "bg-secondary text-secondary-foreground"
                                 )}
-                                role="option"
                                 onClick={(e) => handleCountrySelect(country, e)}
                                 onMouseEnter={() => setActiveIndex(index)}
                                 onFocus={() => {}}

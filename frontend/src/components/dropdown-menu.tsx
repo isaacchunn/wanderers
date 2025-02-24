@@ -25,7 +25,7 @@ import { useRouter } from "next/navigation";
 export function DropdownSetting({
     itineraryId,
 }: {
-    itineraryId: Readonly<string>;
+    readonly itineraryId: Readonly<string>;
 }) {
     const [visibility, setVisibility] = useState<string>("public");
     const router = useRouter();

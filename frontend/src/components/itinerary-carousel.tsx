@@ -17,7 +17,7 @@ import { getDate } from "date-fns";
 export function ItineraryCarousel({
     itineraries,
 }: {
-    itineraries: Readonly<Itinerary[]>;
+    readonly itineraries: Readonly<Itinerary[]>;
 }) {
     return (
         <Carousel

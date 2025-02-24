@@ -9,7 +9,7 @@ import { updateItinerary } from "@/lib/itineraryHandler";
 export function ItineraryTitle({
     itinerary,
 }: {
-    itinerary: Readonly<Itinerary>;
+    readonly itinerary: Readonly<Itinerary>;
 }) {
     const titleInputRef = useRef<HTMLInputElement>(null);
     const [title, setTitle] = useState(itinerary.title);
