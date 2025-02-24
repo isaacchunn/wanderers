@@ -7,7 +7,7 @@ import { fetchItineraryById } from "@/lib/itineraryHandler";
 import { DateRangePicker } from "@/components/calendar-picker";
 
 interface ItineraryPageProps {
-    params: { id: string };
+    readonly params: { id: string };
 }
 export default async function ItineraryPage({
     params,
