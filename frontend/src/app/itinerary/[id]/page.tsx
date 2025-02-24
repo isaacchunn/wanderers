@@ -9,9 +9,9 @@ import { DateRangePicker } from "@/components/calendar-picker";
 export default async function ItineraryPage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
-    const itineraryId = params.id;
+    const itineraryId = (await params).id;
     const itinerary = await fetchItineraryById(itineraryId);
 
     if (!itinerary) {
