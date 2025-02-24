@@ -1,4 +1,5 @@
 import { Itinerary } from "@/lib/types";
+import { BACKEND_URL } from "@/lib/utils";
 
 const NEXT_PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -7,6 +8,7 @@ export async function fetchItineraryById(
 ): Promise<Itinerary | undefined> {
     try {
         const response = await fetch(
+
             `${NEXT_PUBLIC_BACKEND_URL}/api/itinerary/${itineraryId}`,
             {
                 method: "GET",
@@ -39,12 +41,14 @@ export async function fetchPublicItineraryById(
     try {
         const response = await fetch(
             `${NEXT_PUBLIC_BACKEND_URL}/api/public/itinerary/${itineraryId}`,
+
             {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 cache: "no-store",
+                next: { revalidate: 10 },
             }
         );
 
@@ -68,12 +72,14 @@ export async function fetchPublicItinerary(): Promise<Itinerary[] | undefined> {
     try {
         const response = await fetch(
             `${NEXT_PUBLIC_BACKEND_URL}/api/public/itinerary/`,
+
             {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 cache: "no-store",
+                next: { revalidate: 10 },
             }
         );
 
@@ -102,12 +108,14 @@ export async function fetchUserItinerary(
     try {
         const response = await fetch(
             `${NEXT_PUBLIC_BACKEND_URL}/api/itinerary/${ownerId}/created`,
+
             {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 cache: "no-store",
+                next: { revalidate: 10 },
             }
         );
 
