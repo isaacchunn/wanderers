@@ -1,5 +1,5 @@
 import { ChatBox } from "@/components/chat-box";
-import { ExpenseSplitter } from "@/components/ui/expense-splitter";
+import { ExpenseSplitter } from "@/components/expense-splitter";
 import { ActivityContainer } from "@/components/activity-container";
 import { DropdownSetting } from "@/components/dropdown-menu";
 import { ItineraryTitle } from "@/components/itinerary-title";
