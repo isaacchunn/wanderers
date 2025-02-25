@@ -1,28 +1,40 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { CountrySearch } from "@/components/autocomplete-search";
-import { SortableItinerary } from "./sortable-itinerary";
-import { addActivity } from "@/lib/activityHandler";
-import { Itinerary } from "@/lib/types";
+import { SortableItinerary } from "@/components/sortable-itinerary";
+import { getActivity } from "@/lib/activityHandler";
+import {
+    Activity,
+    Itinerary,
+    PlaceDetails,
+    PlaceDetailsNew,
+} from "@/lib/types";
+import { Button } from "./ui/button";
+import AddPlaceDialog from "@/components/add-place-dialog";
+
 /* eslint-disable */
 export function ActivityContainer({
     itinerary,
 }: {
     readonly itinerary: Readonly<Itinerary>;
 }) {
-    const handleSearch = async (searchTerm: string) => {
-        const search = { search: searchTerm, country: "kr" }; //hardcoded country code for now.
-        const activity = await addActivity(search);
-        console.log(activity);
-    };
+    const [activities, setActivities] = React.useState<Activity[]>([]);
+    useEffect(() => {
+        const fetchActivities = async () => {
+            const data: Activity[] = (await getActivity("4")) || [];
+            data.sort((a, b) => a.sequence - b.sequence);
+            setActivities(data);
+        };
+        fetchActivities();
+    }, []);
 
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between">
-                <CountrySearch onSearch={handleSearch} />
+        <div className="flex flex-col space-y-6 w-fit">
+            <div className="flex justify-end -mt-8">
+                <AddPlaceDialog itinerary={itinerary} activities={activities} />
             </div>
-            <SortableItinerary />
+            <SortableItinerary fetchedActivities={activities} />
         </div>
     );
 }

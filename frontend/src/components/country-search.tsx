@@ -127,7 +127,7 @@ export function CountrySearch({ onCountryChange }: Readonly<CountryProps>) {
                     id="country"
                     type="text"
                     placeholder="Where do you want to go?"
-                    className="text-base py-6"
+                    className=" py-2"
                     value={countryInput}
                     onChange={handleCountryChange}
                     onKeyDown={handleKeyDown}

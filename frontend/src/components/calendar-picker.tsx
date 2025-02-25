@@ -39,7 +39,6 @@ export function DateRangePicker({
     );
     const [endDate, setEndDate] = useState<Date | undefined>(initialEndDate);
     const [saveStatus, setSaveStatus] = useState<"idle" | "saving">("idle");
-    console.log("now", new Date());
     useEffect(() => {
         if (!itinerary || saveStatus !== "saving" || !startDate || !endDate)
             return;

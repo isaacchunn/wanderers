@@ -21,12 +21,47 @@ export interface Itinerary {
 }
 
 export interface Activity {
-    id: string;
+    id: number;
     title: string;
     description: string;
-    image: string;
-    time: string;
-    placeDetails?: PlaceDetails;
+    itinerary_id: number;
+    lat: number;
+    lon: number;
+    expense: number;
+    split: string;
+    sequence: number;
+    photo_url: string;
+    start_date: Date;
+    end_date: Date;
+    image?: string;
+    types?: string[];
+    internationalPhoneNumber?: string;
+    website?: string;
+    formattedAddress?: string;
+    userRatingsTotal?: number;
+    rating?: number;
+    googleMapsUrl?: string;
+}
+// export interface Activity {
+//     id: string;
+//     title: string;
+//     description: string;
+//     image: string;
+//     time: string;
+//     placeDetails?: PlaceDetails;
+// }
+export interface PlaceDetailsNew {
+    title: string;
+    lat: number;
+    lon: number;
+    image?: string;
+    types?: string[];
+    internationalPhoneNumber?: string;
+    website?: string;
+    formattedAddress?: string;
+    userRatingsTotal?: number;
+    rating?: number;
+    googleMapsUrl?: string;
 }
 
 export interface PlaceDetails {

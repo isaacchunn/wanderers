@@ -21,23 +21,24 @@ export default async function ItineraryPage({
             </div>
         );
     }
-
     return (
-        <div className="container mx-auto py-6 space-y-10 w-fit">
-            <div className="flex flex-row justify-between">
+        <div className="container mx-auto py-8 w-fit">
+            <div className="flex flex-row justify-between items-start">
                 <div className="flex flex-col gap-2">
                     <ItineraryTitle itinerary={itinerary} />
-                    <DateRangePicker itinerary={itinerary} />
+                    <div className="flex gap-72">
+                        <DateRangePicker itinerary={itinerary} />
+                    </div>
                 </div>
                 <DropdownSetting itineraryId={itineraryId} />
             </div>
-            <div className="flex flex-col gap-11">
+            <div className="flex flex-col gap-2">
                 <div className="grid gap-6 lg:grid-cols-[1fr,400px] min-h-[600px]">
                     <div className="flex flex-col gap-6">
                         <ActivityContainer itinerary={itinerary} />
                         <ExpenseSplitter itinerary={itinerary} />
                     </div>
-                    <div className="h-full">
+                    <div className="h-full -mt-9">
                         <ChatBox itinerary={itinerary} />
                     </div>
                 </div>

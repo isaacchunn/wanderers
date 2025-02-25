@@ -57,7 +57,10 @@ export async function fetchPublicItineraryById(
         }
 
         const data: Itinerary = await response.json();
-        console.log("ItineraryHandler - Fetched itinerary:", data);
+        console.log(
+            `ItineraryHandler - Fetched itinerary id ${itineraryId}:`,
+            data
+        );
         return data;
     } catch (error) {
         console.error("ItineraryHandler - Error fetching itinerary:", error);
