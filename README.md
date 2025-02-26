@@ -82,7 +82,11 @@
   - Duplicate .env.example to .env
   - To enable Places API, go to https://console.cloud.google.com/, Enable API & Service for Places API and obtain the API key.
     - For production/staging environments, do set `Key restrictions` in the Google Console to only accept requests from the frontend service.
-4. Configure environment variables in the `.env` file. Create a cloud-based postgres instance (for e.g. Supabase) and replace the database `DATABASE_URL`, `DIRECT_URL` strings
+4. Configure environment variables in the `.env` file.
+  - Create a cloud-based postgres instance (for e.g. Supabase) and replace the database `DATABASE_URL`, `DIRECT_URL` strings
+  - Create a cloud-based S3 bucket instance and replace the `S3_IMAGE_UPLOAD_ENDPOINT`, `S3_BUCKET_NAME`, `S3_ACCESS_KEY`, `S3_SECRET_ACCESS_KEY` strings
+    - e.g. `S3_IMAGE_UPLOAD_ENDPOINT`=`"https://your-project.supabase.co/storage/v1/s3"`, `S3_BUCKET_NAME`=`"wanderers"`
+    - Refer to https://supabase.com/docs/guides/storage for our preferred S3 bucket
 
 5. Running of local development server
 ```bash

@@ -20,7 +20,7 @@ export const activitySchema = z.object({
   lon: z.number(),
   expense: z.number(),
   split: z.enum(
-    Object.values(ExpenseSplitType) as [ExpenseSplitType, ...ExpenseSplitType[]],
+    Object.values(ExpenseSplitType) as [ExpenseSplitType, ...ExpenseSplitType[]]
   ),
   sequence: z.number(),
   start_date: z.coerce.date(),
@@ -55,4 +55,8 @@ export const updateItinerarySchema = z.object({
   start_date: z.coerce.date(),
   end_date: z.coerce.date(),
   photo_url: z.string().url().optional(),
+});
+
+export const updateProfileDescriptionSchema = z.object({
+  profile_description: z.string().optional(),
 });
