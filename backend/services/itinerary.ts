@@ -25,6 +25,17 @@ const isUserAuthorized = async (userId: number, itineraryId: number) => {
   return isOwner || isCollaborator;
 };
 
+interface UpdateItineraryData {
+  userId: number;
+  itineraryId: number;
+  title: string;
+  location: string;
+  visibility: "public" | "private";
+  start_date: Date;
+  end_date: Date;
+  photo_url?: string | undefined;
+}
+
 export const createItinerary = async (
   owner_id: number,
   title: string,
@@ -176,15 +187,17 @@ export const getItineraryById = async (
     },
   });
 
-  if (itinerary && itinerary.visibility === "private") {
-    return requesterUserId
-      ? (await isUserAuthorized(requesterUserId, itineraryId))
-        ? itinerary
-        : null
-      : null;
+  if (!requesterUserId) {
+    return null;
   }
 
-  return itinerary;
+  const isAuthorized = await isUserAuthorized(requesterUserId, itineraryId);
+
+  if (isAuthorized) {
+    return itinerary;
+  }
+
+  return null;
 };
 
 export const getCreatedItineraries = async (
@@ -287,29 +300,20 @@ export const getCollabItineraries = async (
   return user?.collaborated_itineraries;
 };
 
-export const updateItinerary = async (
-  userId: number,
-  itineraryId: number,
-  title: string,
-  location: string,
-  photo_url: string | null,
-  visibility: ItineraryVisibility,
-  start_date: Date,
-  end_date: Date
-) => {
+export const updateItinerary = async (data: UpdateItineraryData) => {
   let itinerary = await db.itinerary.update({
     where: {
-      id: itineraryId,
-      owner_id: userId,
+      id: data.itineraryId,
+      owner_id: data.userId,
       active: true,
     },
     data: {
-      title,
-      location,
-      photo_url,
-      visibility,
-      start_date,
-      end_date,
+      title: data.title,
+      location: data.location,
+      photo_url: data.photo_url,
+      visibility: data.visibility,
+      start_date: data.start_date,
+      end_date: data.end_date,
     },
     include: {
       owner: {

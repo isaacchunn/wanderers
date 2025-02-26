@@ -209,18 +209,11 @@ export const updateItineraryApi = async (
           .join(", "),
       });
     } else {
-      const { title, location, visibility, photo_url, start_date, end_date } =
-        validatedFields.data;
-      let itinerary = await updateItinerary(
+      let itinerary = await updateItinerary({
         userId,
         itineraryId,
-        title,
-        location,
-        photo_url || null,
-        visibility,
-        start_date,
-        end_date
-      );
+        ...validatedFields.data,
+      });
       res.status(HttpStatusCode.Ok).json(itinerary);
     }
   } catch (error: any) {
