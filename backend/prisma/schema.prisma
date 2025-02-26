@@ -108,7 +108,7 @@ model Activity {
   created_at                DateTime         @default(now())
 
   // New Google Places API fields
-  place_id                  String?          @unique
+  place_id                  String?
   formatted_address         String?
   types                     String[]         // Array of place types
   rating                    Float?

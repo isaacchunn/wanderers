@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import axios from "axios";
+import { HttpCode } from "../lib/httpCodes";
 
 const GOOGLE_PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 const GOOGLE_PLACES_API_URL = "https://maps.googleapis.com/maps/api/place";
@@ -83,6 +84,6 @@ export const searchPlaceController = async (req: Request, res: Response) => {
     res.json(places);
   } catch (error: any) {
     console.error("Error in searchPlaceController:", error);
-    res.status(500).json({ error: error.message });
+    res.status(HttpCode.InternalServerError).json({ error: error.message });
   }
 };

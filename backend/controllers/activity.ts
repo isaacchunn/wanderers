@@ -22,10 +22,6 @@ export const createActivityController = async (req: AuthenticatedRequest, res: R
   let responseBody: any = {};
 
   try {
-    if (!req.user) {
-      throw new Error("Unauthorized");
-    }
-
     const parsed = activitySchema.safeParse(req.body);
     if (!parsed.success) {
       throw new Error(
@@ -52,21 +48,19 @@ export const getActivityByIdController = async (req: AuthenticatedRequest, res: 
   let responseBody: any = {};
 
   try {
-    if (!req.user) {
-      throw new Error("Unauthorized");
-    }
-
     const activity = await getActivityById(parseInt(req.params.id));
     if (!activity) {
+      responseCode = HttpCode.NotFound
       throw new Error("Activity not found");
     }
     if (!activity.active) {
+      responseCode = HttpCode.NotFound
       throw new Error("Activity has been deleted");
     }
 
     responseBody = activity;
   } catch (error: any) {
-    responseCode = HttpCode.BadRequest;
+    responseCode = responseCode || HttpCode.BadRequest;
     responseBody = { message: error.message || "Internal Server Error" };
   }
 
@@ -82,10 +76,6 @@ export const getActivitiesByItineraryIdController = async (req: AuthenticatedReq
   let responseBody: any = {};
 
   try {
-    if (!req.user) {
-      throw new Error("Unauthorized");
-    }
-
     const activities = await getActivitiesByItineraryId(parseInt(req.params.itinerary_id));
     responseBody = activities;
   } catch (error: any) {
@@ -105,10 +95,6 @@ export const updateActivityController = async (req: AuthenticatedRequest, res: R
   let responseBody: any = {};
 
   try {
-    if (!req.user) {
-      throw new Error("Unauthorized");
-    }
-
     const activity = await getActivityById(parseInt(req.params.id));
     if (!activity) {
       throw new Error("Activity not found");
@@ -139,10 +125,6 @@ export const deleteActivityController = async (req: AuthenticatedRequest, res: R
   let responseBody: any = {};
 
   try {
-    if (!req.user) {
-      throw new Error("Unauthorized");
-    }
-
     const activity = await getActivityById(parseInt(req.params.id));
     if (!activity) {
       throw new Error("Activity not found");
