@@ -47,6 +47,11 @@ const swaggerDefinition = {
       },
     },
   },
+  security: [
+    {
+      BearerAuth: [],
+    },
+  ],
 };
 
 // Rate limiter
