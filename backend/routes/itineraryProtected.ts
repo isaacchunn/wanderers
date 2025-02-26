@@ -33,7 +33,7 @@ const router = express.Router();
  *         - photo_url
  *         - active
  *         - created_at
- *         - updated_at 
+ *         - updated_at
  *         - owner
  *         - collaborators
  *         - _count
@@ -76,7 +76,7 @@ const router = express.Router();
  *         updated_at:
  *           type: string
  *           format: date-time
- *           description: Timestamp when the itinerary was last updated 
+ *           description: Timestamp when the itinerary was last updated
  *         owner:
  *           type: object
  *           properties:
@@ -105,7 +105,7 @@ const router = express.Router();
  *                 description: The username of the collaborator
  *               user_photo:
  *                 type: string
- *                 description: Collaborator's profile image URL
+ *                 description: Collaborator's profile image partial URL
  *         _count:
  *           type: object
  *           properties:
@@ -118,7 +118,7 @@ const router = express.Router();
  *         location: "FR"
  *         owner_id: 456
  *         visibility: "public"
- *         photo_url: "https://example.com/photo1.jpg"
+ *         photo_url: "user/456/f345668d-86b4-4939-8cc8-5efa2fa2cfc4.jpeg"
  *         start_date: "2025-03-01T00:00:00Z"
  *         end_date: "2025-03-10T00:00:00Z"
  *         active: true
@@ -126,16 +126,16 @@ const router = express.Router();
  *         updated_at: "2025-02-10T12:30:00Z"
  *         owner:
  *           username: "owner456"
- *           user_photo: "https://example.com/photo1.jpg"
+ *           user_photo: "user/456/f345668d-86b4-4939-8cc8-5efa2fa2cfc4.jpeg"
  *         collaborators:
  *           - id: 1
  *             email: "collaborator1@example.com"
  *             username: "collaborator1"
- *             user_photo: "https://example.com/photo1.jpg"
+ *             user_photo: "user/1/f345668d-86b4-4939-8cc8-5efa2fa2cfc4.jpeg"
  *           - id: 2
  *             email: "collaborator2@example.com"
  *             username: "collaborator2"
- *             user_photo: "https://example.com/photo2.jpg"
+ *             user_photo: "user/2/f345668d-86b4-4939-8cc8-5efa2fa2cfc4.jpeg"
  *         _count:
  *           votes: 3
  */
