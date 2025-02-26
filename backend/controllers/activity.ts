@@ -18,7 +18,7 @@ import { HttpCode } from "../lib/httpCodes";
 // @route   POST /api/activity
 // @access  Private
 export const createActivityController = async (req: AuthenticatedRequest, res: Response) => {
-  let responseCode = HttpCode.OK;
+  let responseCode = HttpCode.ResourceCreated;
   let responseBody: any = {};
 
   try {
@@ -34,7 +34,6 @@ export const createActivityController = async (req: AuthenticatedRequest, res: R
     }
 
     const activity = await createActivity({ ...parsed.data });
-    responseCode = HttpCode.ResourceCreated;
     responseBody = activity;
   } catch (error: any) {
     responseCode = HttpCode.BadRequest;
