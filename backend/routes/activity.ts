@@ -181,6 +181,8 @@ router.post("/", protect, createActivityController);
  *     summary: Get an activity by ID
  *     description: Retrieves a single activity by its ID.
  *     tags: [Activity]
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
