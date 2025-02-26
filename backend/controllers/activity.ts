@@ -60,7 +60,7 @@ export const getActivityByIdController = async (req: AuthenticatedRequest, res: 
 
     responseBody = activity;
   } catch (error: any) {
-    responseCode = responseCode || HttpCode.BadRequest;
+    responseCode = responseCode === HttpCode.OK ? HttpCode.BadRequest : responseCode;
     responseBody = { message: error.message || "Internal Server Error" };
   }
 

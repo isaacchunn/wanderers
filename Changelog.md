@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Global user state (UserProvider and UserStore) with zustand implemented
 - Authentication and User state integrated
+- Protect Activity, Places route
 
 ### Fixed
 
