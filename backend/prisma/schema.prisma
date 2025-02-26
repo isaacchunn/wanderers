@@ -91,22 +91,33 @@ model Itinerary {
 }
 
 model Activity {
-  id           Int              @id @default(autoincrement())
-  title        String
-  description  String?
-  lat          Float
-  lon          Float
-  itinerary    Itinerary        @relation(fields: [itinerary_id], references: [id])
-  itinerary_id Int
-  expense      Float
-  split        ExpenseSplitType
-  sequence     Int
-  photo_url    String?
-  start_date   DateTime
-  end_date     DateTime
-  active       Boolean          @default(true)
-  created_at   DateTime         @default(now())
+  id                        Int              @id @default(autoincrement())
+  title                     String
+  description               String?
+  lat                       Float
+  lon                       Float
+  itinerary                 Itinerary        @relation(fields: [itinerary_id], references: [id])
+  itinerary_id              Int
+  expense                   Float
+  split                     ExpenseSplitType
+  sequence                  Int
+  photo_url                 String?
+  start_date                DateTime
+  end_date                  DateTime
+  active                    Boolean          @default(true)
+  created_at                DateTime         @default(now())
 
+  // New Google Places API fields
+  place_id                  String?
+  formatted_address         String?
+  types                     String[]         // Array of place types
+  rating                    Float?
+  user_ratings_total        Int?
+  international_phone_number String?
+  website                   String?
+  opening_hours             String[]         // Array of opening hours
+  google_maps_url           String?
+  
   @@map("Activities")
 }
 

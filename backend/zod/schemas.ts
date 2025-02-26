@@ -20,15 +20,23 @@ export const activitySchema = z.object({
   lon: z.number(),
   expense: z.number(),
   split: z.enum(
-    Object.values(ExpenseSplitType) as [
-      ExpenseSplitType,
-      ...ExpenseSplitType[],
-    ],
+    Object.values(ExpenseSplitType) as [ExpenseSplitType, ...ExpenseSplitType[]],
   ),
   sequence: z.number(),
   start_date: z.coerce.date(),
   end_date: z.coerce.date(),
   photo_url: z.string().url().optional(),
+
+  // Google Places API fields
+  place_id: z.string().optional(),
+  formatted_address: z.string().optional(),
+  types: z.array(z.string()).optional(),
+  rating: z.number().min(0).max(5).optional(),
+  user_ratings_total: z.number().optional(),
+  international_phone_number: z.string().optional(),
+  website: z.string().url().optional(),
+  opening_hours: z.array(z.string()).optional(),
+  google_maps_url: z.string().url().optional(),
 });
 
 export const createItinerarySchema = z.object({
