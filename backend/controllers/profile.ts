@@ -5,7 +5,6 @@ import {
   updateProfileDescription,
   updateProfileImagePath,
 } from "../services/profile";
-import { randomUUID } from "crypto";
 import { deleteS3ProfileImage, uploadS3ProfileImage } from "../services/image";
 import { getUserById } from "../services/user";
 
