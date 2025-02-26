@@ -279,21 +279,3 @@ export const requestForgetPasswordEmail = async (req: Request, res: Response) =>
   }
   res.status(responseCode).json(responseBody);
 };
-
-interface Payload {
-  id: string | number;
-  role: string;
-  admin: boolean;
-}
-
-// Generate JWT
-// const generateJWTToken = (id: string, role: number, admin: number) => {
-//   const payload = {
-//     id: id,
-//     role: role,
-//     admin: admin,
-//   };
-//   return jwt.sign(payload, process.env.JWT_SECRET as string, {
-//     expiresIn: "7d",
-//   });
-// };
