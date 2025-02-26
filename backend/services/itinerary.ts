@@ -33,7 +33,7 @@ interface UpdateItineraryData {
   visibility: "public" | "private";
   start_date: Date;
   end_date: Date;
-  photo_url?: string | undefined;
+  photo_url: string | undefined;
 }
 
 export const createItinerary = async (
