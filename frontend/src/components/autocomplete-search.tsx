@@ -1,10 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { places } from "@/lib/utils";
-
 export function CountrySearch({
     onSearch,
 }: {
@@ -32,6 +30,7 @@ export function CountrySearch({
         setSelectedIndex(-1);
         setShowDropdown(false);
         onSearch(term);
+        console.log(selectedCountry);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -75,7 +74,7 @@ export function CountrySearch({
             <Input
                 ref={inputRef}
                 type="text"
-                placeholder="Search for a country..."
+                placeholder="Add a place..."
                 value={search}
                 onChange={(e) => {
                     setSearch(e.target.value);
@@ -116,9 +115,6 @@ export function CountrySearch({
                                 onMouseEnter={() => setSelectedIndex(index)}
                             >
                                 <span className="flex-1">{country}</span>
-                                {country === selectedCountry && (
-                                    <Check className="h-4 w-4 text-primary" />
-                                )}
                             </div>
                         ))}
                     </div>

@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-// import { useFormState } from "react-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { saveMessage } from "@/app/itinerary/[id]/actions";
+import { Itinerary } from "@/lib/types";
 
 interface Message {
     id: string;
@@ -14,13 +14,14 @@ interface Message {
     sender: string;
     timestamp: string;
 }
-
-// const initialState = null;
-
-export function ChatBox() {
+/* eslint-disable */
+export function ChatBox({
+    itinerary,
+}: {
+    readonly itinerary: Readonly<Itinerary>;
+}) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState("");
-    // const [state, formAction] = useFormState(saveMessage, initialState);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();

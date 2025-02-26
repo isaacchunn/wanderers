@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import axios from "axios";
+import { HttpCode } from "../lib/httpCodes";
 
 const GOOGLE_PLACES_API_KEY = process.env.GOOGLE_PLACES_API_KEY;
 const GOOGLE_PLACES_API_URL = "https://maps.googleapis.com/maps/api/place";
@@ -29,7 +30,7 @@ const getAutocompletePredictions = async (
 
 const getPlaceDetails = async (placeId: string): Promise<any> => {
   // Include additional fields in the details request
-  const detailsUrl = `${GOOGLE_PLACES_API_URL}/details/json?place_id=${placeId}&fields=name,geometry,photos,types,international_phone_number,website,formatted_address,user_ratings_total,rating&key=${GOOGLE_PLACES_API_KEY}`;
+  const detailsUrl = `${GOOGLE_PLACES_API_URL}/details/json?place_id=${placeId}&fields=name,geometry,photos,types,international_phone_number,website,formatted_address,user_ratings_total,rating,opening_hours&key=${GOOGLE_PLACES_API_KEY}`;
   const detailsResponse = await axios.get(detailsUrl);
   const result = detailsResponse.data.result;
 
@@ -54,6 +55,7 @@ const getPlaceDetails = async (placeId: string): Promise<any> => {
     formattedAddress: result.formatted_address,
     userRatingsTotal: result.user_ratings_total,
     rating: result.rating,
+    openingHours: result.opening_hours?.weekday_text || null,
     googleMapsUrl,
   };
 };
@@ -82,6 +84,6 @@ export const searchPlaceController = async (req: Request, res: Response) => {
     res.json(places);
   } catch (error: any) {
     console.error("Error in searchPlaceController:", error);
-    res.status(500).json({ error: error.message });
+    res.status(HttpCode.InternalServerError).json({ error: error.message });
   }
 };

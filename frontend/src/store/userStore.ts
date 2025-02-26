@@ -1,12 +1,12 @@
-import { create } from 'zustand'
+import { create } from "zustand";
 
 const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 interface User {
-    id: string
-    username: string
-    email: string
-    emailVerified: string
+    id: string;
+    username: string;
+    email: string;
+    emailVerified: string;
 }
 
 interface UserState {
@@ -29,7 +29,6 @@ export const useUserStore = create<UserState>((set, get) => ({
                 const data = await response.json();
                 set({ user: data, isUserFetched: true });
             }
-
         } catch (error) {
             console.error("Error fetching user data: ", error);
         }
