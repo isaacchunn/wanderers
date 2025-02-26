@@ -18,7 +18,7 @@ import { HttpCode } from "../lib/httpCodes";
 // @route   POST /api/activity
 // @access  Private
 export const createActivityController = async (req: AuthenticatedRequest, res: Response) => {
-  let responseCode = HttpCode.OK;
+  let responseCode: number;
   let responseBody: any = {};
 
   try {
@@ -41,7 +41,7 @@ export const createActivityController = async (req: AuthenticatedRequest, res: R
     responseBody = { message: error.message || "Internal Server Error" };
   }
 
-  res.status(responseCode).json(responseBody);
+  res.status(HttpCode.OK).json(responseBody);
 };
 
 

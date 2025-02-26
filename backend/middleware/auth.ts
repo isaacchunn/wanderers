@@ -9,14 +9,13 @@ interface AuthRequest extends Request {
 
 export const protect = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     let responseCode = HttpCode.Unauthorized;
-    let responseBody: any = { message: "Not authorized" };
+    let responseBody: any;
 
     try {
         let token: string | undefined;
 
         if (!process.env.JWT_SECRET) {
             responseCode = HttpCode.InternalServerError;
-            responseBody = { message: "Internal server error" };
             throw new Error("JWT_SECRET is not defined");
         }
 
