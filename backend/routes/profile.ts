@@ -1,6 +1,7 @@
 import express from "express";
 
 import {
+  deleteProfilePictureApi,
   updateProfileDescriptionApi,
   uploadProfilePictureApi,
 } from "../controllers/profile";
@@ -111,5 +112,7 @@ router.route("/description").put(protect, updateProfileDescriptionApi);
 router
   .route("/picture")
   .put(protect, upload_file_single, uploadProfilePictureApi);
+
+router.route("/picture").delete(protect, deleteProfilePictureApi);
 
 export { router as default };

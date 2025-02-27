@@ -1,4 +1,3 @@
-import { randomUUID } from "crypto";
 import {
   S3Client,
   PutObjectCommand,
@@ -22,7 +21,7 @@ export const uploadS3ProfileImage = async (
 ) => {
   try {
     const fileExtension = image_file.mimetype.split("/")[1];
-    const filePath = `user/${userId}/${randomUUID()}.${fileExtension}`;
+    const filePath = `user/${userId}`;
 
     const uploadCommand = new PutObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME ?? "",
@@ -39,11 +38,11 @@ export const uploadS3ProfileImage = async (
   }
 };
 
-export const deleteS3ProfileImage = async (image_file_path: string) => {
+export const deleteS3ProfileImage = async (user_id: string) => {
   try {
     const deleteCommand = new DeleteObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME ?? "",
-      Key: image_file_path,
+      Key: `user/${user_id}`,
     });
 
     await s3Client.send(deleteCommand);

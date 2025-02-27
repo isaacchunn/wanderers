@@ -1,6 +1,7 @@
 import express from "express";
 
-import { registerUser, loginUser, confirmAccount, resetPassword, requestConfirmationEmail, requestForgetPasswordEmail } from "../controllers/auth";
+import { registerUser, loginUser, confirmAccount, resetPassword, requestConfirmationEmail, requestForgetPasswordEmail, updatePassword } from "../controllers/auth";
+import { protect } from "../middleware/auth";
 
 const router = express.Router();
 
@@ -324,5 +325,84 @@ router.post("/forget-password", requestForgetPasswordEmail);
  *                   example: Token has expired
  */
 router.post("/reset-password/:token", resetPassword);
+
+/**
+ * @swagger
+ * /api/auth/update-password:
+ *   put:
+ *     summary: Update user password in settings
+ *     description: >
+ *       Allows an authenticated user to update their password. The request must include the old password for verification.
+ *       If successful, the password is updated, and a confirmation email is sent to the user.
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - currentPassword
+ *               - newPassword
+ *               - newPassword2
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *                 description: The current password of the user.
+ *                 example: "oldpassword123"
+ *               newPassword:
+ *                 type: string
+ *                 description: The new password the user wants to set.
+ *                 example: "NewP@ssw0rd!"
+ *               newPassword2:
+ *                 type: string
+ *                 description: Must match newPassword for confirmation.
+ *                 example: "NewP@ssw0rd!"
+ *     responses:
+ *       200:
+ *         description: Password updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Password updated
+ *       400:
+ *         description: Validation error or incorrect password.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Old password is incorrect
+ *       401:
+ *         description: Unauthorized - User is not authenticated.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Internal Server Error
+ */
+router.put("/update-password", protect, updatePassword);
 
 export { router as default };

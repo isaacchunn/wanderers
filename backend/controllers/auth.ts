@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { registerUserSchema, loginUserschema } from "../zod/schemas";
+import { registerUserSchema, loginUserschema, updatePasswordSchema } from "../zod/schemas";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { db } from "../controllers/db";
 import { HttpCode } from "../lib/httpCodes"
 
-import { createUser, getUserByEmail, updateUser, updateUserPassword } from "../services/user";
+import { createUser, getUserById, getUserByEmail, updateUser, updateUserPassword, updateUserPasswordHistory, checkPasswordReused } from "../services/user";
 import { deliverConfirmationEmail, deliverForgotPasswordEmail, deliverPasswordResetSuccessfulEmail } from "../controllers/mail";
 import {
   generateConfirmAccountToken,
@@ -16,6 +16,10 @@ import {
 } from "../services/token";
 
 const tokenExpirationPeriod = 60 * 60 * 1000 * 24; // 1 day
+
+interface AuthenticatedRequest extends Request {
+  user?: { id: number };
+}
 
 // -------------------------------------------------------------------
 // @desc    Register new user
@@ -198,9 +202,73 @@ export const resetPassword = async (req: Request, res: Response) => {
       throw new Error("User does not exist");
     }
 
+    // check if new password is the same as the old passwords
+    const isPasswordReused = await checkPasswordReused(user.id, password);
+
+    if (isPasswordReused) {
+      throw new Error("Password has been used before");
+    }
+
     await updateUserPassword(user.id, hashedPassword);
 
+    await updateUserPasswordHistory(user.id, hashedPassword);
+
     await deleteToken(existingToken.id);
+
+    await deliverPasswordResetSuccessfulEmail(user.email, user.username);
+
+    responseBody = { message: "Password updated" };
+  }
+  catch (error: any) {
+    responseCode = HttpCode.BadRequest;
+    responseBody = { message: error.message };
+  }
+  res.status(responseCode).json(responseBody);
+
+};
+
+
+// @desc    Update user password in settings
+// @route   POST /api/auth/update-password
+// @access  Protected
+export const updatePassword = async (req: AuthenticatedRequest, res: Response) => {
+  let responseCode = HttpCode.OK;
+  let responseBody: any = {};
+  try {
+    const validatedFields = updatePasswordSchema.safeParse(req.body);
+    if (!validatedFields.success) {
+      throw new Error(validatedFields.error.errors.map((err) => err.message).join(", "));
+    }
+
+    const { currentPassword, newPassword, newPassword2 } = req.body;
+
+    if (newPassword !== newPassword2) {
+      throw new Error("New passwords do not match");
+    }
+
+    const user = await getUserById(req.user!.id);
+
+    if (!user) {
+      throw new Error("User does not exist");
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      throw new Error("Old password is incorrect");
+    }
+
+    // check if new password is the same as the old passwords
+    const isPasswordReused = await checkPasswordReused(user.id, newPassword);
+
+    if (isPasswordReused) {
+      throw new Error("Password has been used before");
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await updateUserPassword(user.id, hashedPassword);
+
+    await updateUserPasswordHistory(user.id, hashedPassword);
 
     await deliverPasswordResetSuccessfulEmail(user.email, user.username);
 

@@ -5,28 +5,29 @@ import { usePathname } from "next/navigation";
 import { useUserStore } from "@/store/userStore";
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({
-    children,
+  children,
 }) => {
-    const { fetchUserData, isUserFetched } = useUserStore((state) => state);
-    const pathname = usePathname();
+  const { fetchUserData, isUserFetched } = useUserStore((state) => state);
+  const pathname = usePathname();
 
-    useEffect(() => {
-        if (pathname !== "/login" && pathname !== "/signup" && !isUserFetched) {
-            const tokenString = localStorage.getItem("token");
+  useEffect(() => {
+    if (pathname !== "/login" && pathname !== "/signup" && !isUserFetched) {
+      // strip trailing and tail quotes
+      const cookieValue = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith(`token=`))
+        ?.split("=")[1]
+        .replace(/(^")|("$)/g, "");
 
-            if (tokenString) {
-                try {
-                    const tokenData = JSON.parse(tokenString);
-                    const userId = tokenData?.user?.id;
-                    if (userId) {
-                        fetchUserData(userId);
-                    }
-                } catch (err) {
-                    console.error("Error parsing token from localStorage", err);
-                }
-            }
+      if (cookieValue) {
+        try {
+          fetchUserData(cookieValue);
+        } catch (err) {
+          console.error("Error parsing token from localStorage", err);
         }
-    }, [pathname, fetchUserData, isUserFetched]);
+      }
+    }
+  }, [pathname, fetchUserData, isUserFetched]);
 
-    return <>{children} </>;
+  return <>{children} </>;
 };

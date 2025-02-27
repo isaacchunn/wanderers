@@ -55,6 +55,7 @@ model User {
   username                 String
   email                    String
   password                 String
+  password_history          String[]        @default([])
   media                    String
   role                     UserRole
   email_verified           DateTime?

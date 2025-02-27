@@ -12,6 +12,11 @@ export const loginUserschema = z.object({
   password: z.string({ message: "Please enter password" }),
 });
 
+export const updatePasswordSchema = z.object({
+  currentPassword: z.string(),
+  newPassword: z.string().min(8, "Password must be at least 8 characters"),
+});
+
 export const activitySchema = z.object({
   title: z.string(),
   description: z.string(),
