@@ -1,22 +1,24 @@
 import { Activity } from "@/lib/types";
 import { BACKEND_URL } from "@/lib/utils";
+import { getToken } from "@/lib/auth";
 const NEXT_PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export async function addActivity(
     activity: Activity
 ): Promise<object | undefined> {
-    console.log("Activity - Adding activity:", activity);
     try {
+        const token = await getToken();
         const response = await fetch(
             `${NEXT_PUBLIC_BACKEND_URL}/api/activity`,
             {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(activity),
+
                 cache: "no-store",
-                next: { revalidate: 10 },
             }
         );
 
@@ -27,7 +29,7 @@ export async function addActivity(
         }
 
         const data: object = await response.json();
-        console.log("Activity - Fetched Google Places Response:", data);
+
         return data;
     } catch (error) {
         console.error(
@@ -40,12 +42,14 @@ export async function addActivity(
 
 export async function getActivity(id: string): Promise<Activity[] | undefined> {
     try {
+        const token = await getToken();
         const response = await fetch(
             `${NEXT_PUBLIC_BACKEND_URL}/api/activity/itinerary/${id}`,
             {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
                 cache: "no-store",
             }
@@ -57,10 +61,7 @@ export async function getActivity(id: string): Promise<Activity[] | undefined> {
             return undefined;
         }
         const data: Activity[] = await response.json();
-        console.log(
-            `ActivityHandler - Fetched Activities for itinerary id ${id}:`,
-            data
-        );
+
         return data;
     } catch (error) {
         console.error(
@@ -72,15 +73,15 @@ export async function getActivity(id: string): Promise<Activity[] | undefined> {
 }
 
 export async function deleteActivity(id: string): Promise<boolean> {
-    console.log("Activity - Deleting activity:", id);
     try {
+        const token = await getToken();
         const response = await fetch(`${BACKEND_URL}/api/activity/${id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
             },
             cache: "no-store",
-            next: { revalidate: 10 },
         });
 
         if (!response.ok) {
@@ -89,7 +90,7 @@ export async function deleteActivity(id: string): Promise<boolean> {
             );
             return false;
         }
-        console.log("Activity - Successfully deleted activity:");
+
         return true;
     } catch (error) {
         console.error(

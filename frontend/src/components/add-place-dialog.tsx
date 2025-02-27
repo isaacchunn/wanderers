@@ -1,3 +1,5 @@
+"use client";
+
 import {
     Dialog,
     DialogContent,
@@ -19,16 +21,12 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { CountrySearch } from "./autocomplete-search";
+import { LocationSearch } from "./location-search";
 import { useState } from "react";
-import {
-    Activity,
-    Itinerary,
-    PlaceDetails,
-    PlaceDetailsNew,
-} from "@/lib/types";
+import { Activity, Itinerary, PlaceDetails } from "@/lib/types";
 import { addActivity } from "@/lib/activityHandler";
 import { toast } from "sonner";
+import { getToken } from "@/lib/auth";
 
 const NEXT_PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 const formSchema = z.object({
@@ -44,12 +42,13 @@ export default function AddPlaceDialog({
 }) {
     // PlaceDetailsResults stores the response from the backend API
     const [placeDetailsResults, setPlaceDetailsResults] = useState<
-        PlaceDetailsNew[]
+        PlaceDetails[]
     >([]);
     // AutoCompleteResults stores the titles of the places (passed to the CountrySearch component dropdown list)
     const [autoCompleteResults, setAutoCompleteResults] = useState<string[]>(
         []
     );
+    const [open, setOpen] = useState(false); // State to control dialog visibility
     const [query, setQuery] = useState("");
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -58,16 +57,17 @@ export default function AddPlaceDialog({
             notes: "",
         },
     });
-
     // FetchPlaces function fetches the places from the backend API
     const fetchPlaces = async (query: string) => {
         if (!query) return;
+        const token = await getToken();
         const response = await fetch(
             `${NEXT_PUBLIC_BACKEND_URL}/api/place/search`,
             {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     search: query,
@@ -76,7 +76,7 @@ export default function AddPlaceDialog({
                 cache: "no-store",
             }
         );
-        const data: PlaceDetailsNew[] = await response.json();
+        const data: PlaceDetails[] = await response.json();
         console.log(data);
         if (!data) console.log("Error fetching google places api response");
         return data;
@@ -85,8 +85,10 @@ export default function AddPlaceDialog({
     // OnSearch function is called when the user types in the search bar and updates countrySearch 's dropdown list
     const onSearch = async (query: string) => {
         const data = await fetchPlaces(query);
-        console.log("Backened API places Response:", data);
-        if (!data) return;
+        console.log(data);
+        if (!data) {
+            return;
+        }
         setPlaceDetailsResults(data);
         setAutoCompleteResults(data.map((place) => place.title));
     };
@@ -100,8 +102,11 @@ export default function AddPlaceDialog({
             console.error("Selected place details not found");
             return;
         }
-        const newActitivity: Activity = {
-            id: 1,
+        /** [TODO] : Theres mismatch between activity creation & places responses endpoint,
+         * cant destructure the response from the backend API as it is not returning the same fields as the activity creation
+         */
+        const newActivity: Activity = {
+            id: Date.now(), // Example: Generating a unique ID
             title: selectedPlaceDetails.title,
             description: values.notes || "",
             itinerary_id: itinerary.id,
@@ -110,34 +115,37 @@ export default function AddPlaceDialog({
             expense: 0,
             split: "split",
             sequence: activities.length + 1,
-            photo_url: "https://picsum.photos/seed/{seed}/300/300",
-            image: selectedPlaceDetails.image,
-            types: selectedPlaceDetails.types,
-            internationalPhoneNumber:
-                selectedPlaceDetails.internationalPhoneNumber,
-            website: selectedPlaceDetails.website,
-            formattedAddress: selectedPlaceDetails.formattedAddress,
-            userRatingsTotal: selectedPlaceDetails.userRatingsTotal,
-            rating: selectedPlaceDetails.rating,
-            googleMapsUrl: selectedPlaceDetails.googleMapsUrl,
+            photo_url: selectedPlaceDetails.image,
             start_date: itinerary.start_date,
             end_date: itinerary.end_date,
+            active: true,
+            created_at: new Date(),
+            place_id: "PLACE_ID_HERE", // You need to assign a real place ID
+            formatted_address: selectedPlaceDetails.formattedAddress,
+            types: selectedPlaceDetails.types,
+            rating: selectedPlaceDetails.rating,
+            user_ratings_total: selectedPlaceDetails.userRatingsTotal,
+            international_phone_number:
+                selectedPlaceDetails.internationalPhoneNumber,
+            website: selectedPlaceDetails.website,
+            opening_hours: selectedPlaceDetails.openingHours,
+            google_maps_url: selectedPlaceDetails.googleMapsUrl,
         };
-        console.log("NEW ACTIVITY", newActitivity);
-        // console.log("Selected Place Details:", selectedPlaceDetails);
-        const response = addActivity(newActitivity);
+
+        const response = addActivity(newActivity);
         if (!response) {
             console.error("Error adding activity");
             toast.error("Error adding activity");
             return;
         }
-        console.log("Activity added successfully");
         toast.success("Activity added successfully");
+        setOpen(false);
+        window.location.reload();
     }
 
     return (
         <div>
-            <Dialog>
+            <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                     <Button>Add Place</Button>
                 </DialogTrigger>
@@ -151,7 +159,7 @@ export default function AddPlaceDialog({
                             className="space-y-6"
                         >
                             <FormItem className="space-y-2">
-                                <CountrySearch
+                                <LocationSearch
                                     onSearch={onSearch}
                                     autoCompleteResults={autoCompleteResults}
                                     onSelect={(term) => {

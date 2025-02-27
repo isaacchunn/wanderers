@@ -1,16 +1,9 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { CountrySearch } from "@/components/autocomplete-search";
 import { SortableItinerary } from "@/components/sortable-itinerary";
 import { getActivity } from "@/lib/activityHandler";
-import {
-    Activity,
-    Itinerary,
-    PlaceDetails,
-    PlaceDetailsNew,
-} from "@/lib/types";
-import { Button } from "./ui/button";
+import { Activity, Itinerary } from "@/lib/types";
 import AddPlaceDialog from "@/components/add-place-dialog";
 
 /* eslint-disable */
@@ -31,7 +24,7 @@ export function ActivityContainer({
 
     return (
         <div className="flex flex-col space-y-6 w-fit">
-            <div className="flex justify-end -mt-8">
+            <div className="flex justify-end -mt-9">
                 <AddPlaceDialog itinerary={itinerary} activities={activities} />
             </div>
             <SortableItinerary fetchedActivities={activities} />

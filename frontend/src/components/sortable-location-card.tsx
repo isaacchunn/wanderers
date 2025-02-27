@@ -5,23 +5,27 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
     Clock,
-    DollarSign,
     ExternalLink,
     Globe,
     GripVertical,
     MapPin,
+    Pencil,
     Phone,
     Star,
+    ChevronDown,
+    StickyNote,
 } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import { Activity } from "@/lib/types";
 
 interface SortableLocationCardProps {
     activity: Activity;
-}
-
-function getPriceLevelText(level: number): string {
-    return "€".repeat(level);
 }
 
 export function SortableLocationCard({ activity }: SortableLocationCardProps) {
@@ -57,8 +61,13 @@ export function SortableLocationCard({ activity }: SortableLocationCardProps) {
             style={style}
             className={`relative ${isDragging ? "z-50 shadow-lg" : ""} transition-shadow hover:shadow-md`}
         >
-            <CardContent className="p-0">
-                <div className="flex gap-4 p-4">
+            <div className="grid justify-items-end mt-2 mr-3">
+                <Button size="icon" variant="ghost">
+                    <Pencil size={16} />
+                </Button>
+            </div>
+            <CardContent className="p-1 -mt-7">
+                <div className="flex gap-1 -mt-3">
                     <button
                         className="cursor-grab touch-none p-1 opacity-50 hover:opacity-100 active:cursor-grabbing"
                         {...attributes}
@@ -67,8 +76,8 @@ export function SortableLocationCard({ activity }: SortableLocationCardProps) {
                         <GripVertical className="h-5 w-5" />
                         <span className="sr-only">Drag handle</span>
                     </button>
-                    <div className="flex flex-1 gap-4 overflow-hidden sm:flex-row my-3">
-                        <div className="relative h-[200px] w-[300px] flex-none overflow-hidden rounded-md ">
+                    <div className="flex flex-col gap-4 overflow-hidden sm:flex-row my-3 mx-2">
+                        <div className="relative h-[300px] w-[300px] flex-none overflow-hidden rounded-md ">
                             <Image
                                 src={activity.photo_url || "/placeholder.svg"}
                                 alt={activity.title}
@@ -87,67 +96,99 @@ export function SortableLocationCard({ activity }: SortableLocationCardProps) {
                                     {activity.rating}
                                     <span className="ml-1 text-xs text-muted-foreground">
                                         (
-                                        {activity.userRatingsTotal?.toLocaleString()}
+                                        {activity.user_ratings_total?.toLocaleString()}
                                         )
                                     </span>
                                 </Badge>
                             )}
                         </div>
-                        <div className="flex-1 space-y-4">
-                            <div>
-                                <div className="flex items-start justify-between gap-4">
-                                    <h3 className="font-semibold leading-none tracking-tight">
-                                        {activity.title}
-                                    </h3>
-                                </div>
-                                <div className="mt-2 flex flex-wrap gap-1">
-                                    {activity.types?.map((type) => (
-                                        <Badge
-                                            key={type}
-                                            variant="outline"
-                                            className="capitalize"
-                                        >
-                                            {type.replace(/_/g, " ")}
-                                        </Badge>
-                                    ))}
-                                </div>
-                            </div>
 
-                            <div className="space-y-2 text-sm">
-                                <div className="flex items-start gap-2">
-                                    <MapPin className="h-4 w-4 flex-shrink-0" />
-                                    <span className="text-muted-foreground">
-                                        {activity.formattedAddress}
-                                    </span>
-                                </div>
-                                {/* {activity.opening_hours && (
-                                    <div className="flex items-start gap-2">
-                                        <Clock className="h-4 w-4 flex-shrink-0" />
-                                        <div className="text-muted-foreground">
-                                            <div className="font-medium">
-                                                {activity.opening_hours.open_now
-                                                    ? "Open now"
-                                                    : "Closed"}
-                                            </div>
-                                            <div className="mt-1 text-xs">
-                                                {
-                                                    activity.opening_hours
-                                                        .weekday_text[0]
-                                                }
-                                            </div>
-                                        </div>
+                        <div className="flex flex-col justify-between gap-2">
+                            <div className="space-y-5">
+                                <div>
+                                    <div className="flex items-start justify-between gap-4">
+                                        <h3 className="font-semibold leading-none tracking-tight">
+                                            {activity.title}
+                                        </h3>
                                     </div>
-                                )} */}
-                                {activity.internationalPhoneNumber && (
-                                    <div className="flex items-center gap-2">
-                                        <Phone className="h-4 w-4" />
+                                    <div className="mt-2 flex flex-wrap gap-1">
+                                        {activity.types
+                                            ?.slice(0, 4)
+                                            .map((type) => (
+                                                <Badge
+                                                    key={type}
+                                                    variant="outline"
+                                                    className="capitalize"
+                                                >
+                                                    {type.replace(/_/g, " ")}
+                                                </Badge>
+                                            ))}
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col text-sm mr-3 gap-2">
+                                    <div className="flex items-center gap-5">
+                                        <MapPin className="h-4 w-4 flex-shrink-0" />
                                         <span className="text-muted-foreground">
-                                            {activity.internationalPhoneNumber}
+                                            {activity.formatted_address}
                                         </span>
                                     </div>
-                                )}
-                            </div>
 
+                                    {activity.international_phone_number && (
+                                        <div className="flex items-center gap-5 mt-1">
+                                            <Phone className="h-4 w-4" />
+                                            <span className="text-muted-foreground">
+                                                {
+                                                    activity.international_phone_number
+                                                }
+                                            </span>
+                                        </div>
+                                    )}
+                                    {activity.opening_hours && (
+                                        <div className="flex flex-row items-center gap-1">
+                                            <Clock className="h-4 w-4 flex-shrink-0" />
+
+                                            <div className="mt-1 text-xs space-y-1">
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger
+                                                        asChild
+                                                    >
+                                                        <Button
+                                                            variant="ghost"
+                                                            className="flex items-center"
+                                                        >
+                                                            <span className="text-muted-foreground">
+                                                                Opening Hours
+                                                            </span>
+                                                            <ChevronDown className="h-4 w-4" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent className="w-64">
+                                                        {activity.opening_hours.map(
+                                                            (day, index) => (
+                                                                <DropdownMenuItem
+                                                                    key={index}
+                                                                >
+                                                                    {day}
+                                                                </DropdownMenuItem>
+                                                            )
+                                                        )}
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {activity.description &&
+                                        activity.description.length > 0 && (
+                                            <div className="flex flex-row items-center gap-5 mb-3">
+                                                <StickyNote className="h-4 w-4 flex-shrink-0" />
+                                                <span>
+                                                    {activity.description}
+                                                </span>
+                                            </div>
+                                        )}
+                                </div>
+                            </div>
                             <div className="flex gap-2">
                                 {activity.website && (
                                     <Button size="sm" variant="outline" asChild>
@@ -163,7 +204,7 @@ export function SortableLocationCard({ activity }: SortableLocationCardProps) {
                                 )}
                                 <Button size="sm" variant="outline" asChild>
                                     <a
-                                        href={activity.googleMapsUrl}
+                                        href={activity.google_maps_url}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >

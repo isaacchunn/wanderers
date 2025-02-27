@@ -9,7 +9,7 @@ interface SearchProps {
     autoCompleteResults: string[];
 }
 
-export function CountrySearch({
+export function LocationSearch({
     onSearch,
     onSelect,
     autoCompleteResults,
@@ -27,7 +27,7 @@ export function CountrySearch({
         }, 1500);
 
         return () => clearTimeout(handler);
-    }, [search]);
+    }, [search, onSearch]);
 
     // Close dropdown when clicking outside
     React.useEffect(() => {
