@@ -23,7 +23,7 @@ export async function updateProfile(profile_description: string): Promise<{ succ
         const data: object = await response.json();
         return { success: true, data: data };
     } catch (error) {
-        return { success: false, data: {} };
+        return { success: false, data: { error: error } };
     }
 }
 
@@ -57,12 +57,12 @@ export async function uploadProfilePicture(file: File): Promise<{ success: boole
             return { success: false, data: "No image_path received from server" };
         }
     } catch (error) {
-        return { success: false, data: "Failed to upload image" };
+        return { success: false, data: error instanceof Error ? error.message : "Failed to upload image" };
     }
 }
 
 
-export async function deleteProfilePicture(): Promise<{ success: boolean }> {
+export async function deleteProfilePicture(): Promise<{ success: boolean, data: string }> {
     const cookieStore = await cookies()
     const token = cookieStore.get("token")?.value.replace(/(^")|("$)/g, "");
 
@@ -76,9 +76,9 @@ export async function deleteProfilePicture(): Promise<{ success: boolean }> {
             cache: "no-store",
             next: { revalidate: 10 },
         })
-        return { success: true };
+        return { success: true, data: "Image deleted successfully" };
     } catch (error) {
-        return { success: false };
+        return { success: false, data: error instanceof Error ? error.message : "Failed to delete image" };
     }
 }
 
@@ -105,8 +105,8 @@ export async function updatePassword(currentPassword: string, newPassword: strin
         }
 
         return { success: true, data: responseData.message };
-    } catch (error: any) {
-        return { success: false, data: error.message || "Something went wrong" };
+    } catch (error) {
+        return { success: false, data: error instanceof Error ? error.message : "Failed to update password" };
     }
 }
 

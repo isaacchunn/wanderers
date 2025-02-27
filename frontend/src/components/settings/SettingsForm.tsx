@@ -56,7 +56,9 @@ export default function SettingsForm() {
           throw new Error("Failed to upload image");
         }
       } catch (error) {
-        toast.error("Failed to upload profile picture. Please try again.");
+        toast.error(
+          error instanceof Error ? error.message : "Failed to upload image"
+        );
       } finally {
         setIsLoading((prev) => ({ ...prev, photo: false }));
       }
@@ -89,7 +91,9 @@ export default function SettingsForm() {
         throw new Error("Failed to update profile");
       }
     } catch (error) {
-      toast.error("Failed to update profile. Please try again.");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update profile"
+      );
     } finally {
       setIsLoading((prev) => ({ ...prev, profile: false }));
     }
@@ -118,10 +122,11 @@ export default function SettingsForm() {
       } else {
         throw new Error(response.data);
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(
-        error.message ||
-          "Failed to change password. Please check your current password and try again."
+        error instanceof Error
+          ? error.message
+          : "Failed to change password. Please check your current password and try again."
       );
     } finally {
       setIsLoading((prev) => ({ ...prev, password: false }));
