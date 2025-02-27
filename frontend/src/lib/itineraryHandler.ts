@@ -1,4 +1,7 @@
+"use server";
+
 import { Itinerary } from "@/lib/types";
+import { getToken } from "@/lib/auth";
 
 const NEXT_PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -6,12 +9,14 @@ export async function fetchItineraryById(
     itineraryId: string | null
 ): Promise<Itinerary | undefined> {
     try {
+        const token = await getToken();
         const response = await fetch(
             `${NEXT_PUBLIC_BACKEND_URL}/api/itinerary/${itineraryId}`,
             {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
                 cache: "no-store",
             }
@@ -24,7 +29,6 @@ export async function fetchItineraryById(
         }
 
         const data: Itinerary = await response.json();
-        console.log("ItineraryHandler - Fetched itinerary:", data);
         return data;
     } catch (error) {
         console.error("ItineraryHandler - Error fetching itinerary:", error);
@@ -46,7 +50,6 @@ export async function fetchPublicItineraryById(
                     "Content-Type": "application/json",
                 },
                 cache: "no-store",
-                next: { revalidate: 10 },
             }
         );
 
@@ -57,7 +60,6 @@ export async function fetchPublicItineraryById(
         }
 
         const data: Itinerary = await response.json();
-        console.log("ItineraryHandler - Fetched itinerary:", data);
         return data;
     } catch (error) {
         console.error("ItineraryHandler - Error fetching itinerary:", error);
@@ -77,7 +79,6 @@ export async function fetchPublicItinerary(): Promise<Itinerary[] | undefined> {
                     "Content-Type": "application/json",
                 },
                 cache: "no-store",
-                next: { revalidate: 10 },
             }
         );
 
@@ -88,7 +89,6 @@ export async function fetchPublicItinerary(): Promise<Itinerary[] | undefined> {
         }
 
         const data: Itinerary[] = await response.json();
-        console.log("ItineraryPublic - Fetched public itinerary:", data);
         return data;
     } catch (error) {
         console.error(
@@ -104,6 +104,11 @@ export async function fetchUserItinerary(
     ownerId: string | undefined
 ): Promise<Itinerary[] | undefined> {
     try {
+        const token = await getToken();
+        if (!token) {
+            throw new Error("No token found in cookieStore.");
+        }
+
         const response = await fetch(
             `${NEXT_PUBLIC_BACKEND_URL}/api/itinerary/${ownerId}/created`,
 
@@ -111,9 +116,9 @@ export async function fetchUserItinerary(
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
                 cache: "no-store",
-                next: { revalidate: 10 },
             }
         );
 
@@ -124,7 +129,6 @@ export async function fetchUserItinerary(
         }
 
         const data: Itinerary[] = await response.json();
-        console.log("ItineraryUser - Fetched user's itinerary:", data);
         return data;
     } catch (error) {
         console.error(
@@ -138,12 +142,14 @@ export async function fetchUserItinerary(
 // Fetches all itineraries where the user is a collaborator.
 export async function fetchCollabItinerary(): Promise<Itinerary[] | undefined> {
     try {
+        const token = await getToken();
         const response = await fetch(
             `${NEXT_PUBLIC_BACKEND_URL}/api/itinerary/collaborated`,
             {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
                 cache: "no-store",
             }

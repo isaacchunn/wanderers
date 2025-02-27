@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     DndContext,
     closestCenter,
@@ -20,11 +20,17 @@ import { Card } from "@/components/ui/card";
 import { SortableLocationCard } from "./sortable-location-card";
 
 import { Activity } from "@/lib/types";
-import { mockActivity } from "@/lib/utils";
 
-export function SortableItinerary() {
-    const [activities, setActivities] = useState<Activity[]>(mockActivity);
-    console.log(activities);
+export function SortableItinerary({
+    fetchedActivities,
+}: Readonly<{
+    fetchedActivities: Activity[];
+}>) {
+    const [activities, setActivities] = useState<Activity[]>(fetchedActivities);
+    useEffect(() => {
+        setActivities(fetchedActivities);
+    }, [fetchedActivities]);
+
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {
@@ -49,8 +55,8 @@ export function SortableItinerary() {
 
     return (
         <div>
-            <Card className="p-6">
-                {mockActivity.length === 0 ? (
+            <Card className="p-6 w-[700px]">
+                {fetchedActivities.length === 0 ? (
                     <Card className="p-6 flex items-center justify-center h-40 border-2 border-gray-300">
                         <div className="flex flex-col items-center">
                             <span className="text-base font-medium">

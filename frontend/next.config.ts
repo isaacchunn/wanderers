@@ -6,6 +6,7 @@ const nextConfig = {
             "media.istockphoto.com",
             "example.com",
             "picsum.photos",
+            "maps.googleapis.com",
         ],
     },
 };
