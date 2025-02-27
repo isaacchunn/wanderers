@@ -167,7 +167,7 @@ export function SortableLocationCard({
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent className="w-64">
                                                         {activity.opening_hours.map(
-                                                            (day, index) => (
+                                                            (day) => (
                                                                 <DropdownMenuItem
                                                                     key={day}
                                                                 >
