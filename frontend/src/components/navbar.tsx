@@ -21,7 +21,7 @@ export function Navbar() {
   const { user, clearUser } = useUserStore();
 
   useEffect(() => {
-    if (user && user?.user_photo) {
+    if (user?.user_photo) {
       setAvatarSrc(`${user.user_photo}` || undefined);
     } else {
       setAvatarSrc(undefined);

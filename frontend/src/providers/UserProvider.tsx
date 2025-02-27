@@ -17,7 +17,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         .split("; ")
         .find((row) => row.startsWith(`token=`))
         ?.split("=")[1]
-        .replace(/^"|"$/g, "");
+        .replace(/(^")|("$)/g, "");
 
       if (cookieValue) {
         try {

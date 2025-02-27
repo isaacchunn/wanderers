@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { HttpCode } from "../lib/httpCodes";
-import { getUserById, getUserByEmail } from "../services/user";
+import { getUserByEmail } from "../services/user";
 
 interface AuthenticatedRequest extends Request {
   user?: { id: number };

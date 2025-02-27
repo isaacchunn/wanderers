@@ -6,7 +6,8 @@ import { cookies } from "next/headers";
 
 export async function updateProfile(profile_description: string): Promise<{ success: boolean, data: object }> {
     const cookieStore = await cookies()
-    const token = cookieStore.get("token")?.value.replace(/^"|"$/g, "");
+    const token = cookieStore.get("token")?.value.replace(/(^")|("$)/g, "");
+
     try {
         const response = await fetch(`${BACKEND_URL}/api/profile/description`, {
             method: "PUT",
@@ -29,7 +30,7 @@ export async function updateProfile(profile_description: string): Promise<{ succ
 
 export async function uploadProfilePicture(file: File): Promise<{ success: boolean, data: string }> {
     const cookieStore = await cookies()
-    const token = cookieStore.get("token")?.value.replace(/^"|"$/g, "");
+    const token = cookieStore.get("token")?.value.replace(/(^")|("$)/g, "");
     try {
         const formData = new FormData()
         formData.append("file", file)
@@ -63,10 +64,10 @@ export async function uploadProfilePicture(file: File): Promise<{ success: boole
 
 export async function deleteProfilePicture(): Promise<{ success: boolean }> {
     const cookieStore = await cookies()
-    const token = cookieStore.get("token")?.value.replace(/^"|"$/g, "");
+    const token = cookieStore.get("token")?.value.replace(/(^")|("$)/g, "");
 
     try {
-        const response = await fetch(`${BACKEND_URL}/api/profile/picture`, {
+        await fetch(`${BACKEND_URL}/api/profile/picture`, {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -84,7 +85,7 @@ export async function deleteProfilePicture(): Promise<{ success: boolean }> {
 
 export async function updatePassword(currentPassword: string, newPassword: string, newPassword2: string): Promise<{ success: boolean, data: string }> {
     const cookieStore = await cookies()
-    const token = cookieStore.get("token")?.value.replace(/^"|"$/g, "");
+    const token = cookieStore.get("token")?.value.replace(/(^")|("$)/g, "");
     try {
         const response = await fetch(`${BACKEND_URL}/api/auth/update-password`, {
             method: "PUT",

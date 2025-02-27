@@ -34,7 +34,7 @@ export default function SettingsForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (user && user.user_photo) {
+    if (user?.user_photo) {
       setAvatarSrc(user.user_photo || undefined);
     } else {
       setAvatarSrc(undefined);
