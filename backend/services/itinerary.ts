@@ -157,7 +157,7 @@ export const getItineraries = async (page: number = 1, limit: number = 10) => {
 
 export const getItineraryById = async (
   itineraryId: number,
-  requesterUserId: number | null
+  requesterUserId: number
 ) => {
   const itinerary = await db.itinerary.findFirst({
     where: {
@@ -187,17 +187,14 @@ export const getItineraryById = async (
     },
   });
 
-  if (!requesterUserId) {
-    return null;
+  if (itinerary && itinerary.visibility === "private") {
+    const isAuthorized = await isUserAuthorized(requesterUserId, itineraryId);
+    if (!isAuthorized) {
+      return null;
+    }
   }
 
-  const isAuthorized = await isUserAuthorized(requesterUserId, itineraryId);
-
-  if (isAuthorized) {
-    return itinerary;
-  }
-
-  return null;
+  return itinerary;
 };
 
 export const getCreatedItineraries = async (

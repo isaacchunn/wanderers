@@ -61,7 +61,7 @@ export const getCreatedItinerariesPublicApi = async (
 export const getItineraryPublicApi = async (req: Request, res: Response) => {
   try {
     const itineraryId = parseInt(req.params.itineraryId);
-    const itinerary = await getItineraryById(itineraryId, null);
+    const itinerary = await getItineraryById(itineraryId, -1);
     if (!itinerary) {
       res
         .status(HttpStatusCode.NotFound)
