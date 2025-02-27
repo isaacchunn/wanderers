@@ -87,7 +87,7 @@ export function SortableLocationCard({ activity }: SortableLocationCardProps) {
                                 priority
                             />
 
-                            {activity.rating && (
+                            {activity.rating > 0 && (
                                 <Badge
                                     variant="secondary"
                                     className="absolute right-2 top-2 bg-background/80 backdrop-blur-sm"

@@ -103,9 +103,9 @@ export function LocationSearch({
                 >
                     <div className="py-1">
                         {autoCompleteResults.map((place, index) => (
-                            <div
+                            <button
                                 key={place}
-                                className={`relative flex cursor-default select-none items-center px-2 py-1.5 text-sm outline-none transition-colors ${
+                                className={`relative flex cursor-default select-none items-center px-2 py-1.5 text-sm outline-none transition-colors text-left w-full ${
                                     index === selectedIndex
                                         ? "bg-accent text-accent-foreground"
                                         : "hover:bg-muted"
@@ -117,7 +117,7 @@ export function LocationSearch({
                                 onMouseEnter={() => setSelectedIndex(index)}
                             >
                                 <span className="flex-1">{place}</span>
-                            </div>
+                            </button>
                         ))}
                     </div>
                 </div>

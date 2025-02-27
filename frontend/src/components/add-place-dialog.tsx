@@ -94,7 +94,7 @@ export default function AddPlaceDialog({
     };
 
     // OnSubmit function is called when the user submits the form (itinerary creation)
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof formSchema>) {
         const selectedPlaceDetails = placeDetailsResults.find(
             (place) => place.title === query
         );
@@ -132,7 +132,7 @@ export default function AddPlaceDialog({
             google_maps_url: selectedPlaceDetails.googleMapsUrl,
         };
 
-        const response = addActivity(newActivity);
+        const response = await addActivity(newActivity);
         if (!response) {
             console.error("Error adding activity");
             toast.error("Error adding activity");
