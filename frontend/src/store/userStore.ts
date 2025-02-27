@@ -5,6 +5,8 @@ const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 interface User {
     id: string;
     username: string;
+    profile_description: string;
+    user_photo: string;
     email: string;
     emailVerified: string;
 }
@@ -12,20 +14,27 @@ interface User {
 interface UserState {
     user: User | null;
     isUserFetched: boolean;
-    fetchUserData: (userId: string) => Promise<void>;
-    setUser: (user: User | null) => void;
+    fetchUserData: (jwtToken: string) => Promise<void>;
+    setUser: (user: object) => void;
     clearUser: () => void;
 }
 
 export const useUserStore = create<UserState>((set, get) => ({
     user: null,
     isUserFetched: false,
-    fetchUserData: async (userId: string) => {
+    fetchUserData: async (jwtToken: string) => {
         if (get().isUserFetched) return;
-        console.log("Fetching user data");
         try {
-            if (userId) {
-                const response = await fetch(`${baseUrl}/api/user/${userId}`);
+            if (jwtToken) {
+                const response = await fetch(`${baseUrl}/api/user`,
+                    {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${jwtToken}`,
+                        },
+                    }
+                );
                 const data = await response.json();
                 set({ user: data, isUserFetched: true });
             }
@@ -33,6 +42,8 @@ export const useUserStore = create<UserState>((set, get) => ({
             console.error("Error fetching user data: ", error);
         }
     },
-    setUser: (user: User | null) => set({ user }),
-    clearUser: () => set({ user: null }),
+    setUser: (values: Partial<User>) => {
+        set((state) => ({ user: { ...state.user, ...values } as User }));
+    },
+    clearUser: () => set({ user: null, isUserFetched: false }),
 }));

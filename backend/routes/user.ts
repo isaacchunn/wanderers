@@ -4,6 +4,7 @@ import {
   getUserByEmailController,
   getUserController,
 } from "../controllers/user";
+import { protect } from "../middleware/auth";
 
 const router = express.Router();
 
@@ -64,7 +65,7 @@ const router = express.Router();
  *                   type: string
  *                   example: Internal Server Error
  */
-router.get("/:id", getUserController);
+router.get("/", protect, getUserController);
 
 /**
  * @swagger

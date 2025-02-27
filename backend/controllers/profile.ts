@@ -6,7 +6,6 @@ import {
   updateProfileImagePath,
 } from "../services/profile";
 import { deleteS3ProfileImage, uploadS3ProfileImage } from "../services/image";
-import { getUserById } from "../services/user";
 
 interface AuthenticatedRequest extends Request {
   user?: { id: number };
@@ -54,22 +53,40 @@ export const uploadProfilePictureApi = async (
     if (!req.file) {
       res.status(HttpCode.BadRequest).json({ message: "No file uploaded" });
     } else {
-      const user = await getUserById(req.user!.id);
 
-      // delete current photo if exists
-      if (user?.user_photo) {
-        await deleteS3ProfileImage(user.user_photo);
-      }
+      const partial_image_path = await uploadS3ProfileImage(userId, req.file);
 
-      const image_path = await uploadS3ProfileImage(userId, req.file);
-
-      if (image_path) {
-        await updateProfileImagePath(userId, image_path);
-        res.status(HttpCode.OK).json({ message: "Profile Picture Updated" });
+      if (partial_image_path) {
+        const full_image_path = process.env.S3_IMAGE_GET_ENDPOINT + partial_image_path;
+        await updateProfileImagePath(userId, full_image_path);
+        res.status(HttpCode.OK).json({ full_image_path });
       } else {
         throw Error("There was an error when uploading the file");
       }
     }
+  } catch (error: any) {
+    res
+      .status(HttpCode.InternalServerError)
+      .json({ message: error.message || "Internal Server Error" });
+  }
+};
+
+// @desc    Deletes user picture
+// @route   DELETE /api/profile/picture
+// @access  Protected
+export const deleteProfilePictureApi = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    const userId = req.user!.id;
+
+    await deleteS3ProfileImage(userId.toString());
+
+    await updateProfileImagePath(userId, "");
+
+    res.status(HttpCode.OK).json({ message: "Profile picture deleted" });
+
   } catch (error: any) {
     res
       .status(HttpCode.InternalServerError)
