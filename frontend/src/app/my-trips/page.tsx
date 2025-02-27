@@ -10,7 +10,7 @@ import {
 import { Itinerary } from "@/lib/types";
 import { Plus } from "lucide-react";
 
-export default async function HomePage() {
+export default async function MyTripsPage() {
     const cookieStore = await cookies();
     const userData = cookieStore.get("user")?.value;
 
@@ -59,18 +59,6 @@ export default async function HomePage() {
 
                     <div className="flex flex-col">
                         <ItineraryCarousel itineraries={userItinerary} />
-                    </div>
-                    <div className="mt-12">
-                        <h2 className="mb-6 text-4xl font-bold tracking-tight">
-                            Collabs
-                        </h2>
-                        <ItineraryCarousel itineraries={CollabItinerary} />
-                    </div>
-                    <div className="mt-12">
-                        <h2 className="mb-6 text-4xl font-bold tracking-tight">
-                            Explore
-                        </h2>
-                        <ItineraryCarousel itineraries={publicItinerary} />
                     </div>
                 </main>
             </div>

@@ -162,10 +162,7 @@ export async function fetchCollabItinerary(): Promise<Itinerary[] | undefined> {
         }
 
         const data: Itinerary[] = await response.json();
-        console.log(
-            "ItineraryCollaborator - Fetched user's collaborated itinerary:",
-            data
-        );
+
         return data;
     } catch (error) {
         console.error(
@@ -208,9 +205,9 @@ export async function createItinerary(
         if (!response.ok) {
             const errorData = await response.json().catch(() => null);
             throw new Error(
-                `Failed to create itinerary: ${response.status} ${response.statusText}${
-                    errorData ? ` - ${JSON.stringify(errorData)}` : ""
-                }`
+                `Failed to create itinerary: ${response.status} ${
+                    response.statusText
+                }${errorData ? ` - ${JSON.stringify(errorData)}` : ""}`
             );
         }
 
