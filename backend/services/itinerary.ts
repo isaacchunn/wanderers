@@ -159,7 +159,7 @@ export const getItineraryById = async (
   itineraryId: number,
   requesterUserId: number
 ) => {
-  let itinerary = await db.itinerary.findFirst({
+  const itinerary = await db.itinerary.findFirst({
     where: {
       id: itineraryId,
       active: true,
