@@ -19,11 +19,22 @@ const isUserAuthorized = async (userId: number, itineraryId: number) => {
 
   const isOwner = itinerary.owner_id === userId;
   const isCollaborator = itinerary.collaborators.some(
-    (collaborator) => collaborator.id === userId,
+    (collaborator) => collaborator.id === userId
   );
 
   return isOwner || isCollaborator;
 };
+
+interface UpdateItineraryData {
+  userId: number;
+  itineraryId: number;
+  title: string;
+  location: string;
+  visibility: "public" | "private";
+  start_date: Date;
+  end_date: Date;
+  photo_url: string | undefined;
+}
 
 export const createItinerary = async (
   owner_id: number,
@@ -32,7 +43,7 @@ export const createItinerary = async (
   visibility: ItineraryVisibility,
   start_date: Date,
   end_date: Date,
-  collaborators: string[] | undefined,
+  collaborators: string[] | undefined
 ) => {
   const createdItinerary = await db.itinerary.create({
     data: {
@@ -70,268 +81,295 @@ export const createItinerary = async (
         collaborator.email,
         owner?.username || "",
         title,
-        location,
+        location
       );
     }
   }
 
-    const itinerary = await db.itinerary.findFirst({
-        where: { 
-            id: createdItinerary.id,
-            active: true,
+  const itinerary = await db.itinerary.findFirst({
+    where: {
+      id: createdItinerary.id,
+      active: true,
+    },
+    include: {
+      owner: {
+        select: {
+          username: true,
+          user_photo: true,
         },
-        include: {
-            owner: {
-              select: {
-                username: true,
-                user_photo: true,
-              },
-            },
-            collaborators: {
-                select: {
-                    id: true,
-                    email: true,
-                    username: true,
-                    user_photo: true,
-                },
-            },
-            _count: {
-                select: {
-                    votes: true,
-                },
-            },
+      },
+      collaborators: {
+        select: {
+          id: true,
+          email: true,
+          username: true,
+          user_photo: true,
         },
-    });
-    
-    return itinerary;
-}
+      },
+      _count: {
+        select: {
+          votes: true,
+        },
+      },
+    },
+  });
+
+  return itinerary;
+};
 
 export const getItineraries = async (page: number = 1, limit: number = 10) => {
-    const skip = (page - 1) * limit;
-    const itineraries = await db.itinerary.findMany({
-        where: { 
-            active: true,
-            visibility: "public",
+  const skip = (page - 1) * limit;
+  const itineraries = await db.itinerary.findMany({
+    where: {
+      active: true,
+      visibility: "public",
+    },
+    include: {
+      owner: {
+        select: {
+          username: true,
+          user_photo: true,
         },
-        include: {
-            owner: {
-                select: {
-                  username: true,
-                  user_photo: true,
-                },
-            },
-            collaborators: {
-                select: {
-                    id: true,
-                    email: true,
-                    username: true,
-                    user_photo: true,
-                },
-            },
-            _count: {
-                select: {
-                    votes: true,
-                },
-            },
+      },
+      collaborators: {
+        select: {
+          id: true,
+          email: true,
+          username: true,
+          user_photo: true,
         },
-        orderBy: {
-            created_at: 'desc',
+      },
+      _count: {
+        select: {
+          votes: true,
         },
-        skip,
-        take: limit,
-    }); 
+      },
+    },
+    orderBy: {
+      created_at: "desc",
+    },
+    skip,
+    take: limit,
+  });
 
   return itineraries;
 };
 
-export const getItineraryById = async (itineraryId: number, requesterUserId: number | null) => {
-    const itinerary = await db.itinerary.findFirst({
-        where: { 
-            id: itineraryId,
-            active: true,
+export const getItineraryById = async (
+  itineraryId: number,
+  requesterUserId: number | null
+) => {
+  const itinerary = await db.itinerary.findFirst({
+    where: {
+      id: itineraryId,
+      active: true,
+    },
+    include: {
+      owner: {
+        select: {
+          username: true,
+          user_photo: true,
         },
-        include: {
-            owner: {
-                select: {
-                  username: true,
-                  user_photo: true,
-                },
-            },
-            collaborators: {
-                select: {
-                    id: true,
-                    email: true,
-                    username: true,
-                    user_photo: true,
-                },
-            },
-            _count: {
-                select: {
-                    votes: true,
-                }
-            },
-        }
-    }); 
+      },
+      collaborators: {
+        select: {
+          id: true,
+          email: true,
+          username: true,
+          user_photo: true,
+        },
+      },
+      _count: {
+        select: {
+          votes: true,
+        },
+      },
+    },
+  });
 
-    if (itinerary && itinerary.visibility === 'private') {
-        return requesterUserId ? await isUserAuthorized(requesterUserId, itineraryId) ? itinerary : null : null;
-    }
+  if (!requesterUserId) {
+    return null;
+  }
 
-  return itinerary;
+  const isAuthorized = await isUserAuthorized(requesterUserId, itineraryId);
+
+  if (isAuthorized) {
+    return itinerary;
+  }
+
+  return null;
 };
 
 export const getCreatedItineraries = async (
   userId: number,
   isOwner: boolean,
   page: number = 1,
-  limit: number = 10,
+  limit: number = 10
 ) => {
-    const skip = (page - 1) * limit;
-    const user = await db.user.findFirst({
-        where: {
-            id: userId,
-        },
-        include: {
-            itineraries: {
-                where: isOwner ? {
-                    active: true,
-                }: 
-                {
-                    active: true,
-                    visibility: 'public'
-                },
-                include: {
-                    owner: {
-                        select: {
-                          username: true,
-                          user_photo: true,
-                        },
-                    },
-                    collaborators: {
-                        select: {
-                            id: true,
-                            email: true,
-                            username: true,
-                            user_photo: true,
-                        },
-                    },
-                    _count: {
-                        select: {
-                            votes: true,
-                        },
-                    },
-                },
-                orderBy: {
-                    created_at: 'desc',
-                },
-                skip,
-                take: limit,
+  const skip = (page - 1) * limit;
+  const user = await db.user.findFirst({
+    where: {
+      id: userId,
+    },
+    include: {
+      itineraries: {
+        where: isOwner
+          ? {
+              active: true,
+            }
+          : {
+              active: true,
+              visibility: "public",
             },
-        },
-    });
-    return user?.itineraries;
-}
-
-export const getCollabItineraries = async (userId: number, page: number = 1, limit: number = 10) => {
-    const skip = (page - 1) * limit;
-    const user = await db.user.findFirst({
-        where: {
-            id: userId,
-        },
         include: {
-            collaborated_itineraries: {
-                where: {
-                    active: true,
-                },
-                include: {
-                    owner: {
-                        select: {
-                          username: true,
-                          user_photo: true,
-                        },
-                    },
-                    collaborators: {
-                        select: {
-                            id: true,
-                            email: true,
-                            username: true,
-                            user_photo: true,
-                        },
-                    },
-                    _count: {
-                        select: {
-                            votes: true,
-                        },
-                    },
-                },
-                orderBy: {
-                    created_at: 'desc',
-                },
-                skip,
-                take: limit,
+          owner: {
+            select: {
+              username: true,
+              user_photo: true,
             },
+          },
+          collaborators: {
+            select: {
+              id: true,
+              email: true,
+              username: true,
+              user_photo: true,
+            },
+          },
+          _count: {
+            select: {
+              votes: true,
+            },
+          },
         },
-    });
-    return user?.collaborated_itineraries;
-}
+        orderBy: {
+          created_at: "desc",
+        },
+        skip,
+        take: limit,
+      },
+    },
+  });
+  return user?.itineraries;
+};
 
-export const updateItinerary = async (
-    itineraryId: number,
-    title: string,
-    location: string,
-    photo_url: string | null,
-    visibility: ItineraryVisibility,
-    start_date: Date,
-    end_date: Date,
+export const getCollabItineraries = async (
+  userId: number,
+  page: number = 1,
+  limit: number = 10
 ) => {
-    let itinerary = await db.itinerary.update({
+  const skip = (page - 1) * limit;
+  const user = await db.user.findFirst({
+    where: {
+      id: userId,
+    },
+    include: {
+      collaborated_itineraries: {
         where: {
-            id: itineraryId,
-            active: true,
-        },
-        data: {
-            title,
-            location,
-            photo_url,
-            visibility,
-            start_date,
-            end_date,
+          active: true,
         },
         include: {
-            owner: {
-                select: {
-                  username: true,
-                  user_photo: true,
-                },
+          owner: {
+            select: {
+              username: true,
+              user_photo: true,
             },
-            collaborators: {
-                select: {
-                    id: true,
-                    email: true,
-                    username: true,
-                    user_photo: true,
-                },
+          },
+          collaborators: {
+            select: {
+              id: true,
+              email: true,
+              username: true,
+              user_photo: true,
             },
-            _count: {
-                select: {
-                    votes: true,
-                },
+          },
+          _count: {
+            select: {
+              votes: true,
             },
+          },
         },
-    });
+        orderBy: {
+          created_at: "desc",
+        },
+        skip,
+        take: limit,
+      },
+    },
+  });
+  return user?.collaborated_itineraries;
+};
+
+export const updateItinerary = async (data: UpdateItineraryData) => {
+  let itinerary = await db.itinerary.update({
+    where: {
+      id: data.itineraryId,
+      owner_id: data.userId,
+      active: true,
+    },
+    data: {
+      title: data.title,
+      location: data.location,
+      photo_url: data.photo_url,
+      visibility: data.visibility,
+      start_date: data.start_date,
+      end_date: data.end_date,
+    },
+    include: {
+      owner: {
+        select: {
+          username: true,
+          user_photo: true,
+        },
+      },
+      collaborators: {
+        select: {
+          id: true,
+          email: true,
+          username: true,
+          user_photo: true,
+        },
+      },
+      _count: {
+        select: {
+          votes: true,
+        },
+      },
+    },
+  });
 
   return itinerary;
 };
 
-export const deleteItinerary = async (itineraryId: number) => {
-  const count = await db.itinerary.updateMany({
+export const deleteItinerary = async (userId: number, itineraryId: number) => {
+  const result = await db.itinerary.updateMany({
     where: {
       id: itineraryId,
+      owner_id: userId,
+      active: true,
     },
     data: {
       active: false,
     },
   });
 
-  return count;
+  return result.count;
+};
+
+export const undoDeleteItinerary = async (
+  userId: number,
+  itineraryId: number
+) => {
+  const result = await db.itinerary.updateMany({
+    where: {
+      id: itineraryId,
+      owner_id: userId,
+      active: false,
+    },
+    data: {
+      active: true,
+    },
+  });
+
+  return result.count;
 };

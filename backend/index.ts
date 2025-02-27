@@ -19,6 +19,7 @@ import itineraryProtectedRouter from "./routes/itineraryProtected";
 import itineraryPublicRouter from "./routes/itineraryPublic";
 import placeRouter from "./routes/place";
 import userRouter from "./routes/user";
+import profileRouter from "./routes/profile";
 
 const port = process.env.PORT || 4000;
 const app = express();
@@ -83,6 +84,8 @@ app.use("/api/itinerary", itineraryProtectedRouter);
 app.use("/api/public/itinerary", itineraryPublicRouter);
 app.use("/api/place", limiter, placeRouter);
 app.use("/api/user", userRouter);
+app.use("/api/profile", profileRouter);
+
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "../frontend/build")));
 
