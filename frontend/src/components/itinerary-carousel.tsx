@@ -19,6 +19,7 @@ export function ItineraryCarousel({
 }: {
     readonly itineraries: Readonly<Itinerary[]>;
 }) {
+    console.log(itineraries.map(itinerary => itinerary.photo_url));
     return (
         <Carousel
             opts={{
