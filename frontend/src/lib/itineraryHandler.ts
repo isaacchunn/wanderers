@@ -19,6 +19,7 @@ export async function fetchItineraryById(
                     Authorization: `Bearer ${token}`,
                 },
                 cache: "no-store",
+                next: { revalidate: 10 },
             }
         );
 
@@ -50,6 +51,7 @@ export async function fetchPublicItineraryById(
                     "Content-Type": "application/json",
                 },
                 cache: "no-store",
+                next: { revalidate: 10 },
             }
         );
 
@@ -79,6 +81,7 @@ export async function fetchPublicItinerary(): Promise<Itinerary[] | undefined> {
                     "Content-Type": "application/json",
                 },
                 cache: "no-store",
+                next: { revalidate: 10 },
             }
         );
 
@@ -119,6 +122,7 @@ export async function fetchUserItinerary(
                     Authorization: `Bearer ${token}`,
                 },
                 cache: "no-store",
+                next: { revalidate: 10 },
             }
         );
 
@@ -152,6 +156,7 @@ export async function fetchCollabItinerary(): Promise<Itinerary[] | undefined> {
                     Authorization: `Bearer ${token}`,
                 },
                 cache: "no-store",
+                next: { revalidate: 10 },
             }
         );
 
@@ -202,6 +207,7 @@ export async function createItinerary(
                     collaborators,
                 }),
                 cache: "no-store",
+                next: { revalidate: 10 },
             }
         );
 
@@ -239,6 +245,7 @@ export async function deleteItinerary(
                     "Content-Type": "application/json",
                 },
                 cache: "no-store",
+                next: { revalidate: 10 },
             }
         );
 
@@ -266,6 +273,7 @@ export async function restoreItinerary(id: string): Promise<boolean> {
                     "Content-Type": "application/json",
                 },
                 cache: "no-store",
+                next: { revalidate: 10 },
             }
         );
 
@@ -294,6 +302,7 @@ export async function updateItinerary(
                 },
                 body: JSON.stringify(itinerary),
                 cache: "no-store",
+                next: { revalidate: 10 },
             }
         );
 
