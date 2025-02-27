@@ -1,18 +1,26 @@
-import { Search } from "@/lib/types";
+import { Activity } from "@/lib/types";
 import { BACKEND_URL } from "@/lib/utils";
+import { getToken } from "@/lib/auth";
+const NEXT_PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-export async function addActivity(search: Search): Promise<object | undefined> {
-    console.log("Activity - Adding activity:", search);
+export async function addActivity(
+    activity: Activity
+): Promise<object | undefined> {
     try {
-        const response = await fetch(`${BACKEND_URL}/api/place/search`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(search),
-            cache: "no-store",
-            next: { revalidate: 10 },
-        });
+        const token = await getToken();
+        const response = await fetch(
+            `${NEXT_PUBLIC_BACKEND_URL}/api/activity`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(activity),
+
+                cache: "no-store",
+            }
+        );
 
         if (!response.ok) {
             console.log(
@@ -21,7 +29,7 @@ export async function addActivity(search: Search): Promise<object | undefined> {
         }
 
         const data: object = await response.json();
-        console.log("Activity - Fetched Google Places Response:", data);
+
         return data;
     } catch (error) {
         console.error(
@@ -31,29 +39,29 @@ export async function addActivity(search: Search): Promise<object | undefined> {
         return undefined;
     }
 }
-export async function getActivity(id: string): Promise<object[] | undefined> {
-    console.log("Activity - Retrieving activity:", id);
+
+export async function getActivity(id: string): Promise<Activity[] | undefined> {
     try {
+        const token = await getToken();
         const response = await fetch(
-            `${BACKEND_URL}/api/activity/itinerary/${id}`,
+            `${NEXT_PUBLIC_BACKEND_URL}/api/activity/itinerary/${id}`,
             {
-                method: "POST",
+                method: "GET",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
                 cache: "no-store",
-                next: { revalidate: 10 },
             }
         );
-
         if (!response.ok) {
             console.log(
                 `Failed to retrieve Activity: ${response.status} ${response.statusText}`
             );
             return undefined;
         }
-        const data: object[] = await response.json();
-        console.log("Activity - Successfully retrieved activity:", data);
+        const data: Activity[] = await response.json();
+
         return data;
     } catch (error) {
         console.error(
@@ -65,19 +73,16 @@ export async function getActivity(id: string): Promise<object[] | undefined> {
 }
 
 export async function deleteActivity(id: string): Promise<boolean> {
-    console.log("Activity - Deleting activity:", id);
     try {
-        const response = await fetch(
-            `${BACKEND_URL}/api/activity/${id}`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                cache: "no-store",
-                next: { revalidate: 10 },
-            }
-        );
+        const token = await getToken();
+        const response = await fetch(`${BACKEND_URL}/api/activity/${id}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            cache: "no-store",
+        });
 
         if (!response.ok) {
             console.log(
@@ -85,7 +90,7 @@ export async function deleteActivity(id: string): Promise<boolean> {
             );
             return false;
         }
-        console.log("Activity - Successfully deleted activity:");
+
         return true;
     } catch (error) {
         console.error(

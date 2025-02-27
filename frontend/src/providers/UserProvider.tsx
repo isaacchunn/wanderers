@@ -13,6 +13,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
     useEffect(() => {
         if (pathname !== "/login" && pathname !== "/signup" && !isUserFetched) {
             const tokenString = localStorage.getItem("token");
+
             if (tokenString) {
                 try {
                     const tokenData = JSON.parse(tokenString);

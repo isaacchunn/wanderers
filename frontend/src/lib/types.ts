@@ -1,4 +1,4 @@
-// [TODO] : Types to be updated as per the backend response [PLACEHOLDER INTERFACE FOR NOW]
+// Types to be updated as per the backend response [PLACEHOLDER INTERFACE FOR NOW]
 // This file contains the types that are used in the frontend
 
 export interface Itinerary {
@@ -21,52 +21,44 @@ export interface Itinerary {
 }
 
 export interface Activity {
-    id: string;
+    id: number;
     title: string;
     description: string;
-    image: string;
-    time: string;
-    placeDetails?: PlaceDetails;
+    itinerary_id: number;
+    lat: number;
+    lon: number;
+    expense: number;
+    split: string;
+    sequence: number;
+    photo_url: string;
+    start_date: Date;
+    end_date: Date;
+    active: true;
+    created_at: Date;
+    place_id: string;
+    formatted_address: string;
+    types: string[];
+    rating: number;
+    user_ratings_total: number;
+    international_phone_number: string;
+    website: string;
+    opening_hours: string[];
+    google_maps_url: string;
 }
 
 export interface PlaceDetails {
-    place_id: string;
-    name: string;
-    formatted_address: string;
-    formatted_phone_number?: string;
-    international_phone_number?: string;
-    website?: string;
-    rating?: number;
-    user_ratings_total?: number;
-    price_level?: number; // 0 to 4
-    opening_hours?: {
-        weekday_text: string[];
-        open_now?: boolean;
-    };
-    photos?: {
-        photo_reference: string;
-        height: number;
-        width: number;
-    }[];
-    address_components: {
-        long_name: string;
-        short_name: string;
-        types: string[];
-    }[];
-    geometry: {
-        location: {
-            lat: number;
-            lng: number;
-        };
-    };
-    reviews?: {
-        author_name: string;
-        rating: number;
-        relative_time_description: string;
-        text: string;
-        profile_photo_url: string;
-    }[];
-    types?: string[];
+    title: string;
+    lat: number;
+    lon: number;
+    image: string;
+    types: string[];
+    internationalPhoneNumber: string;
+    website: string;
+    formattedAddress: string;
+    userRatingsTotal: number;
+    rating: number;
+    openingHours: string[];
+    googleMapsUrl: string;
 }
 
 export interface Search {
