@@ -187,12 +187,8 @@ export const getItineraryById = async (
     },
   });
 
-  if (itinerary) {
-    const isAuthorized = await isUserAuthorized(requesterUserId, itineraryId);
-    const isPrivate = itinerary.visibility === "private";
-    if (!isAuthorized && isPrivate) {
-      itinerary = null;
-    }
+  if (itinerary && !await isUserAuthorized(requesterUserId, itineraryId) && itinerary.visibility === "private") {
+    return null;
   }
 
   return itinerary;
