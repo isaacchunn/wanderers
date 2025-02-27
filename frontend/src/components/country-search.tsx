@@ -149,18 +149,21 @@ export function CountrySearch({ onCountryChange }: Readonly<CountryProps>) {
                         }}
                     >
                         {filteredCountries.map((country, index) => (
-                            <div
-                                key={country.id}
-                                className={cn(
-                                    "px-3 py-2 cursor-pointer hover:bg-secondary hover:text-secondary-foreground",
-                                    activeIndex === index &&
-                                        "bg-secondary text-secondary-foreground"
-                                )}
-                                onClick={(e) => handleCountrySelect(country, e)}
-                                onMouseEnter={() => setActiveIndex(index)}
-                                onKeyDown={handleKeyDown}
-                            >
-                                {country.name}
+                            <div key={country.id}>
+                                <button
+                                    className={cn(
+                                        "px-3 py-2 cursor-pointer hover:bg-secondary hover:text-secondary-foreground text-left w-full",
+                                        activeIndex === index &&
+                                            "bg-secondary text-secondary-foreground"
+                                    )}
+                                    onClick={(e) =>
+                                        handleCountrySelect(country, e)
+                                    }
+                                    onMouseEnter={() => setActiveIndex(index)}
+                                    // onKeyDown={handleKeyDown}
+                                >
+                                    {country.name}
+                                </button>
                             </div>
                         ))}
                     </div>

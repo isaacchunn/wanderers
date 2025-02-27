@@ -36,10 +36,10 @@ const formSchema = z.object({
 export default function AddPlaceDialog({
     itinerary,
     activities,
-}: {
+}: Readonly<{
     itinerary: Itinerary;
     activities: Activity[];
-}) {
+}>) {
     // PlaceDetailsResults stores the response from the backend API
     const [placeDetailsResults, setPlaceDetailsResults] = useState<
         PlaceDetails[]
@@ -102,13 +102,13 @@ export default function AddPlaceDialog({
             console.error("Selected place details not found");
             return;
         }
-        /** [TODO] : Theres mismatch between activity creation & places responses endpoint,
+        /** Theres mismatch between activity creation & places responses endpoint,
          * cant destructure the response from the backend API as it is not returning the same fields as the activity creation
          */
         const newActivity: Activity = {
             id: Date.now(), // Example: Generating a unique ID
             title: selectedPlaceDetails.title,
-            description: values.notes || "",
+            description: values.notes ?? "",
             itinerary_id: itinerary.id,
             lat: selectedPlaceDetails.lat,
             lon: selectedPlaceDetails.lon,

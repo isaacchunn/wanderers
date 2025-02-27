@@ -23,9 +23,9 @@ import { Activity } from "@/lib/types";
 
 export function SortableItinerary({
     fetchedActivities,
-}: {
+}: Readonly<{
     fetchedActivities: Activity[];
-}) {
+}>) {
     const [activities, setActivities] = useState<Activity[]>(fetchedActivities);
     useEffect(() => {
         setActivities(fetchedActivities);

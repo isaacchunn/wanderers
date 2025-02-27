@@ -28,7 +28,9 @@ interface SortableLocationCardProps {
     activity: Activity;
 }
 
-export function SortableLocationCard({ activity }: SortableLocationCardProps) {
+export function SortableLocationCard({
+    activity,
+}: Readonly<SortableLocationCardProps>) {
     const {
         attributes,
         listeners,
@@ -167,7 +169,7 @@ export function SortableLocationCard({ activity }: SortableLocationCardProps) {
                                                         {activity.opening_hours.map(
                                                             (day, index) => (
                                                                 <DropdownMenuItem
-                                                                    key={index}
+                                                                    key={day}
                                                                 >
                                                                     {day}
                                                                 </DropdownMenuItem>

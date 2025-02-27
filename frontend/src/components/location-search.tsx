@@ -13,7 +13,7 @@ export function LocationSearch({
     onSearch,
     onSelect,
     autoCompleteResults,
-}: SearchProps) {
+}: Readonly<SearchProps>) {
     const [search, setSearch] = React.useState("");
     const [selectedIndex, setSelectedIndex] = React.useState(-1);
     const [showDropdown, setShowDropdown] = React.useState(false);
@@ -24,7 +24,7 @@ export function LocationSearch({
     React.useEffect(() => {
         const handler = setTimeout(() => {
             if (search) onSearch(search);
-        }, 1500);
+        }, 500);
 
         return () => clearTimeout(handler);
     }, [search, onSearch]);
