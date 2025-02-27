@@ -1,4 +1,4 @@
-// [TODO] : Types to be updated as per the backend response [PLACEHOLDER INTERFACE FOR NOW]
+// Types to be updated as per the backend response [PLACEHOLDER INTERFACE FOR NOW]
 // This file contains the types that are used in the frontend
 
 export interface Itinerary {
