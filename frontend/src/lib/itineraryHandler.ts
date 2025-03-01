@@ -207,7 +207,7 @@ export async function createItinerary(
             throw new Error(
                 `Failed to create itinerary: ${response.status} ${
                     response.statusText
-                }${errorData ? ` - ${JSON.stringify(errorData)}` : ""}`
+                }${errorData}`
             );
         }
 
