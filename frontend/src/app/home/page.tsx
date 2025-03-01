@@ -63,7 +63,7 @@ export default async function HomePage() {
                             Your Itineraries
                         </h2>
                         {userItinerary.length === 0 ? (
-                            <p className="text-muted-foreground">There's nothing out here! Please create itineraries to begin your journey!</p>
+                            <p className="text-muted-foreground">There&apos;s nothing out here! Please create itineraries to begin your journey!</p>
                         ) : (
                             <ItineraryCarousel itineraries={userItinerary} />
                         )}
@@ -73,7 +73,7 @@ export default async function HomePage() {
                             Collabs
                         </h2>
                         {CollabItinerary.length === 0 ? (
-                            <p className="text-muted-foreground">There's nothing out here! Bump your friends to invite you for a trip planning session!</p>
+                            <p className="text-muted-foreground">There&apos;s nothing out here! Bump your friends to invite you for a trip planning session!</p>
                         ) : (
                             <ItineraryCarousel itineraries={CollabItinerary} />
                         )}
@@ -83,7 +83,7 @@ export default async function HomePage() {
                             Explore
                         </h2>
                         {publicItinerary.length === 0 ? (
-                            <p className="text-muted-foreground">There's nothing out here! Be the first to share your journey!</p>
+                            <p className="text-muted-foreground">There&apos;s nothing out here! Be the first to share your journey!</p>
                         ) : (
                             <ItineraryCarousel itineraries={publicItinerary} />
                         )}

@@ -17,9 +17,6 @@ export default async function MyTripsPage() {
         userItinerary = (await fetchUserItinerary(jsonUserData.id)) || [];
     }
 
-    console.log(userItinerary)
-    console.log(userItinerary.length)
-
     if (!(userItinerary)) {
         return (
             <div className="bg-background p-6 md:p-12 flex items-center justify-items-center">
@@ -38,7 +35,7 @@ export default async function MyTripsPage() {
                 <div className="mx-auto max-w-6xl">
                     <h1 className="text-4xl font-bold tracking-tight">Hey there!</h1>
                     <p className="mt-2 text-muted-foreground">
-                        You have yet to create itineraries, do create one in the home page!
+                        You don&apos;t have any itineraries, do create one in the home page!
                     </p>
                 </div>
             </div>

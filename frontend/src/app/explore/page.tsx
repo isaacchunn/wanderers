@@ -33,7 +33,7 @@ export default async function MyTripsPage() {
                 <div className="mx-auto max-w-6xl">
                     <h1 className="text-4xl font-bold tracking-tight">Hey there!</h1>
                     <p className="mt-2 text-muted-foreground">
-                        There's nothing out here! Be the first to share your journey!
+                        There&apos;s nothing out here! Be the first to share your journey!
                     </p>
                 </div>
             </div>
