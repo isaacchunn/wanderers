@@ -24,6 +24,7 @@ export default async function HomePage() {
         publicItinerary = (await fetchPublicItinerary()) || [];
         CollabItinerary = (await fetchCollabItinerary()) || [];
     }
+
     if (!(userItinerary || publicItinerary || CollabItinerary)) {
         return (
             <div className="bg-background p-6 md:p-12 flex items-center justify-items-center">
@@ -43,7 +44,7 @@ export default async function HomePage() {
                     <div className="mb-12 flex items-center justify-between">
                         <div className="flex flex-col space-y-1">
                             <h1 className="text-4xl font-bold tracking-tight">
-                                Your Itineraries
+                                Welcome to Wanderers!
                             </h1>
                             <p className="mt-2 text-muted-foreground">
                                 Plan and organize your upcoming adventures
@@ -58,19 +59,34 @@ export default async function HomePage() {
                     </div>
 
                     <div className="flex flex-col">
-                        <ItineraryCarousel itineraries={userItinerary} />
+                        <h2 className="mb-6 text-4xl font-bold tracking-tight">
+                            Your Itineraries
+                        </h2>
+                        {userItinerary.length === 0 ? (
+                            <p className="text-muted-foreground">There's nothing out here! Please create itineraries to begin your journey!</p>
+                        ) : (
+                            <ItineraryCarousel itineraries={userItinerary} />
+                        )}
                     </div>
                     <div className="mt-12">
                         <h2 className="mb-6 text-4xl font-bold tracking-tight">
                             Collabs
                         </h2>
-                        <ItineraryCarousel itineraries={CollabItinerary} />
+                        {CollabItinerary.length === 0 ? (
+                            <p className="text-muted-foreground">There's nothing out here! Bump your friends to invite you for a trip planning session!</p>
+                        ) : (
+                            <ItineraryCarousel itineraries={CollabItinerary} />
+                        )}
                     </div>
                     <div className="mt-12">
                         <h2 className="mb-6 text-4xl font-bold tracking-tight">
                             Explore
                         </h2>
-                        <ItineraryCarousel itineraries={publicItinerary} />
+                        {publicItinerary.length === 0 ? (
+                            <p className="text-muted-foreground">There's nothing out here! Be the first to share your journey!</p>
+                        ) : (
+                            <ItineraryCarousel itineraries={publicItinerary} />
+                        )}
                     </div>
                 </main>
             </div>

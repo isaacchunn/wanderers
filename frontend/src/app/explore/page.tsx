@@ -27,6 +27,17 @@ export default async function MyTripsPage() {
                 </div>
             </div>
         );
+    } else if (publicItinerary.length == 0) {
+        return (
+            <div className="bg-background p-6 md:p-12 flex items-center justify-items-center">
+                <div className="mx-auto max-w-6xl">
+                    <h1 className="text-4xl font-bold tracking-tight">Hey there!</h1>
+                    <p className="mt-2 text-muted-foreground">
+                        There's nothing out here! Be the first to share your journey!
+                    </p>
+                </div>
+            </div>
+        )
     } else {
         return (
             <div className="min-h-screen bg-background">

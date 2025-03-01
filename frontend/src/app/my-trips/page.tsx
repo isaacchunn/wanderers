@@ -2,11 +2,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { Button } from "@/components/ui/button";
 import { ItineraryCarousel } from "@/components/itinerary-carousel";
-import {
-    fetchUserItinerary,
-    fetchPublicItinerary,
-    fetchCollabItinerary,
-} from "@/lib/itineraryHandler";
+import { fetchUserItinerary } from "@/lib/itineraryHandler";
 import { Itinerary } from "@/lib/types";
 import { Plus } from "lucide-react";
 
@@ -15,16 +11,16 @@ export default async function MyTripsPage() {
     const userData = cookieStore.get("user")?.value;
 
     let userItinerary: Itinerary[] = [];
-    let publicItinerary: Itinerary[] = [];
-    let CollabItinerary: Itinerary[] = [];
 
     if (userData) {
         const jsonUserData = JSON.parse(userData);
         userItinerary = (await fetchUserItinerary(jsonUserData.id)) || [];
-        publicItinerary = (await fetchPublicItinerary()) || [];
-        CollabItinerary = (await fetchCollabItinerary()) || [];
     }
-    if (!(userItinerary || publicItinerary || CollabItinerary)) {
+
+    console.log(userItinerary)
+    console.log(userItinerary.length)
+
+    if (!(userItinerary)) {
         return (
             <div className="bg-background p-6 md:p-12 flex items-center justify-items-center">
                 <div className="mx-auto max-w-6xl">
@@ -36,6 +32,17 @@ export default async function MyTripsPage() {
                 </div>
             </div>
         );
+    } else if (userItinerary.length == 0) {
+        return (
+            <div className="bg-background p-6 md:p-12 flex items-center justify-items-center">
+                <div className="mx-auto max-w-6xl">
+                    <h1 className="text-4xl font-bold tracking-tight">Hey there!</h1>
+                    <p className="mt-2 text-muted-foreground">
+                        You have yet to create itineraries, do create one in the home page!
+                    </p>
+                </div>
+            </div>
+        )
     } else {
         return (
             <div className="min-h-screen bg-background">
