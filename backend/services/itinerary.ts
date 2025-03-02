@@ -4,7 +4,10 @@ import { getUserByEmail } from "./user";
 import { deliverItineraryCollabEmail } from "../controllers/mail";
 
 // Helper function to check if user is an owner or collaborator
-const isUserAuthorized = async (userId: number, itineraryId: number) => {
+export const isOwnerOrCollaborator = async (
+  userId: number,
+  itineraryId: number
+) => {
   const itinerary = await db.itinerary.findUnique({
     where: { id: itineraryId },
     select: {
@@ -188,7 +191,10 @@ export const getItineraryById = async (
   });
 
   if (itinerary && itinerary.visibility === "private") {
-    const isAuthorized = await isUserAuthorized(requesterUserId, itineraryId);
+    const isAuthorized = await isOwnerOrCollaborator(
+      requesterUserId,
+      itineraryId
+    );
     if (!isAuthorized) {
       return null;
     }

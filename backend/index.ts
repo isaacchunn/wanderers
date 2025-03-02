@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { rateLimit } from "express-rate-limit";
+import http from "http";
 
 dotenv.config({ path: path.resolve(__dirname, "./.env") });
 
@@ -20,11 +21,15 @@ import itineraryPublicRouter from "./routes/itineraryPublic";
 import placeRouter from "./routes/place";
 import userRouter from "./routes/user";
 import profileRouter from "./routes/profile";
+import chatRouter from "./routes/chat";
+
+// Import socket
+import { setupSocket } from "./services/websocket-server";
 
 const port = process.env.PORT || 4000;
 const app = express();
 
-app.use(cors({ origin: '*' }))
+app.use(cors({ origin: "*" }));
 
 // Swagger options
 const swaggerDefinition = {
@@ -85,6 +90,7 @@ app.use("/api/public/itinerary", itineraryPublicRouter);
 app.use("/api/place", limiter, placeRouter);
 app.use("/api/user", userRouter);
 app.use("/api/profile", profileRouter);
+app.use("/api/chat", chatRouter);
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "../frontend/build")));
@@ -94,14 +100,18 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
 });
 
+// socketio
+const server = http.createServer(app);
+setupSocket(server);
+
 // the check is needed for testing
 // refer to https://stackoverflow.com/a/63299022
 if (process.env.NODE_ENV !== "test") {
   // sequelize.sync().then(() => {
-  app.listen(Number(port), "0.0.0.0", () => {
+  server.listen(Number(port), "0.0.0.0", () => {
     console.log(`[server]: Server is running at ${port}`);
     console.log(
-      `[server]: Swagger docs available at http://localhost:${port}/docs`,
+      `[server]: Swagger docs available at http://localhost:${port}/docs`
     );
   });
   // });
