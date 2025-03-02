@@ -18,12 +18,10 @@ export function ChatBox({
   itinerary,
   chatMessages,
   userId,
-  username,
 }: {
   readonly itinerary: Readonly<Itinerary>;
   chatMessages: ChatMessage[] | undefined;
   userId: string;
-  username: string;
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>(chatMessages ?? []);
   const [newMessage, setNewMessage] = useState("");
@@ -297,11 +295,12 @@ export function ChatBox({
                       <div ref={messagesEndRef}></div>
                     </div>
                   </ScrollArea>
-
                   <form onSubmit={handleSubmit} className="mt-4 flex gap-2">
                     <Input
                       placeholder={
-                        isConnectionActive ? "Type a message..." : "Connecting..."
+                        isConnectionActive
+                          ? "Type a message..."
+                          : "Connecting..."
                       }
                       value={newMessage}
                       disabled={!isConnectionActive}
