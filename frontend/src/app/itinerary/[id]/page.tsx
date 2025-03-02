@@ -29,7 +29,6 @@ export default async function ItineraryPage({
 
   let isOwnerOrCollab = false;
   let userId = null;
-  let username = null;
   if (userData) {
     const jsonUserData = JSON.parse(userData);
     isOwnerOrCollab =
@@ -38,7 +37,6 @@ export default async function ItineraryPage({
     if (isOwnerOrCollab) {
       chatMessages = await fetchChatMessages(itineraryId);
       userId = jsonUserData.id;
-      username = jsonUserData.username;
     }
   }
 
@@ -65,7 +63,6 @@ export default async function ItineraryPage({
                 itinerary={itinerary}
                 chatMessages={chatMessages}
                 userId={userId}
-                username={username}
               />
             </div>
           )}
