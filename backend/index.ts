@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from "express";
+import express from "express";
 import cors from "cors";
 import path from "path";
 import cookieParser from "cookie-parser";
@@ -6,7 +6,6 @@ import dotenv from "dotenv";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { rateLimit } from "express-rate-limit";
-import http from "http";
 
 dotenv.config({ path: path.resolve(__dirname, "./.env") });
 
@@ -100,20 +99,18 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
 });
 
-// socketio
-const server = http.createServer(app);
-setupSocket(server);
-
 // the check is needed for testing
 // refer to https://stackoverflow.com/a/63299022
 if (process.env.NODE_ENV !== "test") {
   // sequelize.sync().then(() => {
-  server.listen(Number(port), "0.0.0.0", () => {
+  const server = app.listen(Number(port), "0.0.0.0", () => {
     console.log(`[server]: Server is running at ${port}`);
     console.log(
       `[server]: Swagger docs available at http://localhost:${port}/docs`
     );
   });
+  // socket io
+  setupSocket(server);
   // });
 }
 
