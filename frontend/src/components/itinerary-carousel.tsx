@@ -12,7 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
 import { Calendar, Clock, MapPin, Users2 } from "lucide-react";
-import { getDate } from "date-fns";
+import { getTime } from "date-fns";
 
 export function ItineraryCarousel({
     itineraries,
@@ -70,7 +70,7 @@ export function ItineraryCarousel({
                                             <div className="flex items-center gap-2">
                                                 <Clock className="h-4 w-4" />
                                                 <span>
-                                                    {`${Math.floor((getDate(itinerary.end_date) - getDate(itinerary.start_date)) / (1000 * 60 * 60 * 24)) + 1} Day(s)`}
+                                                    {`${Math.floor(((getTime(itinerary.end_date) - getTime(itinerary.start_date  )) / 86400000 ))} Day(s)`}
                                                 </span>
                                             </div>
                                             <div className="flex items-center gap-2">

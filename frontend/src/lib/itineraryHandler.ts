@@ -6,7 +6,7 @@ import { getToken } from "@/lib/auth";
 const NEXT_PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export async function fetchItineraryById(
-    itineraryId: string | null
+    itineraryId: string | number | null
 ): Promise<Itinerary | undefined> {
     try {
         const token = await getToken();
@@ -183,12 +183,14 @@ export async function createItinerary(
     collaborators: string[] | undefined
 ): Promise<Itinerary | undefined> {
     try {
+        const token = await getToken();
         const response = await fetch(
             `${NEXT_PUBLIC_BACKEND_URL}/api/itinerary/`,
             {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     title,
@@ -205,8 +207,7 @@ export async function createItinerary(
         if (!response.ok) {
             const errorData = await response.json().catch(() => null);
             throw new Error(
-                `Failed to create itinerary: ${response.status} ${
-                    response.statusText
+                `Failed to create itinerary: ${response.status} ${response.statusText
                 }${errorData}`
             );
         }
@@ -228,12 +229,14 @@ export async function deleteItinerary(
     itineraryId: string | null
 ): Promise<boolean> {
     try {
+        const token = await getToken();
         const response = await fetch(
             `${NEXT_PUBLIC_BACKEND_URL}/api/itinerary/${itineraryId}`,
             {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
                 cache: "no-store",
             }
@@ -255,12 +258,14 @@ export async function deleteItinerary(
 // Restore a deleted Itinerary
 export async function restoreItinerary(id: string): Promise<boolean> {
     try {
+        const token = await getToken();
         const response = await fetch(
             `${NEXT_PUBLIC_BACKEND_URL}/api/itinerary/${id}/restore`,
             {
-                method: "PATCH",
+                method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
                 cache: "no-store",
             }
@@ -278,18 +283,31 @@ export async function restoreItinerary(id: string): Promise<boolean> {
         return false;
     }
 }
+
+// Update Itinerary with updated values
 export async function updateItinerary(
     itinerary: Itinerary
 ): Promise<Itinerary | undefined> {
     try {
+        console.log(itinerary)
+        const neededItinerary = {
+            title: itinerary.title,
+            location: itinerary.location,
+            visibility: itinerary.visibility,
+            start_date: itinerary.start_date,
+            end_date: itinerary.end_date
+        };
+        console.log(neededItinerary)
+        const token = await getToken();
         const response = await fetch(
             `${NEXT_PUBLIC_BACKEND_URL}/api/itinerary/${itinerary.id}`,
             {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(itinerary),
+                body: JSON.stringify(neededItinerary),
                 cache: "no-store",
             }
         );

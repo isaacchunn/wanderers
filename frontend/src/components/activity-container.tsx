@@ -15,16 +15,19 @@ export function ActivityContainer({
     const [activities, setActivities] = React.useState<Activity[]>([]);
     useEffect(() => {
         const fetchActivities = async () => {
-            const data: Activity[] = (await getActivity("4")) || [];
-            data.sort((a, b) => a.sequence - b.sequence);
-            setActivities(data);
+            const data: Activity[] = (await getActivity(`${itinerary.id}`)) || [];
+            const activeData = data.filter(function(data) {
+                return data.active === true
+            })
+            activeData.sort((a, b) => a.sequence - b.sequence);
+            setActivities(activeData);
         };
         fetchActivities();
     }, []);
 
     return (
-        <div className="flex flex-col space-y-6 w-fit">
-            <div className="flex justify-end -mt-9">
+        <div className="flex flex-col space-y-8 w-fit -mt-16">
+            <div className="flex justify-end">
                 <AddPlaceDialog itinerary={itinerary} activities={activities} />
             </div>
             <SortableItinerary fetchedActivities={activities} />

@@ -4,12 +4,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
+    Calendar,
     Clock,
     ExternalLink,
     Globe,
     GripVertical,
     MapPin,
-    Pencil,
     Phone,
     Star,
     ChevronDown,
@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import { Activity } from "@/lib/types";
+import { getTime } from "date-fns";
+import { DropdownSetting } from "@/components/dropdown-menuA";
 
 interface SortableLocationCardProps {
     activity: Activity;
@@ -50,7 +52,7 @@ export function SortableLocationCard({
                 <div className="mx-auto max-w-6xl">
                     <h1 className="text-4xl font-bold tracking-tight">Error</h1>
                     <p className="mt-2 text-muted-foreground">
-                        There was an error fetching the itinerary data. Please
+                        There was an error fetching the activity data. Please
                         try again later.
                     </p>
                 </div>
@@ -63,10 +65,8 @@ export function SortableLocationCard({
             style={style}
             className={`relative ${isDragging ? "z-50 shadow-lg" : ""} transition-shadow hover:shadow-md`}
         >
-            <div className="grid justify-items-end mt-2 mr-3">
-                <Button size="icon" variant="ghost">
-                    <Pencil size={16} />
-                </Button>
+            <div className="grid justify-items-end mt-2 mr-3 z-50">
+                <DropdownSetting ActivityId={activity.id} activity={activity} />
             </div>
             <CardContent className="p-1 -mt-7">
                 <div className="flex gap-1 -mt-3">
@@ -108,10 +108,23 @@ export function SortableLocationCard({
                         <div className="flex flex-col justify-between gap-2">
                             <div className="space-y-5">
                                 <div>
-                                    <div className="flex items-start justify-between gap-4">
+                                    <div className="flex items-start justify-between gap-4 mb-2 w-11/12">
                                         <h3 className="font-semibold leading-none tracking-tight">
                                             {activity.title}
                                         </h3>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Calendar className="h-4 w-4" />
+                                        <span className="text-sm">
+                                            {`${new Date(activity.start_date).toLocaleDateString()} - ${new Date(activity.end_date).toLocaleDateString()}`}
+                                        </span>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        <Clock className="h-4 w-4" />
+                                        <span className="text-sm">
+                                            {`${Math.floor(((getTime(activity.end_date) - getTime(activity.start_date)) / 86400000))} Day(s)`}
+                                        </span>
                                     </div>
                                     <div className="mt-2 flex flex-wrap gap-1">
                                         {activity.types

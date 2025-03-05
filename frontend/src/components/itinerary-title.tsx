@@ -64,10 +64,11 @@ export function ItineraryTitle({
         setTimeout(async () => {
             const updatedItinerary: Itinerary = { ...itinerary, title: title };
             const data = await updateItinerary(updatedItinerary);
-            toast.success("Saved!");
             if (!data) {
                 setTitle(itinerary.title);
                 toast.error("Failed to save itinerary title!");
+            } else {
+                toast.success("Saved!");
             }
             setSaveStatus("idle");
         }, 1500);
