@@ -8,7 +8,6 @@ export const setupSocket = (server: http.Server) => {
   const io = new Server(server, {
     cors: {
       origin: "*", // Allow all origins for now
-      methods: ["GET", "POST"],
     },
   });
 
@@ -25,11 +24,7 @@ export const setupSocket = (server: http.Server) => {
 
     socket.on(
       "sendMessage",
-      async (
-        roomId: string,
-        userId: string,
-        message: string
-      ) => {
+      async (roomId: string, userId: string, message: string) => {
         const createdChatMessage = await createMessage(
           Number(userId),
           Number(roomId),
@@ -44,11 +39,9 @@ export const setupSocket = (server: http.Server) => {
       for (const roomId in rooms) {
         if (rooms[roomId].has(socket.id)) {
           rooms[roomId].delete(socket.id);
-          console.log(`Socket ${socket.id} left room ${roomId}`);
         }
       }
-
-      console.log(`Socket ${socket.id} disconnected`);
     });
   });
+  console.log("[socket]: io connected");
 };
