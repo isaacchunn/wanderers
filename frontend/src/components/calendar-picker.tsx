@@ -103,37 +103,37 @@ export function DateRangePicker({
             toast.error("Start date cannot be later than end date");
             return false;
         }
-    
+
         if (mode.includes("activity") && itinerary?.start_date && utcDate < itinerary.start_date) {
             toast.error("Activity start date must be within itinerary date range");
             return false;
         }
-    
+
         return true;
     }
-    
+
     const validateEndDate = (utcDate: Date): boolean => {
         if (startDate && utcDate < startDate) {
             toast.error("End date cannot be earlier than start date");
             return false;
         }
-    
+
         if (mode.includes("activity") && itinerary?.end_date && utcDate > itinerary.end_date) {
             toast.error("Activity end date must be within itinerary date range");
             return false;
         }
-    
+
         return true;
     }
-    
+
     const handleDateSelect = (dateType: "start" | "end", date: Date | undefined): void => {
         if (!date) return;
-    
+
         const utcDate = toUTCDate(date);
         if (!utcDate) return;
-    
+
         let isValid = false;
-    
+
         if (dateType === "start") {
             isValid = validateStartDate(utcDate);
             if (isValid) setStartDate(utcDate);
@@ -141,43 +141,52 @@ export function DateRangePicker({
             isValid = validateEndDate(utcDate);
             if (isValid) setEndDate(utcDate);
         }
-    
+
         if (!isValid) return;
-    
+
         const newDates = {
             startDate: dateType === "start" ? utcDate : startDate,
             endDate: dateType === "end" ? utcDate : endDate,
         };
-    
+
         if (autoSave && mode === "update-itinerary") {
             setSaveStatus("saving");
         } else {
             onDateChange(newDates);
         }
-    
+
         setIsPopoverOpen("none");
     }
-    
 
-    const handlePopoverOpenChange = (open: true | false , type: "start" | "end") => {
-        if (open) {
-            setIsPopoverOpen(type)
+
+    const openPopover = (type: "start" | "end") => {
+        setIsPopoverOpen(type);
+    };
+
+    const closePopover = () => {
+        setIsPopoverOpen("none");
+    };
+
+    // Refactor the handlePopoverOpenChange function to use the open/close methods
+    const handlePopoverOpenChange = (action: "open" | "close", type: "start" | "end") => {
+        if (action === "open") {
+            openPopover(type);
         } else {
-            setIsPopoverOpen("none")
+            closePopover();
         }
-    }
+    };
 
     return (
         <div className="flex items-center space-x-2">
             {/* Start Date Popover */}
-            <Popover open={isPopoverOpen === "start"} onOpenChange={(open) => handlePopoverOpenChange(open, "start")}>
+            <Popover open={isPopoverOpen === "start"} onOpenChange={(open) => handlePopoverOpenChange(open ? "open" : "close", "start")} >
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
                         className="w-[240px] justify-start text-left font-normal z-40"
                         onClick={(e) => {
-                            e.stopPropagation()
-                            handlePopoverOpenChange(true, "start")
+                            e.stopPropagation();
+                            handlePopoverOpenChange("open", "start");
                         }}
                     >
                         <CalendarIcon className="mr-2 h-4 w-4" />
@@ -196,14 +205,14 @@ export function DateRangePicker({
             </Popover>
 
             {/* End Date Popover */}
-            <Popover open={isPopoverOpen === "end"} onOpenChange={(open) => handlePopoverOpenChange(open, "end")}>
+            <Popover open={isPopoverOpen === "end"} onOpenChange={(open) => handlePopoverOpenChange(open ? "open" : "close", "end")}>
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
                         className="w-[240px] justify-start text-left font-normal z-40"
                         onClick={(e) => {
-                            e.stopPropagation()
-                            handlePopoverOpenChange(true, "end")
+                            e.stopPropagation();
+                            handlePopoverOpenChange("open", "end");
                         }}
                     >
                         <CalendarIcon className="mr-2 h-4 w-4" />
