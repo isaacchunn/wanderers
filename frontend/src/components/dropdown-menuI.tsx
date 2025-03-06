@@ -19,7 +19,7 @@ export function DropdownSetting({
     readonly itinerary: Readonly<Itinerary>;
     readonly itineraryId: Readonly<string>;
 }) {
-    const [visible, setVisibility] = useState<"public" | "private">(itinerary.visibility as "public" | "private");
+    const [visibility, setVisibility] = useState<string>(itinerary.visibility);
     const [isUpdating, setIsUpdating] = useState(false);
     const router = useRouter();
 
@@ -36,7 +36,7 @@ export function DropdownSetting({
         setIsUpdating(true); // Disable toggle during update
 
         // Toggle visibility between public and private
-        const newVisibility = visible === "public" ? "private" : "public";
+        const newVisibility = visibility === "public" ? "private" : "public";
         const updatedItinerary: Itinerary = { ...itinerary, visibility: newVisibility };
 
         const response = await updateItinerary(updatedItinerary);
@@ -101,7 +101,7 @@ export function DropdownSetting({
                         </Label>
                         <Switch
                             id="visibility-toggle"
-                            checked={visible === "private"} // Checked when private (Lock)
+                            checked={visibility === "private"} // Checked when private (Lock)
                             onCheckedChange={handleVisibilityToggle}
                             disabled={isUpdating} // Disable during update
                         />
