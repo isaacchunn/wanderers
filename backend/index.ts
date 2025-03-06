@@ -110,7 +110,7 @@ if (process.env.NODE_ENV !== "test") {
     );
   });
   // socket io
-  setupSocket(server);
+  //setupSocket(server);
   // });
 }
 
