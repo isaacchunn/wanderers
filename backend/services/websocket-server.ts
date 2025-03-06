@@ -5,7 +5,12 @@ import { createMessage } from "./chat";
 const rooms: Record<string, Set<string>> = {};
 
 export const setupSocket = (server: http.Server) => {
-  const io = new Server(server);
+  const io = new Server(server, {
+    cors: {
+      origin: "*", // Allow all origins for now
+      methods: ["GET", "POST"],
+    },
+  });
 
   io.on("connection", (socket: Socket) => {
     socket.on("joinRoom", (roomId: string) => {
@@ -46,6 +51,4 @@ export const setupSocket = (server: http.Server) => {
       console.log(`Socket ${socket.id} disconnected`);
     });
   });
-
-  return io;
 };

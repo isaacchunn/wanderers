@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { rateLimit } from "express-rate-limit";
+import http from "http";
 
 dotenv.config({ path: path.resolve(__dirname, "./.env") });
 
@@ -102,19 +103,22 @@ app.get("*", (req, res) => {
 // the check is needed for testing
 // refer to https://stackoverflow.com/a/63299022
 if (process.env.NODE_ENV !== "test") {
+  const server = http.createServer(app);
+  // socket io
+  setupSocket(server);
+
   // sequelize.sync().then(() => {
-  const server = app.listen(Number(port), "0.0.0.0", () => {
+  server.listen(Number(port), "0.0.0.0", () => {
     console.log(`[server]: Server is running at ${port}`);
     console.log(
       `[server]: Swagger docs available at http://localhost:${port}/docs`
     );
   });
-  // socket io
-  setupSocket(server);
+
   // });
 }
 
 if (process.env.NODE_ENV === "test") {
   // sequelize.sync({ force: false})
 }
-export default app;
+// export default app;
