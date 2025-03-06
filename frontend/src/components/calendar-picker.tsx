@@ -159,7 +159,7 @@ export function DateRangePicker({
     }
     
 
-    const handlePopoverOpenChange = (open: boolean, type: "start" | "end") => {
+    const handlePopoverOpenChange = (open: true | false , type: "start" | "end") => {
         if (open) {
             setIsPopoverOpen(type)
         } else {

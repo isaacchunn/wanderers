@@ -7,7 +7,7 @@ import { updateItinerary } from "@/lib/itineraryHandler"
 import { toast } from "sonner"
 
 interface EditCalendarProps {
-    itinerary: Itinerary
+    readonly itinerary: Readonly<Itinerary>
 }
 
 export default function EditCalendar({ itinerary }: EditCalendarProps) {
