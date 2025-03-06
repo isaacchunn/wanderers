@@ -32,7 +32,7 @@ export default function DialogModal({
     // State for place details and auto-complete results
     const [placeDetailsResults, setPlaceDetailsResults] = useState<PlaceDetails[]>([])
     const [autoCompleteResults, setAutoCompleteResults] = useState<string[]>([])
-    const [query, setQuery] = useState(activityToEdit?.title || "")
+    const [query, setQuery] = useState(activityToEdit?.title ?? "")
     const [isSearching, setIsSearching] = useState(false)
     const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -144,10 +144,8 @@ export default function DialogModal({
                 setPlaceDetailsResults(data);
                 setAutoCompleteResults(data.map((place) => place.title));
             }
-        } else {
-            if (!term) {
-                setAutoCompleteResults([]);
-            }
+        } else if (!term) {
+            setAutoCompleteResults([]);
         }
     };
 

@@ -25,9 +25,8 @@ export function DropdownSetting({
 }: {
     readonly activity: Readonly<Activity>
     readonly ActivityId: Readonly<number>
-    open?: boolean
-    setOpen?: (value: boolean) => void
 }) {
+
     const router = useRouter()
     const [activities, setActivities] = useState<Activity[]>([])
     const [itinerary, setItinerary] = useState<Itinerary | null>(null)

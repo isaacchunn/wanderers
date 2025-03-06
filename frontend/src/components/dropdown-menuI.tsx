@@ -19,13 +19,13 @@ export function DropdownSetting({
     readonly itinerary: Readonly<Itinerary>;
     readonly itineraryId: Readonly<string>;
 }) {
-    const [visible, setVisibility] = useState<string>(itinerary.visibility); // Initially set to visible
+    const [visible, setVisibility] = useState<"public" | "private">("private"); // Default to "private"
     const [isUpdating, setIsUpdating] = useState(false);
     const router = useRouter();
 
     // Ensure that the initial visibility is set based on itinerary.visibility
     useEffect(() => {
-        if (itinerary && itinerary.visibility) {
+        if (itinerary?.visibility) {
             setVisibility(itinerary.visibility as "public" | "private");
         }
     }, [itinerary]);

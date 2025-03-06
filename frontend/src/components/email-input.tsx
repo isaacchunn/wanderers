@@ -45,14 +45,12 @@ export function EmailInput({ onEmailChange }: Readonly<EmailProps>) {
             const errorData = result as ErrorResponse;
             if (errorData.message === "User not found") {
                 toast.error("This email is not registered with Wanderers.");
+            } else if (result.isCurrentUser) {
+                toast.error("You cannot add yourself as a collaborator");
             } else {
-                if (result.isCurrentUser) {
-                    toast.error("You cannot add yourself as a collaborator");
-                } else {
-                    setEmails([...emails, email]);
-                    onEmailChange([...emails, email]);
-                    setInput("");
-                }
+                setEmails([...emails, email]);
+                onEmailChange([...emails, email]);
+                setInput("");
             }
             setIsChecking(false);
         } else if (e.key === "Backspace" && input === "" && emails.length > 0) {
