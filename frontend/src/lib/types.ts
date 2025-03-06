@@ -77,3 +77,13 @@ export interface SelectedCountry {
     name: string;
     code: string;
 }
+
+export interface ChatMessage {
+    id: number;
+    created_at: Date;
+    chat_message: string;
+    chat_message_by: { username: string };
+    chat_message_by_id: number;
+    itinerary_id: number;
+    active: boolean;
+}
