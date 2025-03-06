@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Activity, Itinerary } from "@/lib/types";
-import DialogModal from "@/components/dialog-model"
+import DialogModal from "@/components/dialog-model";
 
 export default function AddPlaceDialog({
     itinerary,
@@ -38,7 +38,10 @@ export default function AddPlaceDialog({
                     <DialogHeader>
                         <DialogTitle>Add New Place</DialogTitle>
                     </DialogHeader>
-                    <DialogModal itinerary={itinerary} activities={activities} />
+                    <DialogModal
+                        itinerary={itinerary}
+                        activities={activities}
+                    />
                 </DialogContent>
             </Dialog>
         </div>

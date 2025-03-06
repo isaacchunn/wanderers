@@ -8,11 +8,9 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { deleteActivity, getActivity } from "@/lib/activityHandler";
-import { deleteActivityAndRevalidate } from "@/app/itinerary/[id]/actions";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import type { Itinerary, Activity } from "@/lib/types";
 import DialogModal from "./dialog-model";
 import { useEffect, useState } from "react";
@@ -32,7 +30,6 @@ export function DropdownSetting({
     readonly activity: Readonly<Activity>;
     readonly activityId: Readonly<number>;
 }) {
-    const router = useRouter();
     const [activities, setActivities] = useState<Activity[]>([]);
     const [itinerary, setItinerary] = useState<Itinerary | null>(null);
     const [isOpen, setIsOpen] = useState(false); // State to control modal visibility
@@ -54,7 +51,7 @@ export function DropdownSetting({
 
         fetchActivities();
         fetchItinerary();
-    }, []);
+    }, [activity.itinerary_id]);
 
     const handleDelete = async () => {
         const success = await deleteActivity(activityId);

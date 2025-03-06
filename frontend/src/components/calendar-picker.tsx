@@ -1,25 +1,33 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
-import { toast } from "sonner"
-import type { Itinerary, Activity } from "@/lib/types"
+import { useState, useEffect, useRef } from "react";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { toast } from "sonner";
+import type { Itinerary, Activity } from "@/lib/types";
 
 interface DateRangePickerProps {
-    itinerary?: Itinerary
-    activity?: Activity
+    itinerary?: Itinerary;
+    activity?: Activity;
     onDateChange: (dates: {
-        startDate: Date | undefined
-        endDate: Date | undefined
-    }) => void
-    initialStartDate?: Date
-    initialEndDate?: Date
-    mode: "create-itinerary" | "update-itinerary" | "create-activity" | "update-activity"
-    autoSave?: boolean
+        startDate: Date | undefined;
+        endDate: Date | undefined;
+    }) => void;
+    initialStartDate?: Date;
+    initialEndDate?: Date;
+    mode:
+        | "create-itinerary"
+        | "update-itinerary"
+        | "create-activity"
+        | "update-activity";
+    autoSave?: boolean;
 }
 
 export function DateRangePicker({
@@ -33,70 +41,83 @@ export function DateRangePicker({
 }: Readonly<DateRangePickerProps>) {
     // Initialize with provided dates or defaults based on context
     const [startDate, setStartDate] = useState<Date | undefined>(
-        initialStartDate || activity?.start_date || itinerary?.start_date,
-    )
-    const [endDate, setEndDate] = useState<Date | undefined>(initialEndDate || activity?.end_date || itinerary?.end_date)
-    const [isPopoverOpen, setIsPopoverOpen] = useState<"start" | "end" | "none">("none")
-    const [saveStatus, setSaveStatus] = useState<"idle" | "saving">("idle")
+        initialStartDate || activity?.start_date || itinerary?.start_date
+    );
+    const [endDate, setEndDate] = useState<Date | undefined>(
+        initialEndDate || activity?.end_date || itinerary?.end_date
+    );
+    const [isPopoverOpen, setIsPopoverOpen] = useState<
+        "start" | "end" | "none"
+    >("none");
+    const [saveStatus, setSaveStatus] = useState<"idle" | "saving">("idle");
 
     // Keep references of previous values to determine changes
-    const previousValues = useRef({ startDate, endDate })
+    const previousValues = useRef({ startDate, endDate });
 
     // Auto-save effect (only used for update-itinerary mode with autoSave=true)
     useEffect(() => {
-        if (!autoSave || mode !== "update-itinerary" || saveStatus !== "saving") return
+        if (!autoSave || mode !== "update-itinerary" || saveStatus !== "saving")
+            return;
 
-        const hasChanged = previousValues.current.startDate !== startDate || previousValues.current.endDate !== endDate
+        const hasChanged =
+            previousValues.current.startDate !== startDate ||
+            previousValues.current.endDate !== endDate;
 
         if (!hasChanged) {
-            setSaveStatus("idle")
-            return
+            setSaveStatus("idle");
+            return;
         }
 
         const timer = setTimeout(() => {
             // Call onDateChange with current dates
             if (startDate && endDate) {
-                onDateChange({ startDate, endDate })
+                onDateChange({ startDate, endDate });
 
                 // Update reference values
-                previousValues.current = { startDate, endDate }
+                previousValues.current = { startDate, endDate };
             }
 
-            setSaveStatus("idle")
-        }, 1500) // Reasonable debounce delay
+            setSaveStatus("idle");
+        }, 1500); // Reasonable debounce delay
 
-        return () => clearTimeout(timer)
-    }, [startDate, endDate, onDateChange, mode, autoSave, saveStatus])
+        return () => clearTimeout(timer);
+    }, [startDate, endDate, onDateChange, mode, autoSave, saveStatus]);
 
     const toUTCDate = (date: Date | string | undefined): Date | undefined => {
-        if (!date) return undefined
+        if (!date) return undefined;
 
-        const parsedDate = typeof date === "string" ? new Date(date) : date
+        const parsedDate = typeof date === "string" ? new Date(date) : date;
 
-        return new Date(Date.UTC(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate()))
-    }
+        return new Date(
+            Date.UTC(
+                parsedDate.getFullYear(),
+                parsedDate.getMonth(),
+                parsedDate.getDate()
+            )
+        );
+    };
 
     const isDisabledDate = (date: Date, type: "start" | "end"): boolean => {
         // Base condition: No past dates
-        const today = new Date()
-        today.setHours(0, 0, 0, 0)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-        if (date < today) return true
+        if (date < today) return true;
 
         // For end date: cannot be before start date
-        if (type === "end" && startDate && date < startDate) return true
+        if (type === "end" && startDate && date < startDate) return true;
 
         // For activity dates: must be within itinerary range
         if (mode.includes("activity") && itinerary) {
-            const itineraryStart = itinerary.start_date
-            const itineraryEnd = itinerary.end_date
+            const itineraryStart = itinerary.start_date;
+            const itineraryEnd = itinerary.end_date;
 
-            if (itineraryStart && date < itineraryStart) return true
-            if (itineraryEnd && date > itineraryEnd) return true
+            if (itineraryStart && date < itineraryStart) return true;
+            if (itineraryEnd && date > itineraryEnd) return true;
         }
 
-        return false
-    }
+        return false;
+    };
 
     const validateStartDate = (utcDate: Date): boolean => {
         if (endDate && utcDate > endDate) {
@@ -104,13 +125,19 @@ export function DateRangePicker({
             return false;
         }
 
-        if (mode.includes("activity") && itinerary?.start_date && utcDate < itinerary.start_date) {
-            toast.error("Activity start date must be within itinerary date range");
+        if (
+            mode.includes("activity") &&
+            itinerary?.start_date &&
+            utcDate < itinerary.start_date
+        ) {
+            toast.error(
+                "Activity start date must be within itinerary date range"
+            );
             return false;
         }
 
         return true;
-    }
+    };
 
     const validateEndDate = (utcDate: Date): boolean => {
         if (startDate && utcDate < startDate) {
@@ -118,15 +145,24 @@ export function DateRangePicker({
             return false;
         }
 
-        if (mode.includes("activity") && itinerary?.end_date && utcDate > itinerary.end_date) {
-            toast.error("Activity end date must be within itinerary date range");
+        if (
+            mode.includes("activity") &&
+            itinerary?.end_date &&
+            utcDate > itinerary.end_date
+        ) {
+            toast.error(
+                "Activity end date must be within itinerary date range"
+            );
             return false;
         }
 
         return true;
-    }
+    };
 
-    const handleDateSelect = (dateType: "start" | "end", date: Date | undefined): void => {
+    const handleDateSelect = (
+        dateType: "start" | "end",
+        date: Date | undefined
+    ): void => {
         if (!date) return;
 
         const utcDate = toUTCDate(date);
@@ -156,8 +192,7 @@ export function DateRangePicker({
         }
 
         setIsPopoverOpen("none");
-    }
-
+    };
 
     const openPopover = (type: "start" | "end") => {
         setIsPopoverOpen(type);
@@ -168,7 +203,10 @@ export function DateRangePicker({
     };
 
     // Refactor the handlePopoverOpenChange function to use the open/close methods
-    const handlePopoverOpenChange = (action: "open" | "close", type: "start" | "end") => {
+    const handlePopoverOpenChange = (
+        action: "open" | "close",
+        type: "start" | "end"
+    ) => {
         if (action === "open") {
             openPopover(type);
         } else {
@@ -179,7 +217,12 @@ export function DateRangePicker({
     return (
         <div className="flex items-center space-x-2">
             {/* Start Date Popover */}
-            <Popover open={isPopoverOpen === "start"} onOpenChange={(open) => handlePopoverOpenChange(open ? "open" : "close", "start")} >
+            <Popover
+                open={isPopoverOpen === "start"}
+                onOpenChange={(open) =>
+                    handlePopoverOpenChange(open ? "open" : "close", "start")
+                }
+            >
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
@@ -205,7 +248,12 @@ export function DateRangePicker({
             </Popover>
 
             {/* End Date Popover */}
-            <Popover open={isPopoverOpen === "end"} onOpenChange={(open) => handlePopoverOpenChange(open ? "open" : "close", "end")}>
+            <Popover
+                open={isPopoverOpen === "end"}
+                onOpenChange={(open) =>
+                    handlePopoverOpenChange(open ? "open" : "close", "end")
+                }
+            >
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
@@ -230,5 +278,5 @@ export function DateRangePicker({
                 </PopoverContent>
             </Popover>
         </div>
-    )
+    );
 }
