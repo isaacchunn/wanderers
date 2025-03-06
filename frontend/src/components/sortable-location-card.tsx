@@ -63,10 +63,12 @@ export function SortableLocationCard({
         <Card
             ref={setNodeRef}
             style={style}
-            className={`relative ${isDragging ? "z-50 shadow-lg" : ""} transition-shadow hover:shadow-md`}
+            className={`relative ${
+                isDragging ? "z-50 shadow-lg" : ""
+            } transition-shadow hover:shadow-md`}
         >
             <div className="grid justify-items-end mt-2 mr-3 z-50">
-                <DropdownSetting ActivityId={activity.id} activity={activity} />
+                <DropdownSetting activityId={activity.id} activity={activity} />
             </div>
             <CardContent className="p-1 -mt-7">
                 <div className="flex gap-1 -mt-3">
@@ -116,14 +118,24 @@ export function SortableLocationCard({
                                     <div className="flex items-center gap-2">
                                         <Calendar className="h-4 w-4" />
                                         <span className="text-sm">
-                                            {`${new Date(activity.start_date).toLocaleDateString()} - ${new Date(activity.end_date).toLocaleDateString()}`}
+                                            {`${new Date(
+                                                activity.start_date
+                                            ).toLocaleDateString()} - ${new Date(
+                                                activity.end_date
+                                            ).toLocaleDateString()}`}
                                         </span>
                                     </div>
 
                                     <div className="flex items-center gap-2">
                                         <Clock className="h-4 w-4" />
                                         <span className="text-sm">
-                                            {`${Math.floor(((getTime(activity.end_date) - getTime(activity.start_date)) / 86400000))} Day(s)`}
+                                            {`${Math.floor(
+                                                (getTime(activity.end_date) -
+                                                    getTime(
+                                                        activity.start_date
+                                                    )) /
+                                                    86400000
+                                            )} Day(s)`}
                                         </span>
                                     </div>
                                     <div className="mt-2 flex flex-wrap gap-1">

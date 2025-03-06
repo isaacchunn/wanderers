@@ -15,10 +15,12 @@ export function ActivityContainer({
     const [activities, setActivities] = React.useState<Activity[]>([]);
     useEffect(() => {
         const fetchActivities = async () => {
-            const data: Activity[] = (await getActivity(`${itinerary.id}`)) || [];
-            const activeData = data.filter(function(data) {
-                return data.active === true
-            })
+            const data: Activity[] =
+                (await getActivity(`${itinerary.id}`)) || [];
+            const activeData = data.filter(function (data) {
+                return data.active === true;
+            });
+
             activeData.sort((a, b) => a.sequence - b.sequence);
             setActivities(activeData);
         };
