@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { rateLimit } from "express-rate-limit";
+import http from "http";
 
 dotenv.config({ path: path.resolve(__dirname, "./.env") });
 
@@ -95,9 +96,9 @@ app.use("/api/chat", chatRouter);
 app.use(express.static(path.join(__dirname, "../frontend/build")));
 
 // Catch-all route to serve the React index.html
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
-});
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "../frontend/build", "index.html"));
+// });
 
 // the check is needed for testing
 // refer to https://stackoverflow.com/a/63299022
