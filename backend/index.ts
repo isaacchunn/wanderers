@@ -7,6 +7,7 @@ import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { rateLimit } from "express-rate-limit";
 import http from "http";
+import { Server, Socket } from "socket.io";
 
 dotenv.config({ path: path.resolve(__dirname, "./.env") });
 
@@ -25,6 +26,7 @@ import chatRouter from "./routes/chat";
 
 // Import socket
 import { setupSocket } from "./services/websocket-server";
+import { createMessage } from "./services/chat";
 
 const port = process.env.PORT || 4000;
 const app = express();
@@ -105,7 +107,13 @@ app.get("*", (req, res) => {
 if (process.env.NODE_ENV !== "test") {
   const server = http.createServer(app);
   // socket io
-  setupSocket(server);
+  // setupSocket(server);
+  const io = new Server(server, {
+    cors: {
+      origin: "*", // Allow all origins for now
+      methods: ["GET", "POST"],
+    },
+  });
 
   // sequelize.sync().then(() => {
   server.listen(Number(port), "0.0.0.0", () => {
@@ -116,6 +124,42 @@ if (process.env.NODE_ENV !== "test") {
   });
 
   // });
+  const rooms: Record<string, Set<string>> = {};
+  io.on("connection", (socket: Socket) => {
+    socket.on("joinRoom", (roomId: string) => {
+      socket.join(roomId); // Join room with the given roomId
+
+      // Add to room trackingF
+      if (!rooms[roomId]) {
+        rooms[roomId] = new Set();
+      }
+      rooms[roomId].add(socket.id);
+    });
+
+    socket.on(
+      "sendMessage",
+      async (roomId: string, userId: string, message: string) => {
+        const createdChatMessage = await createMessage(
+          Number(userId),
+          Number(roomId),
+          message
+        );
+        io.to(roomId).emit("receiveMessage", createdChatMessage);
+      }
+    );
+
+    socket.on("disconnect", () => {
+      // Remove the user from the rooms
+      for (const roomId in rooms) {
+        if (rooms[roomId].has(socket.id)) {
+          rooms[roomId].delete(socket.id);
+          console.log(`Socket ${socket.id} left room ${roomId}`);
+        }
+      }
+
+      console.log(`Socket ${socket.id} disconnected`);
+    });
+  });
 }
 
 if (process.env.NODE_ENV === "test") {
