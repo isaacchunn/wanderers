@@ -71,7 +71,7 @@ export function ItineraryTitle({
                 toast.success("Saved!");
             }
             setSaveStatus("idle");
-        }, 1500);
+        }, 1000);
     };
 
     return (

@@ -119,8 +119,7 @@ export default function DialogModal({
                 retryCountRef.current += 1;
 
                 console.log(
-                    `Rate limit hit. Retrying in ${
-                        retryDelay / 1000
+                    `Rate limit hit. Retrying in ${retryDelay / 1000
                     } seconds...`
                 );
                 toast.warning(
@@ -167,7 +166,6 @@ export default function DialogModal({
     const handleSearch = async (term: string) => {
         if (term.length >= 1) {
             const data = await fetchPlaces(term);
-            console.log("Search results:", data); // Make sure this is being printed with results
             if (data) {
                 setPlaceDetailsResults(data);
                 setAutoCompleteResults(data.map((place) => place.title));
@@ -217,6 +215,8 @@ export default function DialogModal({
             placeId: activityToEdit!.place_id, // Ensure placeId is valid
         };
 
+        console.log(selectedPlaceDetails.openingHours)
+
         // If `placeDetails` is still undefined (i.e., editing activity and no place found), return an error
         if (!placeDetails) {
             toast.error("Could not find place details.");
@@ -254,7 +254,6 @@ export default function DialogModal({
             if (activityToEdit) {
                 // Editing existing activity
                 response = await editActivity(newActivity);
-                console.log(response);
                 if (response) {
                     toast.success("Activity updated successfully");
                 } else {
@@ -263,6 +262,7 @@ export default function DialogModal({
             } else {
                 // Adding new activity
                 response = await addActivity(newActivity);
+                console.log(response);
                 if (response) {
                     toast.success("Activity added successfully");
                 } else {

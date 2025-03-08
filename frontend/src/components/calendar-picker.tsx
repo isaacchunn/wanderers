@@ -23,10 +23,10 @@ interface DateRangePickerProps {
     initialStartDate?: Date;
     initialEndDate?: Date;
     mode:
-        | "create-itinerary"
-        | "update-itinerary"
-        | "create-activity"
-        | "update-activity";
+    | "create-itinerary"
+    | "update-itinerary"
+    | "create-activity"
+    | "update-activity";
     autoSave?: boolean;
 }
 
@@ -54,6 +54,17 @@ export function DateRangePicker({
     // Keep references of previous values to determine changes
     const previousValues = useRef({ startDate, endDate });
 
+    useEffect(() => {
+        if (mode.includes("activity") && itinerary) {
+            setStartDate((prevStart) =>
+                prevStart && prevStart < itinerary.start_date ? itinerary.start_date : prevStart
+            );
+            setEndDate((prevEnd) =>
+                prevEnd && prevEnd > itinerary.end_date ? itinerary.end_date : prevEnd
+            );
+        }
+    }, [itinerary, itinerary?.start_date, itinerary?.end_date, mode]);
+
     // Auto-save effect (only used for update-itinerary mode with autoSave=true)
     useEffect(() => {
         if (!autoSave || mode !== "update-itinerary" || saveStatus !== "saving")
@@ -78,7 +89,7 @@ export function DateRangePicker({
             }
 
             setSaveStatus("idle");
-        }, 1500); // Reasonable debounce delay
+        }, 1000); // Reasonable debounce delay
 
         return () => clearTimeout(timer);
     }, [startDate, endDate, onDateChange, mode, autoSave, saveStatus]);
@@ -98,25 +109,29 @@ export function DateRangePicker({
     };
 
     const isDisabledDate = (date: Date, type: "start" | "end"): boolean => {
-        // Base condition: No past dates
         const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0); // Normalize time to 00:00:00
 
+        // Disable past dates
         if (date < today) return true;
 
-        // For end date: cannot be before start date
-        if (type === "end" && startDate && date < startDate) return true;
-
-        // For activity dates: must be within itinerary range
         if (mode.includes("activity") && itinerary) {
-            const itineraryStart = itinerary.start_date;
-            const itineraryEnd = itinerary.end_date;
+            const itineraryStart = new Date(itinerary.start_date);
+            const itineraryEnd = new Date(itinerary.end_date);
 
-            if (itineraryStart && date < itineraryStart) return true;
-            if (itineraryEnd && date > itineraryEnd) return true;
+            // Ensure we set times to UTC 00:00:00 for proper comparison
+            itineraryStart.setHours(0, 0, 0, 0);
+            itineraryEnd.setHours(0, 0, 0, 0);
+
+            if (type === "start") {
+                if (date < itineraryStart) return true; // ✅ Disable before March 9
+            }
+            if (type === "end") {
+                if (date > itineraryEnd) return true; // ✅ Disable **March 29 onwards**
+            }
         }
 
-        return false;
+        return false; // ✅ Allow valid dates
     };
 
     const validateStartDate = (utcDate: Date): boolean => {
@@ -159,10 +174,7 @@ export function DateRangePicker({
         return true;
     };
 
-    const handleDateSelect = (
-        dateType: "start" | "end",
-        date: Date | undefined
-    ): void => {
+    const handleDateSelect = (dateType: "start" | "end", date: Date | undefined): void => {
         if (!date) return;
 
         const utcDate = toUTCDate(date);
@@ -172,10 +184,19 @@ export function DateRangePicker({
 
         if (dateType === "start") {
             isValid = validateStartDate(utcDate);
-            if (isValid) setStartDate(utcDate);
+            if (isValid) {
+                setStartDate(utcDate);
+
+                // Adjust endDate if it's now before startDate
+                if (endDate && endDate < utcDate) {
+                    setEndDate(utcDate);
+                }
+            }
         } else {
             isValid = validateEndDate(utcDate);
-            if (isValid) setEndDate(utcDate);
+            if (isValid) {
+                setEndDate(utcDate);
+            }
         }
 
         if (!isValid) return;
