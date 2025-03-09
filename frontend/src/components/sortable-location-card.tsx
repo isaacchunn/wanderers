@@ -47,7 +47,29 @@ export function SortableLocationCard({
         transition,
     };
 
-    console.log(activity.opening_hours)
+    const isOpen24Hours = (openingHours: string[]) => {
+        return openingHours.every((day) => day.includes("Open 24 hours"));
+    };
+
+    const OpeningHoursDropdown = ({ openingHours }: { openingHours: string[] }) => (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="p-0">
+                    <span className="text-muted-foreground font-medium">
+                        Opening Hours
+                    </span>
+                    <ChevronDown className="h-4 w-4" />
+                </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent className="w-64">
+                {openingHours.map((day) => (
+                    <DropdownMenuItem key={day}>{day}</DropdownMenuItem>
+                ))}
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+
 
     if (!activity) {
         return (
@@ -178,38 +200,14 @@ export function SortableLocationCard({
                                             <Clock className="h-4 w-4 flex-shrink-0" />
 
                                             <div className="mt-1 text-xs space-y-1">
-                                                {activity.opening_hours.length > 0 ? (
-                                                    // Check if all days are "Open 24 Hours"
-                                                    activity.opening_hours.every((day) =>
-                                                        day.includes("Open 24 hours")
-                                                    ) ? (
-                                                        // Display "Open 24 Hours" in green when all days match
-                                                        <span className="text-green-600 font-medium">
-                                                            Open 24 Hours
-                                                        </span>
-                                                    ) : (
-                                                        <DropdownMenu>
-                                                            <DropdownMenuTrigger asChild>
-                                                                <Button variant="ghost" className="p-0">
-                                                                    <span className="text-muted-foreground font-medium">
-                                                                        Opening Hours
-                                                                    </span>
-                                                                    <ChevronDown className="h-4 w-4" />
-                                                                </Button>
-                                                            </DropdownMenuTrigger>
-
-                                                            <DropdownMenuContent className="w-64">
-                                                                {activity.opening_hours.map((day, index) => (
-                                                                    <DropdownMenuItem key={index}>{day}</DropdownMenuItem>
-                                                                ))}
-                                                            </DropdownMenuContent>
-                                                        </DropdownMenu>
-                                                    )
-                                                ) : (
-                                                    // If no opening hours, display message with consistent styling
+                                                {activity.opening_hours.length === 0 ? (
                                                     <span className="text-sm text-muted-foreground italic">
                                                         No opening hours available
                                                     </span>
+                                                ) : isOpen24Hours(activity.opening_hours) ? (
+                                                    <span className="text-green-600 font-medium">Open 24 Hours</span>
+                                                ) : (
+                                                    <OpeningHoursDropdown openingHours={activity.opening_hours} />
                                                 )}
                                             </div>
                                         </div>
