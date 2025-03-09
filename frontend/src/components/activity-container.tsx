@@ -32,7 +32,7 @@ export function ActivityContainer({
             <div className="flex justify-end">
                 <AddPlaceDialog itinerary={itinerary} activities={activities} />
             </div>
-            <SortableItinerary fetchedActivities={activities} />
+            <SortableItinerary itineraryID={itinerary.id.toString()} fetchedActivities={activities} />
         </div>
     );
 }
