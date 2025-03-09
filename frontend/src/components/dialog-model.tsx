@@ -210,7 +210,7 @@ export default function DialogModal({
             internationalPhoneNumber:
                 activityToEdit!.international_phone_number,
             website: activityToEdit!.website,
-            openingHours: activityToEdit!.opening_hours,
+            openingHours: activityToEdit?.opening_hours || [],
             googleMapsUrl: activityToEdit!.google_maps_url,
             placeId: activityToEdit!.place_id, // Ensure placeId is valid
         };
@@ -245,7 +245,7 @@ export default function DialogModal({
             international_phone_number:
                 selectedPlaceDetails.internationalPhoneNumber,
             website: selectedPlaceDetails.website,
-            opening_hours: selectedPlaceDetails!.openingHours,
+            opening_hours: selectedPlaceDetails?.openingHours || [],
             google_maps_url: selectedPlaceDetails.googleMapsUrl,
         };
 
@@ -262,7 +262,6 @@ export default function DialogModal({
             } else {
                 // Adding new activity
                 response = await addActivity(newActivity);
-                console.log(response);
                 if (response) {
                     toast.success("Activity added successfully");
                 } else {
@@ -270,12 +269,7 @@ export default function DialogModal({
                 }
             }
 
-            if (!response) {
-                console.error("Error adding or updating activity");
-                return;
-            }
-
-            // window.location.reload();
+            window.location.reload();
         } catch (error) {
             toast.error("Something went wrong. Please try again.");
             console.error(error);

@@ -46,6 +46,9 @@ export function SortableLocationCard({
         transform: CSS.Transform.toString(transform),
         transition,
     };
+
+    console.log(activity.opening_hours)
+
     if (!activity) {
         return (
             <div className="bg-background p-6 md:p-12 flex items-center justify-items-center">
@@ -63,9 +66,8 @@ export function SortableLocationCard({
         <Card
             ref={setNodeRef}
             style={style}
-            className={`relative ${
-                isDragging ? "z-50 shadow-lg" : ""
-            } transition-shadow hover:shadow-md`}
+            className={`relative ${isDragging ? "z-50 shadow-lg" : ""
+                } transition-shadow hover:shadow-md`}
         >
             <div className="grid justify-items-end mt-2 mr-3 z-50">
                 <DropdownSetting activityId={activity.id} activity={activity} />
@@ -134,8 +136,8 @@ export function SortableLocationCard({
                                                     getTime(
                                                         activity.start_date
                                                     )) /
-                                                    86400000
-                                            )} Day(s)`}
+                                                86400000
+                                            ) + 1} Day(s)`}
                                         </span>
                                     </div>
                                     <div className="mt-2 flex flex-wrap gap-1">
@@ -172,39 +174,47 @@ export function SortableLocationCard({
                                         </div>
                                     )}
                                     {activity.opening_hours && (
-                                        <div className="flex flex-row items-center gap-1">
+                                        <div className="flex items-center gap-5 mt-1">
                                             <Clock className="h-4 w-4 flex-shrink-0" />
 
                                             <div className="mt-1 text-xs space-y-1">
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger
-                                                        asChild
-                                                    >
-                                                        <Button
-                                                            variant="ghost"
-                                                            className="flex items-center"
-                                                        >
-                                                            <span className="text-muted-foreground">
-                                                                Opening Hours
-                                                            </span>
-                                                            <ChevronDown className="h-4 w-4" />
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent className="w-64">
-                                                        {activity.opening_hours?.map(
-                                                            (day) => (
-                                                                <DropdownMenuItem
-                                                                    key={day}
-                                                                >
-                                                                    {day}
-                                                                </DropdownMenuItem>
-                                                            )
-                                                        )}
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
+                                                {activity.opening_hours.length > 0 ? (
+                                                    // Check if all days are "Open 24 Hours"
+                                                    activity.opening_hours.every((day) =>
+                                                        day.includes("Open 24 hours")
+                                                    ) ? (
+                                                        // Display "Open 24 Hours" in green when all days match
+                                                        <span className="text-green-600 font-medium">
+                                                            Open 24 Hours
+                                                        </span>
+                                                    ) : (
+                                                        <DropdownMenu>
+                                                            <DropdownMenuTrigger asChild>
+                                                                <Button variant="ghost" className="p-0">
+                                                                    <span className="text-muted-foreground font-medium">
+                                                                        Opening Hours
+                                                                    </span>
+                                                                    <ChevronDown className="h-4 w-4" />
+                                                                </Button>
+                                                            </DropdownMenuTrigger>
+
+                                                            <DropdownMenuContent className="w-64">
+                                                                {activity.opening_hours.map((day, index) => (
+                                                                    <DropdownMenuItem key={index}>{day}</DropdownMenuItem>
+                                                                ))}
+                                                            </DropdownMenuContent>
+                                                        </DropdownMenu>
+                                                    )
+                                                ) : (
+                                                    // If no opening hours, display message with consistent styling
+                                                    <span className="text-sm text-muted-foreground italic">
+                                                        No opening hours available
+                                                    </span>
+                                                )}
                                             </div>
                                         </div>
                                     )}
+
                                     {activity.description &&
                                         activity.description.length > 0 && (
                                             <div className="flex flex-row items-center gap-5 mb-3">

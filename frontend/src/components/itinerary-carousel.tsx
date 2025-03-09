@@ -70,7 +70,7 @@ export function ItineraryCarousel({
                                             <div className="flex items-center gap-2">
                                                 <Clock className="h-4 w-4" />
                                                 <span>
-                                                    {`${Math.floor(((getTime(itinerary.end_date) - getTime(itinerary.start_date  )) / 86400000 ))} Day(s)`}
+                                                    {`${Math.floor(((getTime(itinerary.end_date) - getTime(itinerary.start_date  )) / 86400000 )) + 1} Day(s)`}
                                                 </span>
                                             </div>
                                             <div className="flex items-center gap-2">

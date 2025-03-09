@@ -81,7 +81,10 @@ export function DropdownSetting({
                 <Dialog open={isOpen} onOpenChange={setIsOpen}>
                     <DialogTrigger asChild>
                         {/* Prevent dropdown from closing when clicking "Edit Activity" */}
-                        <DropdownMenuItem onClick={handleEditClick}>
+                        <DropdownMenuItem
+                            onSelect={(e) => e.preventDefault()} // Stops dropdown from closing
+                            onClick={handleEditClick}
+                        >
                             <Pencil className="mr-2 h-4 w-4" />
                             Edit Activity
                         </DropdownMenuItem>
