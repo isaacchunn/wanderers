@@ -1,10 +1,10 @@
 import { ChatBox } from "@/components/chat-box";
 import { ExpenseSplitter } from "@/components/expense-splitter";
 import { ActivityContainer } from "@/components/activity-container";
-import { DropdownSetting } from "@/components/dropdown-menu";
+import { DropdownSetting } from "@/components/dropdown-menuI";
 import { ItineraryTitle } from "@/components/itinerary-title";
 import { fetchItineraryById } from "@/lib/itineraryHandler";
-import { DateRangePicker } from "@/components/calendar-picker";
+import EditCalendar from "@/components/edit-i-calendar";
 import { cookies } from "next/headers";
 import { fetchChatMessages } from "@/lib/chatHandler";
 
@@ -43,13 +43,15 @@ export default async function ItineraryPage({
   return (
     <div className="container mx-auto py-8 w-fit">
       <div className="flex flex-row justify-between items-start">
-        <div className="flex flex-col gap-2">
+        <div className="w-fit flex flex-col gap-2">
           <ItineraryTitle itinerary={itinerary} />
-          <div className="flex gap-72">
-            <DateRangePicker itinerary={itinerary} />
+          <div className="w-fit space-x-6">
+            <EditCalendar
+              itinerary={itinerary}
+            />
           </div>
         </div>
-        <DropdownSetting itineraryId={itineraryId} />
+        <DropdownSetting itinerary={itinerary} itineraryId={itineraryId} />
       </div>
       <div className="flex flex-col gap-2">
         <div className="grid gap-6 lg:grid-cols-[1fr,400px] min-h-[600px]">

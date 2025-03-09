@@ -1,4 +1,4 @@
-import { Activity } from "@/lib/types";
+import { Itinerary, Activity } from "@/lib/types";
 import { BACKEND_URL } from "@/lib/utils";
 import { getToken } from "@/lib/auth";
 const NEXT_PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -7,6 +7,7 @@ export async function addActivity(
     activity: Activity
 ): Promise<object | undefined> {
     try {
+        console.log(activity)
         const token = await getToken();
         const response = await fetch(
             `${NEXT_PUBLIC_BACKEND_URL}/api/activity`,
@@ -17,10 +18,11 @@ export async function addActivity(
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(activity),
-
                 cache: "no-store",
             }
         );
+
+        console.log(response)
 
         if (!response.ok) {
             console.log(
@@ -29,6 +31,7 @@ export async function addActivity(
         }
 
         const data: object = await response.json();
+        console.log(data)
 
         return data;
     } catch (error) {
@@ -40,7 +43,7 @@ export async function addActivity(
     }
 }
 
-export async function getActivity(id: string): Promise<Activity[] | undefined> {
+export async function getActivity(id: string | number): Promise<Activity[] | undefined> {
     try {
         const token = await getToken();
         const response = await fetch(
@@ -72,11 +75,11 @@ export async function getActivity(id: string): Promise<Activity[] | undefined> {
     }
 }
 
-export async function deleteActivity(id: string): Promise<boolean> {
+export async function deleteActivity(id: string | number): Promise<boolean> {
     try {
         const token = await getToken();
         const response = await fetch(`${BACKEND_URL}/api/activity/${id}`, {
-            method: "POST",
+            method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
@@ -98,5 +101,64 @@ export async function deleteActivity(id: string): Promise<boolean> {
             error instanceof Error ? error.message : error
         );
         return false;
+    }
+}
+
+export async function editActivity(
+    activity: Activity
+): Promise<object | undefined> {
+    try {
+        console.log(activity)
+        const token = await getToken();
+        const response = await fetch(
+            `${NEXT_PUBLIC_BACKEND_URL}/api/activity/${activity.id}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(activity),
+                cache: "no-store",
+            }
+        );
+        console.log(response)
+        if (!response.ok) {
+            console.log(
+                `Failed to retrieve Activity: ${response.status} ${response.statusText}`
+            );
+            return undefined;
+        }
+        const data: Activity[] = await response.json();
+        console.log(data)
+
+        return data;
+    } catch (error) {
+        console.error(
+            "Activity - Failed to edit activity:",
+            error instanceof Error ? error.message : error
+        );
+        return undefined;
+    }
+}
+
+export function adjustActivityDates(activity: Activity, oldItinerary: Itinerary, newItinerary: Itinerary): Activity {
+    let newStartDate = activity.start_date
+    let newEndDate = activity.end_date
+
+    // When itinerary start date moves later than activity start date
+    if (newItinerary.start_date > oldItinerary.start_date && activity.start_date < newItinerary.start_date) {
+        newStartDate = newItinerary.start_date
+    }
+
+    // When itinerary end date moves earlier than activity end date
+    if (newItinerary.end_date < oldItinerary.end_date && activity.end_date > newItinerary.end_date) {
+        newEndDate = newItinerary.end_date
+    }
+
+    return {
+        ...activity,
+        start_date: newStartDate,
+        end_date: newEndDate,
     }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
     Popover,
     PopoverContent,
@@ -8,61 +8,91 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { Itinerary } from "@/lib/types";
-import { updateItinerary } from "@/lib/itineraryHandler";
+import type { Itinerary, Activity } from "@/lib/types";
 
 interface DateRangePickerProps {
     itinerary?: Itinerary;
-    onDateChange?: (dates: {
+    activity?: Activity;
+    onDateChange: (dates: {
         startDate: Date | undefined;
         endDate: Date | undefined;
     }) => void;
+    initialStartDate?: Date;
+    initialEndDate?: Date;
+    mode:
+    | "create-itinerary"
+    | "update-itinerary"
+    | "create-activity"
+    | "update-activity";
+    autoSave?: boolean;
 }
-
-/*
-If an itinerary prop is provided, it will update the itinerary asynchronously with debouncing.
-If no itinerary is provided, it will function as a simple date picker with an onDateChange callback.
-*/
 
 export function DateRangePicker({
     itinerary,
+    activity,
     onDateChange,
+    initialStartDate,
+    initialEndDate,
+    mode,
+    autoSave = false, // Default to false - only updateItinerary should use autoSave=true
 }: Readonly<DateRangePickerProps>) {
-    const initialStartDate = itinerary?.start_date;
-    const initialEndDate = itinerary?.end_date;
+    // Initialize with provided dates or defaults based on context
     const [startDate, setStartDate] = useState<Date | undefined>(
-        initialStartDate
+        initialStartDate || activity?.start_date || itinerary?.start_date
     );
-    const [endDate, setEndDate] = useState<Date | undefined>(initialEndDate);
+    const [endDate, setEndDate] = useState<Date | undefined>(
+        initialEndDate || activity?.end_date || itinerary?.end_date
+    );
+    const [isPopoverOpen, setIsPopoverOpen] = useState<
+        "start" | "end" | "none"
+    >("none");
     const [saveStatus, setSaveStatus] = useState<"idle" | "saving">("idle");
+
+    // Keep references of previous values to determine changes
+    const previousValues = useRef({ startDate, endDate });
+
     useEffect(() => {
-        if (!itinerary || saveStatus !== "saving" || !startDate || !endDate)
+        if (mode.includes("activity") && itinerary) {
+            setStartDate((prevStart) =>
+                prevStart && prevStart < itinerary.start_date ? itinerary.start_date : prevStart
+            );
+            setEndDate((prevEnd) =>
+                prevEnd && prevEnd > itinerary.end_date ? itinerary.end_date : prevEnd
+            );
+        }
+    }, [itinerary, itinerary?.start_date, itinerary?.end_date, mode]);
+
+    // Auto-save effect (only used for update-itinerary mode with autoSave=true)
+    useEffect(() => {
+        if (!autoSave || mode !== "update-itinerary" || saveStatus !== "saving")
             return;
 
-        const timer = setTimeout(async () => {
-            const updatedItinerary: Itinerary = {
-                ...itinerary,
-                start_date: startDate,
-                end_date: endDate,
-            };
-            const data = await updateItinerary(updatedItinerary);
+        const hasChanged =
+            previousValues.current.startDate !== startDate ||
+            previousValues.current.endDate !== endDate;
 
-            if (!data) {
-                toast.error("Failed to update itinerary dates!");
-                setStartDate(itinerary.start_date);
-                setEndDate(itinerary.end_date);
-            } else {
-                toast.success("Itinerary dates updated successfully!");
-            }
+        if (!hasChanged) {
             setSaveStatus("idle");
-        }, 1500);
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            // Call onDateChange with current dates
+            if (startDate && endDate) {
+                onDateChange({ startDate, endDate });
+
+                // Update reference values
+                previousValues.current = { startDate, endDate };
+            }
+
+            setSaveStatus("idle");
+        }, 1000); // Reasonable debounce delay
 
         return () => clearTimeout(timer);
-    }, [startDate, endDate, itinerary, saveStatus, onDateChange]);
+    }, [startDate, endDate, onDateChange, mode, autoSave, saveStatus]);
 
     const toUTCDate = (date: Date | string | undefined): Date | undefined => {
         if (!date) return undefined;
@@ -77,94 +107,194 @@ export function DateRangePicker({
             )
         );
     };
-    const handleDateSelect = (
-        dateType: "start" | "end",
-        date: Date | undefined
-    ): void => {
-        const utcDate = toUTCDate(date);
 
+    const isDisabledDate = (date: Date, type: "start" | "end"): boolean => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Normalize time to 00:00:00
+
+        // Disable past dates
+        if (date < today) return true;
+
+        if (mode.includes("activity") && itinerary) {
+            const itineraryStart = new Date(itinerary.start_date);
+            const itineraryEnd = new Date(itinerary.end_date);
+
+            // Ensure we set times to UTC 00:00:00 for proper comparison
+            itineraryStart.setHours(0, 0, 0, 0);
+            itineraryEnd.setHours(0, 0, 0, 0);
+
+            if (type === "start") {
+                if (date < itineraryStart) return true; // ✅ Disable before March 9
+            }
+            if (type === "end") {
+                if (date > itineraryEnd) return true; // ✅ Disable **March 29 onwards**
+            }
+        }
+
+        return false; // ✅ Allow valid dates
+    };
+
+    const validateStartDate = (utcDate: Date): boolean => {
+        if (endDate && utcDate > endDate) {
+            toast.error("Start date cannot be later than end date");
+            return false;
+        }
+
+        if (
+            mode.includes("activity") &&
+            itinerary?.start_date &&
+            utcDate < itinerary.start_date
+        ) {
+            toast.error(
+                "Activity start date must be within itinerary date range"
+            );
+            return false;
+        }
+
+        return true;
+    };
+
+    const validateEndDate = (utcDate: Date): boolean => {
+        if (startDate && utcDate < startDate) {
+            toast.error("End date cannot be earlier than start date");
+            return false;
+        }
+
+        if (
+            mode.includes("activity") &&
+            itinerary?.end_date &&
+            utcDate > itinerary.end_date
+        ) {
+            toast.error(
+                "Activity end date must be within itinerary date range"
+            );
+            return false;
+        }
+
+        return true;
+    };
+
+    const handleDateSelect = (dateType: "start" | "end", date: Date | undefined): void => {
+        if (!date) return;
+
+        const utcDate = toUTCDate(date);
         if (!utcDate) return;
 
+        let isValid = false;
+
         if (dateType === "start") {
-            if (endDate && utcDate > toUTCDate(endDate)!) {
-                toast.error("Start date cannot be later than end date!");
-                return;
+            isValid = validateStartDate(utcDate);
+            if (isValid) {
+                setStartDate(utcDate);
+
+                // Adjust endDate if it's now before startDate
+                if (endDate && endDate < utcDate) {
+                    setEndDate(utcDate);
+                }
             }
-            setStartDate(utcDate);
-        } else if (dateType === "end") {
-            if (startDate && utcDate < toUTCDate(startDate)!) {
-                toast.error("End date cannot be earlier than start date!");
-                return;
+        } else {
+            isValid = validateEndDate(utcDate);
+            if (isValid) {
+                setEndDate(utcDate);
             }
-            setEndDate(utcDate);
         }
 
-        if (itinerary) {
+        if (!isValid) return;
+
+        const newDates = {
+            startDate: dateType === "start" ? utcDate : startDate,
+            endDate: dateType === "end" ? utcDate : endDate,
+        };
+
+        if (autoSave && mode === "update-itinerary") {
             setSaveStatus("saving");
+        } else {
+            onDateChange(newDates);
         }
 
-        if (onDateChange) {
-            onDateChange({
-                startDate: dateType === "start" ? utcDate : startDate,
-                endDate: dateType === "end" ? utcDate : endDate,
-            });
+        setIsPopoverOpen("none");
+    };
+
+    const openPopover = (type: "start" | "end") => {
+        setIsPopoverOpen(type);
+    };
+
+    const closePopover = () => {
+        setIsPopoverOpen("none");
+    };
+
+    // Refactor the handlePopoverOpenChange function to use the open/close methods
+    const handlePopoverOpenChange = (
+        action: "open" | "close",
+        type: "start" | "end"
+    ) => {
+        if (action === "open") {
+            openPopover(type);
+        } else {
+            closePopover();
         }
     };
 
     return (
         <div className="flex items-center space-x-2">
+            {/* Start Date Popover */}
             <Popover
+                open={isPopoverOpen === "start"}
                 onOpenChange={(open) =>
-                    !open && handleDateSelect("start", startDate)
+                    handlePopoverOpenChange(open ? "open" : "close", "start")
                 }
             >
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
-                        className={cn(
-                            "w-[240px] justify-start text-left font-normal",
-                            !startDate && "text-muted-foreground"
-                        )}
+                        className="w-[240px] justify-start text-left font-normal z-40"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handlePopoverOpenChange("open", "start");
+                        }}
                     >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {startDate ? format(startDate, "PPP") : "Start date"}
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0 z-50" align="start">
                     <Calendar
                         mode="single"
                         selected={startDate}
                         onSelect={(date) => handleDateSelect("start", date)}
-                        disabled={{ before: new Date() }}
-                        autoFocus
+                        disabled={(date) => isDisabledDate(date, "start")}
+                        initialFocus
                     />
                 </PopoverContent>
             </Popover>
 
+            {/* End Date Popover */}
             <Popover
+                open={isPopoverOpen === "end"}
                 onOpenChange={(open) =>
-                    !open && handleDateSelect("end", endDate)
+                    handlePopoverOpenChange(open ? "open" : "close", "end")
                 }
             >
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
-                        className={cn(
-                            "w-[240px] justify-start text-left font-normal",
-                            !endDate && "text-muted-foreground"
-                        )}
+                        className="w-[240px] justify-start text-left font-normal z-40"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handlePopoverOpenChange("open", "end");
+                        }}
                     >
                         <CalendarIcon className="mr-2 h-4 w-4" />
                         {endDate ? format(endDate, "PPP") : "End date"}
                     </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0 z-50" align="start">
                     <Calendar
                         mode="single"
                         selected={endDate}
                         onSelect={(date) => handleDateSelect("end", date)}
-                        disabled={{ before: new Date() }}
-                        autoFocus
+                        disabled={(date) => isDisabledDate(date, "end")}
+                        initialFocus
                     />
                 </PopoverContent>
             </Popover>

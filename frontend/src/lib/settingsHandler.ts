@@ -2,6 +2,11 @@
 import { BACKEND_URL } from "@/lib/utils";
 import { cookies } from "next/headers";
 
+interface CheckEmailResponse {
+    isCurrentUser: boolean
+    exists: boolean
+    message?: string
+}
 
 
 export async function updateProfile(profile_description: string): Promise<{ success: boolean, data: object }> {
@@ -107,6 +112,50 @@ export async function updatePassword(currentPassword: string, newPassword: strin
         return { success: true, data: responseData.message };
     } catch (error) {
         return { success: false, data: error instanceof Error ? error.message : "Failed to update password" };
+    }
+}
+
+export async function checkEmail(email: string): Promise<CheckEmailResponse> {
+    const cookieStore = await cookies()
+    const token = cookieStore.get("token")?.value.replace(/(^")|("$)/g, "")
+    const userData = cookieStore.get("user")?.value
+
+    try {
+        // First check if this is the current user's email
+        if (userData) {
+            const currentUser = JSON.parse(userData)
+            if (email.toLowerCase() === currentUser.email.toLowerCase()) {
+                return {
+                    isCurrentUser: true,
+                    exists: true,
+                    message: "This is your email",
+                }
+            }
+        }
+
+        // Then check if the user exists in the database
+        const response = await fetch(`${BACKEND_URL}/api/user/email/${email}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            cache: "no-store",
+            next: { revalidate: 10 },
+        })
+
+        const data = await response.json()
+        return {
+            isCurrentUser: false,
+            exists: response.ok,
+            message: data.message,
+        }
+    } catch (error) {
+        return {
+            isCurrentUser: false,
+            exists: false,
+            message: error instanceof Error ? error.message : "Failed to check email",
+        }
     }
 }
 
