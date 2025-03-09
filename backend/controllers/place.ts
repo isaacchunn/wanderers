@@ -81,7 +81,12 @@ export const searchPlaceController = async (req: Request, res: Response) => {
       ),
     );
 
-    res.json(places);
+    // Filter out places without opening hours
+    const filteredPlaces = places.filter(
+      (place: any) => place.openingHours !== null,
+    );
+
+    res.json(filteredPlaces);
   } catch (error: any) {
     console.error("Error in searchPlaceController:", error);
     res.status(HttpCode.InternalServerError).json({ error: error.message });

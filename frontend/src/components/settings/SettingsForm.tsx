@@ -152,16 +152,18 @@ export default function SettingsForm() {
                 className="hidden"
                 accept="image/*"
               />
-              <Button onClick={handleUpdatePhoto} disabled={isLoading.photo}>
-                {isLoading.photo ? "Uploading..." : "Update photo"}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={handleDeletePhoto}
-                disabled={isLoading.photo}
-              >
-                Delete photo
-              </Button>
+              <div className="flex space-x-2">
+                <Button onClick={handleUpdatePhoto} disabled={isLoading.photo}>
+                  {isLoading.photo ? "Uploading..." : "Update photo"}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleDeletePhoto}
+                  disabled={isLoading.photo}
+                >
+                  Delete photo
+                </Button>
+              </div>
             </div>
           </div>
           <div className="space-y-2">

@@ -46,6 +46,7 @@ export const getActivitiesByItineraryId = async (itinerary_id: number) => {
   let activities = await db.activity.findMany({
     where: {
       itinerary_id,
+      active: true,
     },
   });
   return activities;
