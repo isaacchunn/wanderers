@@ -289,38 +289,48 @@ export function ChatBox({
                 <CardContent className="h-80 max-h-80 flex flex-col">
                   <ScrollArea className="max-h-80 flex-1 pr-4" type="always">
                     <div className="space-y-4 pt-1y">
-                      {messages.map((message) => (
-                        <div
-                          key={message.id}
-                          className="flex flex-col space-y-1 text-sm"
-                        >
-                          <div
-                            className={`flex items-center gap-2 ${
-                              message.chat_message_by_id.toString() ===
-                              userId.toString()
-                                ? "justify-end"
-                                : ""
-                            }`}
-                          >
-                            <span className="font-medium">
-                              {message.chat_message_by.username}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {new Date(
-                                message.created_at
-                              ).toLocaleTimeString()}
-                            </span>
+                      {Object.entries(groupedMessages).map(([date, msgs]) => (
+                        <div key={date}>
+                          {/* Date separator */}
+                          <div className="text-center text-xs text-muted-foreground py-2">
+                            {date}
                           </div>
-                          <p
-                            className={`text-muted-foreground ${
-                              message.chat_message_by_id.toString() ===
-                              userId.toString()
-                                ? "text-right"
-                                : ""
-                            }`}
-                          >
-                            {message.chat_message}
-                          </p>
+
+                          {/* Render messages for that date */}
+                          {msgs.map((message) => (
+                            <div
+                              key={message.id}
+                              className="flex flex-col space-y-1 text-sm"
+                            >
+                              <div
+                                className={`flex items-center gap-2 ${
+                                  message.chat_message_by_id.toString() ===
+                                  userId.toString()
+                                    ? "justify-end"
+                                    : ""
+                                }`}
+                              >
+                                <span className="font-medium">
+                                  {message.chat_message_by.username}
+                                </span>
+                                <span className="text-xs text-muted-foreground">
+                                  {new Date(
+                                    message.created_at
+                                  ).toLocaleTimeString()}
+                                </span>
+                              </div>
+                              <p
+                                className={`text-muted-foreground ${
+                                  message.chat_message_by_id.toString() ===
+                                  userId.toString()
+                                    ? "text-right"
+                                    : ""
+                                }`}
+                              >
+                                {message.chat_message}
+                              </p>
+                            </div>
+                          ))}
                         </div>
                       ))}
                       {/* Auto scroll marker */}
