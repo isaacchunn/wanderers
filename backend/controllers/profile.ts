@@ -57,7 +57,7 @@ export const uploadProfilePictureApi = async (
       const partial_image_path = await uploadS3ProfileImage(userId, req.file);
 
       if (partial_image_path) {
-        const full_image_path = process.env.S3_IMAGE_GET_ENDPOINT + partial_image_path;
+        const full_image_path = process.env.S3_IMAGE_GET_ENDPOINT + "/" + partial_image_path;
         await updateProfileImagePath(userId, full_image_path);
         res.status(HttpCode.OK).json({ full_image_path });
       } else {

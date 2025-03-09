@@ -11,7 +11,14 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
   const pathname = usePathname();
 
   useEffect(() => {
-    if (pathname !== "/login" && pathname !== "/signup" && !isUserFetched) {
+    // If the user is not fetched and the user is not on the login or signup page or confirm account page
+    console.log(pathname);
+    if (
+      pathname !== "/login" &&
+      pathname !== "/signup" &&
+      !pathname.startsWith("/confirm-account/") &&
+      !isUserFetched
+    ) {
       // strip trailing and tail quotes
       const cookieValue = document.cookie
         .split("; ")
