@@ -51,6 +51,7 @@ export function SortableLocationCard({
         return openingHours.every((day) => day.includes("Open 24 hours"));
     };
 
+    // Extracted Component (Placed Outside Parent)
     const OpeningHoursDropdown = ({ openingHours }: { openingHours: string[] }) => (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -70,6 +71,16 @@ export function SortableLocationCard({
         </DropdownMenu>
     );
 
+    // Inside Parent Component
+    const RenderOpeningHours = ({ openingHours }: { openingHours: string[] }) => {
+        const isAlwaysOpen = isOpen24Hours(openingHours);
+
+        return isAlwaysOpen ? (
+            <span className="text-green-600 font-medium">Open 24 Hours</span>
+        ) : (
+            <OpeningHoursDropdown openingHours={openingHours} />
+        );
+    };
 
     if (!activity) {
         return (
@@ -204,11 +215,8 @@ export function SortableLocationCard({
                                                     <span className="text-sm text-muted-foreground italic">
                                                         No opening hours available
                                                     </span>
-                                                ) : isOpen24Hours(activity.opening_hours) ? (
-                                                    <span className="text-green-600 font-medium">Open 24 Hours</span>
-                                                ) : (
-                                                    <OpeningHoursDropdown openingHours={activity.opening_hours} />
-                                                )}
+                                                ) : <RenderOpeningHours openingHours={activity.opening_hours} />
+                                                }
                                             </div>
                                         </div>
                                     )}
