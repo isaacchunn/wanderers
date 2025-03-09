@@ -180,17 +180,31 @@ export function DateRangePicker({
         const utcDate = toUTCDate(date);
         if (!utcDate) return;
 
-        const isStartDate = dateType === "start";
-        const isValid = isStartDate ? validateStartDate(utcDate) : validateEndDate(utcDate);
+        let isValid = false;
+
+        if (dateType === "start") {
+            isValid = validateStartDate(utcDate);
+            if (isValid) {
+                setStartDate(utcDate);
+
+                // Adjust endDate if it's now before startDate
+                if (endDate && endDate < utcDate) {
+                    setEndDate(utcDate);
+                }
+            }
+        } else {
+            isValid = validateEndDate(utcDate);
+            if (isValid) {
+                setEndDate(utcDate);
+            }
+        }
+
         if (!isValid) return;
 
-        const updatedStartDate = isStartDate ? utcDate : startDate;
-        const updatedEndDate = isStartDate && endDate && endDate < utcDate ? utcDate : endDate;
-
-        if (isStartDate) setStartDate(updatedStartDate);
-        if (!isStartDate || updatedEndDate !== endDate) setEndDate(updatedEndDate);
-
-        const newDates = { startDate: updatedStartDate, endDate: updatedEndDate };
+        const newDates = {
+            startDate: dateType === "start" ? utcDate : startDate,
+            endDate: dateType === "end" ? utcDate : endDate,
+        };
 
         if (autoSave && mode === "update-itinerary") {
             setSaveStatus("saving");

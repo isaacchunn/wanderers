@@ -39,6 +39,9 @@ export default function SettingsForm() {
     } else {
       setAvatarSrc(undefined);
     }
+    if (user?.profile_description) {
+      setDescription(user.profile_description);
+    }
   }, [user, user?.user_photo]);
 
   const handleFileChange = async (
