@@ -178,6 +178,7 @@ export function ChatBox({
             setNewMessage={setNewMessage}
             messagesEndRef={messagesEndRef}
             isMobile={isMobile}
+            chatboxY={chatboxY}
             setIsChatBoxOpen={setIsChatBoxOpen}
           />
         </div>
@@ -216,6 +217,7 @@ export function ChatBox({
                 setNewMessage={setNewMessage}
                 messagesEndRef={messagesEndRef}
                 isMobile={isMobile}
+                chatboxY={chatboxY}
                 setIsChatBoxOpen={setIsChatBoxOpen}
               />{" "}
             </div>

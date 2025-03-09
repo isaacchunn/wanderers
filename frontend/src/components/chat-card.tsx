@@ -12,6 +12,7 @@ interface ChatCardProps {
   newMessage: string;
   messagesEndRef: React.RefObject<HTMLDivElement | null>;
   isMobile: boolean;
+  chatboxY: number;
   handleSubmit: (e: React.FormEvent) => void;
   setNewMessage: (message: string) => void;
   setIsChatBoxOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -24,12 +25,16 @@ const ChatCard: React.FC<ChatCardProps> = ({
   newMessage,
   messagesEndRef,
   isMobile,
+  chatboxY,
   handleSubmit,
   setNewMessage,
   setIsChatBoxOpen,
 }) => {
   return (
-    <Card className={`absolute transition-all duration-300 ease-in-outs`}>
+    <Card
+      className={`absolute transition-all duration-300 ease-in-outs`}
+      style={isMobile ? {} : { top: chatboxY }}
+    >
       <CardHeader>
         {isMobile ? (
           <CardTitle>
