@@ -135,7 +135,7 @@ export async function editActivity(
         return data;
     } catch (error) {
         console.error(
-            "Activity - Failed to retrieve activity:",
+            "Activity - Failed to edit activity:",
             error instanceof Error ? error.message : error
         );
         return undefined;

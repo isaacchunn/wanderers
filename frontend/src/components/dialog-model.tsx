@@ -245,7 +245,7 @@ export default function DialogModal({
             international_phone_number:
                 selectedPlaceDetails.internationalPhoneNumber,
             website: selectedPlaceDetails.website,
-            opening_hours: selectedPlaceDetails.openingHours,
+            opening_hours: selectedPlaceDetails!.openingHours,
             google_maps_url: selectedPlaceDetails.googleMapsUrl,
         };
 
@@ -275,7 +275,7 @@ export default function DialogModal({
                 return;
             }
 
-            window.location.reload();
+            // window.location.reload();
         } catch (error) {
             toast.error("Something went wrong. Please try again.");
             console.error(error);
