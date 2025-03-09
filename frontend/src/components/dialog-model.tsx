@@ -208,8 +208,8 @@ export default function DialogModal({
             rating: activityToEdit?.rating ?? 0,
             userRatingsTotal: activityToEdit?.user_ratings_total ?? 0,
             internationalPhoneNumber:
-                activityToEdit?.international_phone_number ?? "No Phone Number Available",
-            website: activityToEdit?.website ?? "No Website Available",
+                activityToEdit?.international_phone_number ?? "No phone number available",
+            website: activityToEdit?.website ?? "No website available",
             openingHours: activityToEdit?.opening_hours ?? [],
             googleMapsUrl: activityToEdit!.google_maps_url,
             placeId: activityToEdit!.place_id, // Ensure placeId is valid
@@ -241,8 +241,8 @@ export default function DialogModal({
             rating: selectedPlaceDetails?.rating ?? 0,
             user_ratings_total: selectedPlaceDetails?.userRatingsTotal ?? 0,
             international_phone_number:
-                selectedPlaceDetails?.internationalPhoneNumber ?? "No Phone Number Available",
-            website: selectedPlaceDetails?.website ?? "No Website Available",
+                selectedPlaceDetails?.internationalPhoneNumber ?? "No phone number available",
+            website: selectedPlaceDetails?.website ?? "No website available",
             opening_hours: selectedPlaceDetails?.openingHours ?? [],
             google_maps_url: selectedPlaceDetails.googleMapsUrl,
         };

@@ -20,15 +20,14 @@ import { Card } from "@/components/ui/card";
 import { SortableLocationCard } from "./sortable-location-card";
 import { Activity } from "@/lib/types";
 import { editActivity } from "@/lib/activityHandler";
+import { toast } from "sonner";
 
 export function SortableItinerary({
     fetchedActivities,
 }: Readonly<{
     fetchedActivities: Activity[];
-    itineraryID: string;
 }>) {
     const [activities, setActivities] = useState<Activity[]>(fetchedActivities);
-    const [isSaving, setIsSaving] = useState(false);
     const containerRef = useRef<HTMLDivElement | null>(null);
     const initialOrderRef = useRef<Activity[]>(fetchedActivities);
 
@@ -44,7 +43,7 @@ export function SortableItinerary({
         })
     );
 
-    const handleDragEnd = useCallback((event: DragEndEvent) => {
+    function handleDragEnd(event: DragEndEvent) {
         const { active, over } = event;
         if (!over || active.id === over.id) return;
 
@@ -53,37 +52,30 @@ export function SortableItinerary({
             const newIndex = items.findIndex((item) => item.id === over.id);
             return arrayMove(items, oldIndex, newIndex);
         });
-    }, []);
+    }
 
     const saveOrder = useCallback(async () => {
-        setIsSaving(true);
         const updatedActivities = activities.map((activity, index) => ({
             ...activity,
             sequence: index + 1, // Assign new sequence order
         }));
 
         try {
-            await Promise.all(updatedActivities.map((activity) => editActivity(activity)));
+            await Promise.all(updatedActivities.map(editActivity)); // Parallelize API calls
         } catch (error) {
             console.error("Error saving activity order:", error);
+            toast.error("Error saving activity order");
         }
-
-        setIsSaving(false);
     }, [activities]);
 
-    const handleClickOutside = useCallback(
-        (event: MouseEvent) => {
-            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-                const hasOrderChanged = JSON.stringify(activities) !== JSON.stringify(initialOrderRef.current);
-                if (hasOrderChanged) {
-                    saveOrder();
-                }
+    const handleClickOutside = useCallback((event: MouseEvent) => {
+        if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+            // Check if the activity order has changed before saving
+            if (JSON.stringify(activities) !== JSON.stringify(initialOrderRef.current)) {
+                saveOrder();
             }
-        },
-        [activities, saveOrder]
-    );
-    
-    console.log(isSaving)
+        }
+    }, [activities, saveOrder]);
 
     useEffect(() => {
         document.addEventListener("click", handleClickOutside);
@@ -95,7 +87,7 @@ export function SortableItinerary({
     return (
         <div ref={containerRef}>
             <Card className="p-6 w-[700px]">
-                {activities.length === 0 ? (
+                {fetchedActivities.length === 0 ? (
                     <Card className="p-6 flex items-center justify-center h-40 border-2 border-gray-300">
                         <div className="flex flex-col items-center">
                             <span className="text-base font-medium">Add a place!</span>
@@ -113,7 +105,10 @@ export function SortableItinerary({
                         >
                             <div className="space-y-4">
                                 {activities.map((activity) => (
-                                    <SortableLocationCard key={activity.id} activity={activity} />
+                                    <SortableLocationCard
+                                        key={activity.id}
+                                        activity={activity}
+                                    />
                                 ))}
                             </div>
                         </SortableContext>
