@@ -1,5 +1,4 @@
 import { Itinerary, Activity } from "@/lib/types";
-import { BACKEND_URL } from "@/lib/utils";
 import { getToken } from "@/lib/auth";
 const NEXT_PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -78,7 +77,7 @@ export async function getActivity(id: string | number): Promise<Activity[] | und
 export async function deleteActivity(id: string | number): Promise<boolean> {
     try {
         const token = await getToken();
-        const response = await fetch(`${BACKEND_URL}/api/activity/${id}`, {
+        const response = await fetch(`${NEXT_PUBLIC_BACKEND_URL}/api/activity/${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
