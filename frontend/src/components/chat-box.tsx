@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -72,13 +72,13 @@ export function ChatBox({
       });
 
       newSocket.on("disconnect", () => {
-        toast.error("Connection lost. Reconnecting...");
+        // toast.error("Connection lost. Reconnecting...");
         setIsConnectionActive(false);
         // Handle reconnection attempt
       });
 
       newSocket.io.on("reconnect_failed", () => {
-        toast.error("Connection lost. Please refresh the page.");
+        // toast.error("Connection lost. Please refresh the page.");
       });
 
       // Cleanup when the component unmounts
@@ -148,6 +148,26 @@ export function ChatBox({
     setNewMessage("");
   }
 
+  const groupedMessages = useMemo(() => {
+    return messages.reduce((acc, message) => {
+      const msgDate = new Date(message.created_at);
+      const today = new Date();
+      const yesterday = new Date();
+      yesterday.setDate(today.getDate() - 1);
+
+      let dateLabel =
+        msgDate.toDateString() === today.toDateString()
+          ? "Today"
+          : msgDate.toDateString() === yesterday.toDateString()
+          ? "Yesterday"
+          : msgDate.toLocaleDateString("en-GB");
+
+      acc[dateLabel] = acc[dateLabel] || [];
+      acc[dateLabel].push(message);
+      return acc;
+    }, {} as Record<string, typeof messages>);
+  }, [messages]);
+
   return (
     <>
       {!isMobile ? (
@@ -161,37 +181,49 @@ export function ChatBox({
             </CardHeader>
             <CardContent className="h-80 max-h-80 flex flex-col">
               <ScrollArea className="max-h-80 flex-1 pr-4" type="always">
-                <div className="space-y-4 pt-1y">
-                  {messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className="flex flex-col space-y-1 text-sm"
-                    >
-                      <div
-                        className={`flex items-center gap-2 ${
-                          message.chat_message_by_id.toString() ===
-                          userId.toString()
-                            ? "justify-end"
-                            : ""
-                        }`}
-                      >
-                        <span className="font-medium">
-                          {message.chat_message_by.username}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(message.created_at).toLocaleTimeString()}
-                        </span>
+                <div className="space-y-4 pt-1">
+                  {Object.entries(groupedMessages).map(([date, msgs]) => (
+                    <div key={date}>
+                      {/* Date separator */}
+                      <div className="text-center text-xs text-muted-foreground py-2">
+                        {date}
                       </div>
-                      <p
-                        className={`text-muted-foreground ${
-                          message.chat_message_by_id.toString() ===
-                          userId.toString()
-                            ? "text-right"
-                            : ""
-                        }`}
-                      >
-                        {message.chat_message}
-                      </p>
+
+                      {/* Render messages for that date */}
+                      {msgs.map((message) => (
+                        <div
+                          key={message.id}
+                          className="flex flex-col space-y-1 text-sm"
+                        >
+                          <div
+                            className={`flex items-center gap-2 ${
+                              message.chat_message_by_id.toString() ===
+                              userId.toString()
+                                ? "justify-end"
+                                : ""
+                            }`}
+                          >
+                            <span className="font-medium">
+                              {message.chat_message_by.username}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(
+                                message.created_at
+                              ).toLocaleTimeString()}
+                            </span>
+                          </div>
+                          <p
+                            className={`text-muted-foreground ${
+                              message.chat_message_by_id.toString() ===
+                              userId.toString()
+                                ? "text-right"
+                                : ""
+                            }`}
+                          >
+                            {message.chat_message}
+                          </p>
+                        </div>
+                      ))}
                     </div>
                   ))}
                   {/* Auto scroll marker */}
