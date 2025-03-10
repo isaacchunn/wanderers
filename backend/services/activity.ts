@@ -64,6 +64,18 @@ export const updateActivity = async (activityId: number, activityData: ActivityD
   return activity;
 };
 
+export const updateActivitySequence = async (activityId: number, sequence: number) => {
+  let activity = await db.activity.update({
+    where: {
+      id: activityId,
+    },
+    data: {
+      sequence,
+    },
+  });
+  return activity;
+};
+
 export const deleteActivity = async (id: number) => {
   let activity = await db.activity.update({
     where: {
