@@ -207,8 +207,7 @@ export async function createItinerary(
         if (!response.ok) {
             const errorData = await response.json().catch(() => null);
             throw new Error(
-                `Failed to create itinerary: ${response.status} ${response.statusText
-                }${errorData}`
+                `Failed to create itinerary: ${response.status} ${response.statusText}${errorData}`
             );
         }
 
@@ -286,18 +285,19 @@ export async function restoreItinerary(id: string): Promise<boolean> {
 
 // Update Itinerary with updated values
 export async function updateItinerary(
-    itinerary: Itinerary
+    itinerary: Itinerary,
+    photoURL?: string | undefined
 ): Promise<Itinerary | undefined> {
     try {
-        console.log(itinerary)
         const neededItinerary = {
             title: itinerary.title,
             location: itinerary.location,
             visibility: itinerary.visibility,
             start_date: itinerary.start_date,
-            end_date: itinerary.end_date
+            end_date: itinerary.end_date,
+            photo_url: photoURL,
         };
-        console.log(neededItinerary)
+        console.log("update itinerary photo", neededItinerary);
         const token = await getToken();
         const response = await fetch(
             `${NEXT_PUBLIC_BACKEND_URL}/api/itinerary/${itinerary.id}`,
