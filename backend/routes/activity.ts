@@ -6,6 +6,7 @@ import {
   getActivitiesByItineraryIdController,
   updateActivityController,
   deleteActivityController,
+  updateActivitySequenceController,
 } from "../controllers/activity";
 import { protect } from "../middleware/auth";
 
@@ -224,6 +225,70 @@ router.get("/:id", protect, getActivityByIdController);
  */
 router.get("/itinerary/:itinerary_id", protect, getActivitiesByItineraryIdController);
 
+
+/**
+ * @swagger
+ * /api/activity/sequence:
+ *   put:
+ *     summary: Update activity sequence
+ *     description: Updates the sequence order of activities based on the provided array.
+ *     tags: [Activity]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - activities
+ *             properties:
+ *               activities:
+ *                 type: array
+ *                 description: An array of activities with their IDs in the new order.
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - id
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       description: The unique identifier of the activity.
+ *                       example: 1
+ *     responses:
+ *       200:
+ *         description: Successfully updated activity sequence.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   sequence:
+ *                     type: integer
+ *                     example: 2
+ *       400:
+ *         description: Bad request due to missing or invalid data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Activities array is empty"
+ *       401:
+ *         description: Unauthorized access.
+ *       500:
+ *         description: Internal server error.
+ */
+router.put("/sequence", protect, updateActivitySequenceController);
+
 /**
  * @swagger
  * /api/activity/{id}:
@@ -257,6 +322,7 @@ router.get("/itinerary/:itinerary_id", protect, getActivitiesByItineraryIdContro
  *         description: Internal server error
  */
 router.put("/:id", protect, updateActivityController);
+
 
 /**
  * @swagger

@@ -37,10 +37,12 @@ export default function ResetPasswordPage() {
         }
       );
 
+      const data = await response.json();
+
       if (response.ok) {
         setIsSuccess(true);
       } else {
-        setError("Token is not valid");
+        setError(data.message || "An error occurred");
       }
     } catch (error) {
       setError("An error occurred: " + error);

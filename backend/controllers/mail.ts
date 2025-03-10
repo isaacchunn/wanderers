@@ -42,6 +42,7 @@ export const deliverPasswordResetSuccessfulEmail = async (
 export const deliverItineraryCollabEmail = async (
   email: string,
   username: string,
+  itineraryId: number,
   inviterUsername: string,
   itineraryName: string,
   itineraryLocation: string,
@@ -50,7 +51,7 @@ export const deliverItineraryCollabEmail = async (
     email,
     `Wanderers - Invitation to collaborate in \"${itineraryName}\"`,
     await itineraryCollabBody(
-      `${process.env.FRONTEND_URL as string}`,
+      `${process.env.FRONTEND_URL as string}/itinerary/${itineraryId}`,
       username,
       inviterUsername,
       itineraryName,

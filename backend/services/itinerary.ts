@@ -81,7 +81,8 @@ export const createItinerary = async (
       });
       await deliverItineraryCollabEmail(
         collaborator.email,
-        collaborator.email,
+        collaborator.username,
+        createdItinerary.id,
         owner?.username || "",
         title,
         location
@@ -218,12 +219,12 @@ export const getCreatedItineraries = async (
       itineraries: {
         where: isOwner
           ? {
-              active: true,
-            }
+            active: true,
+          }
           : {
-              active: true,
-              visibility: "public",
-            },
+            active: true,
+            visibility: "public",
+          },
         include: {
           owner: {
             select: {

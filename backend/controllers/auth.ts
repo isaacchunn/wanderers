@@ -51,7 +51,10 @@ export const registerUser = async (req: Request, res: Response) => {
     } else if (existingUser && existingUser.email_verified) {
       throw new Error("Email already in use!");
     } else {
-      await createUser(username, lowercaseEmail, hashedPassword);
+      const user = await createUser(username, lowercaseEmail, hashedPassword);
+
+      await updateUserPasswordHistory(user.id, hashedPassword);
+
       await deliverConfirmationEmail(
         confirmAccountToken.sent_to,
         username,
