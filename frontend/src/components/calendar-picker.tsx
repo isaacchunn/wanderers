@@ -43,6 +43,7 @@ export function DateRangePicker({
     const [startDate, setStartDate] = useState<Date | undefined>(
         initialStartDate ?? activity?.start_date ?? itinerary?.start_date
     );
+
     const [endDate, setEndDate] = useState<Date | undefined>(
         initialEndDate ?? activity?.end_date ?? itinerary?.end_date
     );

@@ -23,8 +23,8 @@ export default function TripPlannerForm() {
         startDate: Date | undefined;
         endDate: Date | undefined;
     }>({
-        startDate: undefined,
-        endDate: undefined,
+        startDate: new Date(),
+        endDate: new Date(),
     });
     const [title, setTitle] = useState("");
     const [collaborators, setCollaborators] = useState<string[]>([]);
@@ -47,7 +47,7 @@ export default function TripPlannerForm() {
                 : "Start date is required.",
             endDate: dateRange.endDate ? undefined : "End date is required.",
             collaborators:
-                collaborators.length > 0
+                collaborators.length >= 0
                     ? undefined
                     : "Please add at least one collaborator.",
         };
@@ -88,7 +88,6 @@ export default function TripPlannerForm() {
                 collaborators
             );
             if (!itineraryData) throw new Error("Failed to create itinerary");
-            console.log(photo_url);
             const updateResponse = await updateItinerary(
                 itineraryData,
                 photo_url
@@ -140,7 +139,7 @@ export default function TripPlannerForm() {
                     <DateRangePicker
                         onDateChange={(dates) => setDateRange(dates)}
                         mode="create-itinerary"
-                        initialStartDate={new Date()} // Default to today
+                        initialStartDate={dateRange.startDate} // Default to today
                         initialEndDate={
                             new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
                         } // Default to a week from today
