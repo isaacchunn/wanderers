@@ -247,10 +247,11 @@ export function DateRangePicker({
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
-                        className="w-[240px] justify-start text-left font-normal z-40"
+                        className={`w-[240px] justify-start text-left font-normal z-40"
+                            }`}
                         onClick={(e) => {
                             e.stopPropagation();
-                            handlePopoverOpenChange("open", "start");
+                            handlePopoverOpenChange("open", "start");  // You may need to modify this depending on your flow
                         }}
                     >
                         <CalendarIcon className="mr-2 h-4 w-4" />
@@ -278,10 +279,11 @@ export function DateRangePicker({
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
-                        className="w-[240px] justify-start text-left font-normal z-40"
+                        className={`w-[240px] justify-start text-left font-normal z-40"
+                            }`}
                         onClick={(e) => {
                             e.stopPropagation();
-                            handlePopoverOpenChange("open", "end");
+                            handlePopoverOpenChange("open", "end");  // You may need to modify this depending on your flow
                         }}
                     >
                         <CalendarIcon className="mr-2 h-4 w-4" />
