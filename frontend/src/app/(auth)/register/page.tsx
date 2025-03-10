@@ -15,7 +15,13 @@ const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}`;
 const registerSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters long"),
   email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters long"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters long")
+    .regex(
+      /^(?=.*\d)(?=.*[a-zA-Z])/,
+      "Password must contain at least 1 digit and 1 non-letter"
+    ),
 });
 
 export default function RegisterPage() {
@@ -178,6 +184,7 @@ export default function RegisterPage() {
             <p>Password must:</p>
             <ul className="list-disc list-inside">
               <li>Be at least 8 characters long</li>
+              <li>Have at least 1 non-letter / 1 digit</li>
             </ul>
           </div>
 
