@@ -23,10 +23,10 @@ interface DateRangePickerProps {
     initialStartDate?: Date;
     initialEndDate?: Date;
     mode:
-    | "create-itinerary"
-    | "update-itinerary"
-    | "create-activity"
-    | "update-activity";
+        | "create-itinerary"
+        | "update-itinerary"
+        | "create-activity"
+        | "update-activity";
     autoSave?: boolean;
 }
 
@@ -41,10 +41,10 @@ export function DateRangePicker({
 }: Readonly<DateRangePickerProps>) {
     // Initialize with provided dates or defaults based on context
     const [startDate, setStartDate] = useState<Date | undefined>(
-        initialStartDate || activity?.start_date || itinerary?.start_date
+        initialStartDate ?? activity?.start_date ?? itinerary?.start_date
     );
     const [endDate, setEndDate] = useState<Date | undefined>(
-        initialEndDate || activity?.end_date || itinerary?.end_date
+        initialEndDate ?? activity?.end_date ?? itinerary?.end_date
     );
     const [isPopoverOpen, setIsPopoverOpen] = useState<
         "start" | "end" | "none"
@@ -53,17 +53,6 @@ export function DateRangePicker({
 
     // Keep references of previous values to determine changes
     const previousValues = useRef({ startDate, endDate });
-
-    useEffect(() => {
-        if (mode.includes("activity") && itinerary) {
-            setStartDate((prevStart) =>
-                prevStart && prevStart < itinerary.start_date ? itinerary.start_date : prevStart
-            );
-            setEndDate((prevEnd) =>
-                prevEnd && prevEnd > itinerary.end_date ? itinerary.end_date : prevEnd
-            );
-        }
-    }, [itinerary, itinerary?.start_date, itinerary?.end_date, mode]);
 
     // Auto-save effect (only used for update-itinerary mode with autoSave=true)
     useEffect(() => {
@@ -108,73 +97,38 @@ export function DateRangePicker({
         );
     };
 
-    const isDisabledDate = (date: Date, type: "start" | "end"): boolean => {
+    const isDisabledDate = (date: Date): boolean => {
+        // Normalize time to 00:00:00 for comparison
         const today = new Date();
-        today.setHours(0, 0, 0, 0); // Normalize time to 00:00:00
+        today.setHours(0, 0, 0, 0);
 
         // Disable past dates
         if (date < today) return true;
-
-        if (mode.includes("activity") && itinerary) {
-            const itineraryStart = new Date(itinerary.start_date);
-            const itineraryEnd = new Date(itinerary.end_date);
-
-            // Ensure we set times to UTC 00:00:00 for proper comparison
-            itineraryStart.setHours(0, 0, 0, 0);
-            itineraryEnd.setHours(0, 0, 0, 0);
-
-            if (type === "start") {
-                if (date < itineraryStart) return true; // ✅ Disable before March 9
-            }
-            if (type === "end") {
-                if (date > itineraryEnd) return true; // ✅ Disable **March 29 onwards**
-            }
-        }
-
-        return false; // ✅ Allow valid dates
+        return false;
     };
 
     const validateStartDate = (utcDate: Date): boolean => {
-        if (endDate && utcDate > endDate) {
+        const utcEndDate = toUTCDate(endDate);
+        if (utcEndDate && utcDate > utcEndDate) {
             toast.error("Start date cannot be later than end date");
             return false;
         }
-
-        if (
-            mode.includes("activity") &&
-            itinerary?.start_date &&
-            utcDate < itinerary.start_date
-        ) {
-            toast.error(
-                "Activity start date must be within itinerary date range"
-            );
-            return false;
-        }
-
         return true;
     };
 
     const validateEndDate = (utcDate: Date): boolean => {
-        if (startDate && utcDate < startDate) {
+        const utcStartDate = toUTCDate(startDate);
+        if (utcStartDate && utcDate < utcStartDate) {
             toast.error("End date cannot be earlier than start date");
             return false;
         }
-
-        if (
-            mode.includes("activity") &&
-            itinerary?.end_date &&
-            utcDate > itinerary.end_date
-        ) {
-            toast.error(
-                "Activity end date must be within itinerary date range"
-            );
-            return false;
-        }
-
         return true;
     };
 
-    const handleDateSelect = (dateType: "start" | "end", date: Date | undefined): void => {
+    const handleDateSelect = (
+        dateType: "start" | "end",
+        date: Date | undefined
+    ): void => {
         if (!date) return;
 
         const utcDate = toUTCDate(date);
@@ -262,8 +216,8 @@ export function DateRangePicker({
                         mode="single"
                         selected={startDate}
                         onSelect={(date) => handleDateSelect("start", date)}
-                        disabled={(date) => isDisabledDate(date, "start")}
-                        initialFocus
+                        disabled={(date) => isDisabledDate(date)}
+                        autoFocus
                     />
                 </PopoverContent>
             </Popover>
@@ -293,8 +247,8 @@ export function DateRangePicker({
                         mode="single"
                         selected={endDate}
                         onSelect={(date) => handleDateSelect("end", date)}
-                        disabled={(date) => isDisabledDate(date, "end")}
-                        initialFocus
+                        disabled={(date) => isDisabledDate(date)}
+                        autoFocus
                     />
                 </PopoverContent>
             </Popover>
