@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import {
     DndContext,
     closestCenter,
@@ -18,8 +18,9 @@ import {
 } from "@dnd-kit/sortable";
 import { Card } from "@/components/ui/card";
 import { SortableLocationCard } from "./sortable-location-card";
-
 import { Activity } from "@/lib/types";
+import { editActivity } from "@/lib/activityHandler";
+import { toast } from "sonner";
 
 export function SortableItinerary({
     fetchedActivities,
@@ -27,8 +28,16 @@ export function SortableItinerary({
     fetchedActivities: Activity[];
 }>) {
     const [activities, setActivities] = useState<Activity[]>(fetchedActivities);
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const initialOrderRef = useRef<Activity[]>(fetchedActivities);
+
+    useEffect(() => {
+        saveOrder();
+    }, [activities]);
+
     useEffect(() => {
         setActivities(fetchedActivities);
+        initialOrderRef.current = fetchedActivities;
     }, [fetchedActivities]);
 
     const sensors = useSensors(
@@ -40,21 +49,31 @@ export function SortableItinerary({
 
     function handleDragEnd(event: DragEndEvent) {
         const { active, over } = event;
+        if (!over || active.id === over.id) return;
 
-        if (over && active.id !== over.id) {
-            setActivities((items) => {
-                const oldIndex = items.findIndex(
-                    (item) => item.id === active.id
-                );
-                const newIndex = items.findIndex((item) => item.id === over.id);
-
-                return arrayMove(items, oldIndex, newIndex);
-            });
-        }
+        setActivities((items) => {
+            const oldIndex = items.findIndex((item) => item.id === active.id);
+            const newIndex = items.findIndex((item) => item.id === over.id);
+            return arrayMove(items, oldIndex, newIndex);
+        });
     }
 
+    const saveOrder = useCallback(async () => {
+        const updatedActivities = activities.map((activity, index) => ({
+            ...activity,
+            sequence: index + 1, // Assign new sequence order
+        }));
+
+        try {
+            await Promise.all(updatedActivities.map(editActivity)); // Parallelize API calls
+        } catch (error) {
+            console.error("Error saving activity order:", error);
+            toast.error("Error saving activity order");
+        }
+    }, [activities]);
+
     return (
-        <div>
+        <div ref={containerRef}>
             <Card className="p-6 w-[700px]">
                 {fetchedActivities.length === 0 ? (
                     <Card className="p-6 flex items-center justify-center h-40 border-2 border-gray-300">

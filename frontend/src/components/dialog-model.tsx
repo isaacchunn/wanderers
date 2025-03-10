@@ -119,7 +119,8 @@ export default function DialogModal({
                 retryCountRef.current += 1;
 
                 console.log(
-                    `Rate limit hit. Retrying in ${retryDelay / 1000
+                    `Rate limit hit. Retrying in ${
+                        retryDelay / 1000
                     } seconds...`
                 );
                 toast.warning(
@@ -205,17 +206,16 @@ export default function DialogModal({
             image: activityToEdit!.photo_url,
             formattedAddress: activityToEdit!.formatted_address,
             types: activityToEdit!.types,
-            rating: activityToEdit!.rating,
-            userRatingsTotal: activityToEdit!.user_ratings_total,
+            rating: activityToEdit?.rating ?? 0,
+            userRatingsTotal: activityToEdit?.user_ratings_total ?? 0,
             internationalPhoneNumber:
-                activityToEdit!.international_phone_number,
-            website: activityToEdit!.website,
-            openingHours: activityToEdit?.opening_hours || [],
+                activityToEdit?.international_phone_number ??
+                "No phone number available",
+            website: activityToEdit?.website ?? "No website available",
+            openingHours: activityToEdit?.opening_hours ?? [],
             googleMapsUrl: activityToEdit!.google_maps_url,
             placeId: activityToEdit!.place_id, // Ensure placeId is valid
         };
-
-        console.log(selectedPlaceDetails.openingHours)
 
         // If `placeDetails` is still undefined (i.e., editing activity and no place found), return an error
         if (!placeDetails) {
@@ -240,12 +240,13 @@ export default function DialogModal({
             place_id: "PLACE_ID_HERE", // You need to assign a real place ID
             formatted_address: selectedPlaceDetails.formattedAddress,
             types: selectedPlaceDetails.types,
-            rating: selectedPlaceDetails.rating,
-            user_ratings_total: selectedPlaceDetails.userRatingsTotal,
+            rating: selectedPlaceDetails?.rating ?? 0,
+            user_ratings_total: selectedPlaceDetails?.userRatingsTotal ?? 0,
             international_phone_number:
-                selectedPlaceDetails.internationalPhoneNumber,
-            website: selectedPlaceDetails.website,
-            opening_hours: selectedPlaceDetails?.openingHours || [],
+                selectedPlaceDetails?.internationalPhoneNumber ??
+                "No phone number available",
+            website: selectedPlaceDetails?.website ?? "No website available",
+            opening_hours: selectedPlaceDetails?.openingHours ?? [],
             google_maps_url: selectedPlaceDetails.googleMapsUrl,
         };
 
@@ -306,9 +307,9 @@ export default function DialogModal({
                         onSelect={(term) => setQuery(term)}
                         initialValue={activityToEdit?.title}
                     />
-                    {query && query.length < 3 && (
+                    {query && query.length < 1 && (
                         <p className="text-xs text-muted-foreground">
-                            Type at least 3 characters to search
+                            Type at least 1 character to search
                         </p>
                     )}
                 </FormItem>
