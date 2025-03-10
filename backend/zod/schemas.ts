@@ -5,7 +5,7 @@ import { ExpenseSplitType } from "@prisma/client";
 export const registerUserSchema = z.object({
   username: z.string(),
   email: z.string().email(),
-  password: z.string().min(8, { message: "Password must be at least 8 characters" }).regex(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/, {
+  password: z.string().min(8, { message: "Password must be at least 8 characters" }).regex(/^(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/, {
     message: "Password must contain at least 1 number and 1 special character",
   }),
 });
@@ -17,7 +17,7 @@ export const loginUserschema = z.object({
 
 export const updatePasswordSchema = z.object({
   currentPassword: z.string(),
-  newPassword: z.string().min(8, "Password must be at least 8 characters").regex(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/, {
+  newPassword: z.string().min(8, "Password must be at least 8 characters").regex(/^(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/, {
     message: "Password must contain at least 1 number and 1 special character",
   }),
 });
