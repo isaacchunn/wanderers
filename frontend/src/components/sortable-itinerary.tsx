@@ -32,6 +32,10 @@ export function SortableItinerary({
     const initialOrderRef = useRef<Activity[]>(fetchedActivities);
 
     useEffect(() => {
+        saveOrder();
+    }, [activities]);
+
+    useEffect(() => {
         setActivities(fetchedActivities);
         initialOrderRef.current = fetchedActivities;
     }, [fetchedActivities]);
@@ -68,29 +72,15 @@ export function SortableItinerary({
         }
     }, [activities]);
 
-    const handleClickOutside = useCallback((event: MouseEvent) => {
-        if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-            // Check if the activity order has changed before saving
-            if (JSON.stringify(activities) !== JSON.stringify(initialOrderRef.current)) {
-                saveOrder();
-            }
-        }
-    }, [activities, saveOrder]);
-
-    useEffect(() => {
-        document.addEventListener("click", handleClickOutside);
-        return () => {
-            document.removeEventListener("click", handleClickOutside);
-        };
-    }, [handleClickOutside]);
-
     return (
         <div ref={containerRef}>
             <Card className="p-6 w-[700px]">
                 {fetchedActivities.length === 0 ? (
                     <Card className="p-6 flex items-center justify-center h-40 border-2 border-gray-300">
                         <div className="flex flex-col items-center">
-                            <span className="text-base font-medium">Add a place!</span>
+                            <span className="text-base font-medium">
+                                Add a place!
+                            </span>
                         </div>
                     </Card>
                 ) : (
