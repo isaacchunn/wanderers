@@ -17,11 +17,19 @@ const registerSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z
     .string()
-    .min(8, "Password must be at least 8 characters long")
-    .regex(
-      /^(?=.*\d)(?=.*[a-zA-Z])/,
-      "Password must contain at least 1 digit and 1 non-letter"
-    ),
+    .min(8, { message: "Password must be at least 8 characters long" })
+    .max(20, { message: "Password must not exceed 20 characters" })
+    .regex(/[A-Z]/, {
+      message: "Password must contain at least one uppercase letter",
+    })
+    .regex(/[a-z]/, {
+      message: "Password must contain at least one lowercase letter",
+    })
+    .regex(/\d/, { message: "Password must contain at least one digit" })
+    .regex(/[!@#$%^&*]/, {
+      message:
+        "Password must contain at least one special character (!@#$%^&*)",
+    }),
 });
 
 export default function RegisterPage() {
