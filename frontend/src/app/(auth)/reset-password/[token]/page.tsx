@@ -129,7 +129,7 @@ export default function ResetPasswordPage() {
         setErrors([data.message || "An error occurred"]);
       }
     } catch (error) {
-      setErrors(["An unexpected error occurred. Please try again."]);
+      setErrors([`An unexpected error occurred. Please try again. ${error}`]);
     }
   };
 
