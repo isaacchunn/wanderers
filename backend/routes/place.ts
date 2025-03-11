@@ -1,6 +1,6 @@
 import express from "express";
 import { protect } from "../middleware/auth";
-import { searchPlaceController } from "../controllers/place";
+import { searchLandmarkController, searchPlaceController } from "../controllers/place";
 
 const router = express.Router();
 
@@ -109,5 +109,55 @@ const router = express.Router();
  *         description: Internal server error.
  */
 router.post("/search", protect, searchPlaceController);
+
+/**
+ * @swagger
+ * /api/place/landmark-photos:
+ *   post:
+ *     summary: Get a photo of a landmark
+ *     description: >
+ *       Retrieves a photo of a landmark using the Google Places Details API.
+ *       The endpoint returns a URL to the image of the landmark.
+ *     tags:
+ *       - Place
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               search:
+ *                 type: string
+ *                 description: The search query for the place (e.g., "Namsan").
+ *                 example: Namsan
+ *               country:
+ *                 type: string
+ *                 description: Optional country code to restrict results (e.g., "kr" for South Korea).
+ *                 example: kr
+ *             required:
+ *               - search
+ *     responses:
+ *       200:
+ *         description: Returns a URL to an image of the landmark.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 imageUrl:
+ *                   type: string
+ *                   description: A URL to an image of the landmark.
+ *                   example: "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=PHOTO_REFERENCE&key=YOUR_API_KEY"
+ *       400:
+ *         description: Invalid place ID provided.
+ *       404:
+ *         description: No photos found for the landmark.
+ *       500:
+ *         description: Internal server error.
+ */
+router.post("/landmark-photos", protect, searchLandmarkController);
 
 export { router as default };

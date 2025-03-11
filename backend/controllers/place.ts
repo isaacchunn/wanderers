@@ -60,6 +60,17 @@ const getPlaceDetails = async (placeId: string): Promise<any> => {
   };
 };
 
+// Get a photo of a landmark
+const getLandmarkPhoto = async (placeId: string): Promise<string> => {
+  const detailsUrl = `${GOOGLE_PLACES_API_URL}/details/json?place_id=${placeId}&fields=photos&key=${GOOGLE_PLACES_API_KEY}`;
+  const { data } = await axios.get(detailsUrl);
+  const result = data.result;
+
+  return result?.photos?.[0]?.photo_reference
+    ? `${GOOGLE_PLACES_API_URL}/photo?maxwidth=400&photoreference=${result.photos[0].photo_reference}&key=${GOOGLE_PLACES_API_KEY}`
+    : "";
+};
+
 // @desc    Search a place
 // @route   POST /api/place/search
 // @access  Private
@@ -92,3 +103,32 @@ export const searchPlaceController = async (req: Request, res: Response) => {
     res.status(HttpCode.InternalServerError).json({ error: error.message });
   }
 };
+
+// @desc    Return a landmark photo
+// @route   POST /api/place/landmark-photos
+// @access  Private
+export const searchLandmarkController = async (req: Request, res: Response) => {
+  try {
+    const { search, country } = req.body;
+
+    if (!search || typeof search !== "string") {
+      throw new Error("Invalid search query");
+    }
+
+    // Get predictions from the Autocomplete API
+    const predictions = await getAutocompletePredictions(search, country);
+
+    // For each prediction, get detailed information
+    const places = await Promise.all(
+      predictions.map(async (prediction: any) =>
+        getLandmarkPhoto(prediction.place_id),
+      ),
+    );
+
+    res.json(places);
+  } catch (error: any) {
+    console.error("Error in searchPlaceController:", error);
+    res.status(HttpCode.InternalServerError).json({ error: error.message });
+  }
+};
+
