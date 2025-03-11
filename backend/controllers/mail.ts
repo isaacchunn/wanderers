@@ -62,13 +62,13 @@ export const deliverItineraryCollabEmail = async (
 
 const forgetpasswordbody = (url: string, username: string, token: string) => {
   var date = new Date();
-  date.setDate(date.getDate() + 1);
+  date.setDate(date.getDate() + 2);
 
   return `
 	Hi ${username}!
 
 	<br/>
-	We received a request to reset your account password. Please use the following link to verify yourself. This link is valid for 1 day till ${date}.
+	We received a request to reset your account password. Please use the following link to verify yourself. This link is valid for 2 days till ${date.toLocaleDateString}.
 	<br/><br/>
 	Click on this <a href="${url}/reset-password/${token}">${url}/reset-password/${token}</a> to reset your password
 	<br/><br/>
