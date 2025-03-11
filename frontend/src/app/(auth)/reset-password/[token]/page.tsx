@@ -193,12 +193,13 @@ export default function ResetPasswordPage() {
           <div className="text-sm">
             <p className="font-medium mb-1">Password must:</p>
             <ul className="text-xs list-inside space-y-1">
-              {passwordCriteria.map((criterion, index) => (
+              {passwordCriteria.map((criterion) => (
                 <li
-                  key={index}
+                  key={criterion.text}
                   className={cn(
                     "flex items-start",
-                    newPassword.length > 0 && !criteriaValidation[index]
+                    newPassword.length > 0 &&
+                      !criteriaValidation[passwordCriteria.indexOf(criterion)]
                       ? "text-red-500"
                       : "text-muted-foreground"
                   )}
@@ -214,8 +215,8 @@ export default function ResetPasswordPage() {
           {errors.length > 0 && (
             <div className="mt-2">
               <ul className="text-red-500 text-xs list-disc list-inside space-y-1">
-                {errors.map((error, index) => (
-                  <li key={index}>{error}</li>
+                {errors.map((error) => (
+                  <li key={error}>{error}</li>
                 ))}
               </ul>
             </div>
