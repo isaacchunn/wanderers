@@ -184,7 +184,10 @@ export default function RegisterPage() {
             <p>Password must:</p>
             <ul className="list-disc list-inside">
               <li>Be at least 8 characters long</li>
-              <li>Have at least 1 non-letter / 1 digit</li>
+              <li>Must contain at least 1 uppercase letter</li>
+              <li>Must contain at least 1 lowercase letter</li>
+              <li>Must contain at least 1 digit</li>
+              <li>Must contain at least 1 special character</li>
             </ul>
           </div>
 

@@ -5,9 +5,12 @@ import { ExpenseSplitType } from "@prisma/client";
 export const registerUserSchema = z.object({
   username: z.string(),
   email: z.string().email(),
-  password: z.string().min(8, { message: "Password must be at least 8 characters" }).regex(/^(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/, {
-    message: "Password must contain at least 1 number and 1 special character",
-  }),
+  password: z.string().min(8, { message: "Password must be at least 8 characters long" })
+    .max(20, { message: "Password must not exceed 20 characters" })
+    .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
+    .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
+    .regex(/\d/, { message: "Password must contain at least one digit" })
+    .regex(/[!@#$%^&*]/, { message: "Password must contain at least one special character (!@#$%^&*)" })
 });
 
 export const loginUserschema = z.object({
@@ -17,9 +20,12 @@ export const loginUserschema = z.object({
 
 export const updatePasswordSchema = z.object({
   currentPassword: z.string(),
-  newPassword: z.string().min(8, "Password must be at least 8 characters").regex(/^(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/, {
-    message: "Password must contain at least 1 number and 1 special character",
-  }),
+  newPassword: z.string().min(8, { message: "Password must be at least 8 characters long" })
+    .max(20, { message: "Password must not exceed 20 characters" })
+    .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
+    .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
+    .regex(/\d/, { message: "Password must contain at least one digit" })
+    .regex(/[!@#$%^&*]/, { message: "Password must contain at least one special character (!@#$%^&*)" })
 });
 
 export const activitySchema = z.object({
