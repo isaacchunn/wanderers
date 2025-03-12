@@ -58,6 +58,39 @@ export default function DialogModal({
         },
     })
 
+    useEffect(() => {
+        // Add custom styles to remove border and clear button from TimePicker
+        const style = document.createElement("style")
+        style.innerHTML = `
+        .react-time-picker__wrapper {
+          border: none !important;
+        }
+        .react-time-picker__clear-button {
+          display: none !important;
+        }
+        .react-time-picker__inputGroup {
+          width: 116px !important;
+          font-size: 14px !important;
+          display: flex ! important;
+          justify-content: space-between !important;
+          padding-left: 6px !important;
+        }
+        .react-time-picker__inputGroup__input {
+          min-width: 16px !important;
+          padding: 0 2px !important;
+        }
+        .react-time-picker__inputGroup__leadingZero {
+          padding-top: 1.5px !important;
+          padding-right: 2px !important;
+        }
+      `
+        document.head.appendChild(style)
+
+        return () => {
+            document.head.removeChild(style)
+        }
+    }, [])
+
     // Fetch places based on search query
     const abortControllerRef = useRef<AbortController | null>(null)
     const retryCountRef = useRef<number>(0)
@@ -154,27 +187,42 @@ export default function DialogModal({
     }
 
     // When dates change from the DateRangePicker, preserve the time
-    const handleDateChange = (newDateRange: {
-        startDate: Date | undefined
-        endDate: Date | undefined
-    }) => {
+    const handleDateChange = (newDateRange: { startDate: Date | undefined; endDate: Date | undefined }) => {
         if (newDateRange.startDate && dateTimeRange.startDate) {
-            newDateRange.startDate.setHours(dateTimeRange.startDate.getHours(), dateTimeRange.startDate.getMinutes(), 0, 0)
+            // Update only the date, keep the time from dateTimeRange.startDate
+            newDateRange.startDate.setHours(dateTimeRange.startDate.getHours(), dateTimeRange.startDate.getMinutes(), 0, 0);
         }
 
         if (newDateRange.endDate && dateTimeRange.endDate) {
-            newDateRange.endDate.setHours(dateTimeRange.endDate.getHours(), dateTimeRange.endDate.getMinutes(), 0, 0)
+            // Update only the date, keep the time from dateTimeRange.endDate
+            newDateRange.endDate.setHours(dateTimeRange.endDate.getHours(), dateTimeRange.endDate.getMinutes(), 0, 0);
         }
 
-        setDateTimeRange(newDateRange)
-    }
+        setDateTimeRange(newDateRange);
+    };
 
-    // When start time changes
+    const findTimeValidateError = (startDate?: Date, endDate?: Date) => {
+        const timeValidationError = validateTime(startDate, endDate);
+        if (timeValidationError) {
+            toast.error(timeValidationError);
+            return;
+        }
+    };
+
     const handleStartTimeChange = (newTime: string | null) => {
         if (newTime && dateTimeRange.startDate) {
+            findTimeValidateError(dateTimeRange.startDate, dateTimeRange.endDate);
+
             const [hours, minutes] = newTime.split(":").map(Number);
+
             const newStartDate = new Date(dateTimeRange.startDate);
             newStartDate.setHours(hours, minutes, 0, 0);
+
+            // Make sure the date doesn't change unintentionally when updating time
+            if (newStartDate.getDate() !== dateTimeRange.startDate.getDate()) {
+                // If the date has changed (e.g., March 11 -> March 12), we adjust it
+                newStartDate.setDate(dateTimeRange.startDate.getDate());
+            }
 
             setDateTimeRange((prev) => ({
                 ...prev,
@@ -185,9 +233,18 @@ export default function DialogModal({
 
     const handleEndTimeChange = (newTime: string | null) => {
         if (newTime && dateTimeRange.endDate) {
+            findTimeValidateError(dateTimeRange.startDate, dateTimeRange.endDate);
+
             const [hours, minutes] = newTime.split(":").map(Number);
+
             const newEndDate = new Date(dateTimeRange.endDate);
             newEndDate.setHours(hours, minutes, 0, 0);
+
+            // Make sure the date doesn't change unintentionally when updating time
+            if (newEndDate.getDate() !== dateTimeRange.endDate.getDate()) {
+                // If the date has changed (e.g., March 11 -> March 12), we adjust it
+                newEndDate.setDate(dateTimeRange.endDate.getDate());
+            }
 
             setDateTimeRange((prev) => ({
                 ...prev,
@@ -196,7 +253,32 @@ export default function DialogModal({
         }
     };
 
-    // Calculate duration in days and hours
+    const validateTime = (startDate?: Date, endDate?: Date) => {
+        if (!startDate || !endDate) return "Please select a valid start and end time.";
+
+        const now = new Date();
+        const today = now.toDateString();
+
+        // Convert times to comparable values (YYYY-MM-DD HH:MM)
+        const formatDate = (date: Date) => date.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:MM"
+
+        const startTime = formatDate(startDate);
+        const endTime = formatDate(endDate);
+        const nowTime = formatDate(now);
+
+        if (startDate.toDateString() === today && startTime < nowTime) {
+            return "Start time cannot be in the past.";
+        } else if (endDate.toDateString() === today && endTime < nowTime) {
+            return "End time cannot be in the past.";
+        } else if (startTime > endTime) {
+            return "Start time cannot be later than end time.";
+        } else if (endTime < startTime) {
+            return "End time cannot be earlier than start time.";
+        } else {
+            return "Dates Saved";
+        }
+    };
+
     const calculateDuration = () => {
         if (!dateTimeRange.startDate || !dateTimeRange.endDate) return ""
 
