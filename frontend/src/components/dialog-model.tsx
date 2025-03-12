@@ -16,7 +16,7 @@ import { DateRangePicker } from "@/components/calendar-picker"
 import TimePicker from 'react-time-picker'
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
-import { differenceInMilliseconds } from "date-fns"
+import { calculateDuration } from "@/lib/duration"
 import { Clock } from "lucide-react";
 
 const NEXT_PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL
@@ -34,23 +34,36 @@ export default function DialogModal({
     activities: Activity[]
     activityToEdit?: Activity
 }>) {
-    // State for place details and auto-complete results
     const [placeDetailsResults, setPlaceDetailsResults] = useState<PlaceDetails[]>([])
     const [autoCompleteResults, setAutoCompleteResults] = useState<string[]>([])
     const [query, setQuery] = useState(activityToEdit?.title ?? "")
     const [isSearching, setIsSearching] = useState(false)
     const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-    // States for start and end dates with time
-    const [dateTimeRange, setDateTimeRange] = useState<{
-        startDate: Date | undefined
-        endDate: Date | undefined
-    }>({
-        startDate: activityToEdit?.start_date ? new Date(activityToEdit.start_date) : itinerary.start_date ? new Date(itinerary.start_date) : undefined,
-        endDate: activityToEdit?.end_date ? new Date(activityToEdit.end_date) : itinerary.end_date ? new Date(itinerary.end_date) : undefined,
-    })
+    let startDate: Date | undefined;
+    let endDate: Date | undefined;
 
-    // Form initialization using react-hook-form
+    if (activityToEdit?.start_date) {
+        startDate = new Date(activityToEdit.start_date);
+    } else if (itinerary.start_date) {
+        startDate = new Date(itinerary.start_date);
+    }
+
+    if (activityToEdit?.end_date) {
+        endDate = new Date(activityToEdit.end_date);
+    } else if (itinerary.end_date) {
+        endDate = new Date(itinerary.end_date);
+    }
+
+    const [dateTimeRange, setDateTimeRange] = useState<{
+        startDate: Date | undefined;
+        endDate: Date | undefined;
+    }>({
+        startDate,
+        endDate,
+    });
+
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -59,7 +72,6 @@ export default function DialogModal({
     })
 
     useEffect(() => {
-        // Add custom styles to remove border and clear button from TimePicker
         const style = document.createElement("style")
         style.innerHTML = `
         .react-time-picker__wrapper {
@@ -91,27 +103,22 @@ export default function DialogModal({
         }
     }, [])
 
-    // Fetch places based on search query
     const abortControllerRef = useRef<AbortController | null>(null)
     const retryCountRef = useRef<number>(0)
 
-    // Update the fetchPlaces function to log results and ensure autoCompleteResults is set correctly
     const fetchPlaces = async (query: string): Promise<PlaceDetails[] | undefined> => {
         if (!query || query.length < 1 || isSearching) return undefined
 
         setIsSearching(true)
 
-        // Clear any existing timeout
         if (searchTimeoutRef.current) {
             clearTimeout(searchTimeoutRef.current)
         }
 
-        // Abort the previous request if it exists
         if (abortControllerRef.current) {
             abortControllerRef.current.abort()
         }
 
-        // Create a new AbortController instance
         abortControllerRef.current = new AbortController()
 
         try {
@@ -132,23 +139,19 @@ export default function DialogModal({
             })
 
             if (response.status === 429) {
-                // Rate limit hit - implement exponential backoff
-                const retryDelay = Math.min(2000 * Math.pow(2, retryCountRef.current), 30000) // Cap at 30 seconds
+                const retryDelay = Math.min(2000 * Math.pow(2, retryCountRef.current), 30000)
                 retryCountRef.current += 1
 
                 console.log(`Rate limit hit. Retrying in ${retryDelay / 1000} seconds...`)
                 toast.warning(`Search rate limit reached. Please wait a moment.`)
 
-                // Set a timeout to retry after the delay
                 searchTimeoutRef.current = setTimeout(() => {
                     setIsSearching(false)
-                    // Don't automatically retry - let the user try again
                 }, retryDelay)
 
                 return undefined
             }
 
-            // Reset retry count on successful request
             retryCountRef.current = 0
 
             const data: PlaceDetails[] = await response.json()
@@ -166,14 +169,12 @@ export default function DialogModal({
             }
             return undefined
         } finally {
-            // Set a timeout to allow searching again after a delay
             searchTimeoutRef.current = setTimeout(() => {
                 setIsSearching(false)
-            }, 2000) // Wait 2 seconds before allowing another search
+            }, 2000)
         }
     }
 
-    // Handle search with rate limiting
     const handleSearch = async (term: string) => {
         if (term.length >= 1) {
             const data = await fetchPlaces(term)
@@ -186,15 +187,12 @@ export default function DialogModal({
         }
     }
 
-    // When dates change from the DateRangePicker, preserve the time
     const handleDateChange = (newDateRange: { startDate: Date | undefined; endDate: Date | undefined }) => {
         if (newDateRange.startDate && dateTimeRange.startDate) {
-            // Update only the date, keep the time from dateTimeRange.startDate
             newDateRange.startDate.setHours(dateTimeRange.startDate.getHours(), dateTimeRange.startDate.getMinutes(), 0, 0);
         }
 
         if (newDateRange.endDate && dateTimeRange.endDate) {
-            // Update only the date, keep the time from dateTimeRange.endDate
             newDateRange.endDate.setHours(dateTimeRange.endDate.getHours(), dateTimeRange.endDate.getMinutes(), 0, 0);
         }
 
@@ -218,9 +216,7 @@ export default function DialogModal({
             const newStartDate = new Date(dateTimeRange.startDate);
             newStartDate.setHours(hours, minutes, 0, 0);
 
-            // Make sure the date doesn't change unintentionally when updating time
             if (newStartDate.getDate() !== dateTimeRange.startDate.getDate()) {
-                // If the date has changed (e.g., March 11 -> March 12), we adjust it
                 newStartDate.setDate(dateTimeRange.startDate.getDate());
             }
 
@@ -240,9 +236,7 @@ export default function DialogModal({
             const newEndDate = new Date(dateTimeRange.endDate);
             newEndDate.setHours(hours, minutes, 0, 0);
 
-            // Make sure the date doesn't change unintentionally when updating time
             if (newEndDate.getDate() !== dateTimeRange.endDate.getDate()) {
-                // If the date has changed (e.g., March 11 -> March 12), we adjust it
                 newEndDate.setDate(dateTimeRange.endDate.getDate());
             }
 
@@ -259,47 +253,40 @@ export default function DialogModal({
         const now = new Date();
         const today = now.toDateString();
 
-        // Convert times to comparable values (YYYY-MM-DD HH:MM)
-        const formatDate = (date: Date) => date.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:MM"
+        const formatDate = (date: Date) => date.toISOString().slice(0, 16);
 
         const startTime = formatDate(startDate);
         const endTime = formatDate(endDate);
         const nowTime = formatDate(now);
 
-        if (startDate.toDateString() === today && startTime < nowTime) {
-            return "Start time cannot be in the past.";
-        } else if (endDate.toDateString() === today && endTime < nowTime) {
-            return "End time cannot be in the past.";
-        } else if (startTime > endTime) {
-            return "Start time cannot be later than end time.";
-        } else if (endTime < startTime) {
-            return "End time cannot be earlier than start time.";
+        if (startDate.toDateString() !== endDate.toDateString()) {
+            if (startTime > endTime) {
+                console.log(startTime);
+                console.log(endTime);
+                return "Start time cannot be later than end time.";
+            }
+            if (startTime < nowTime) {
+                console.log(startTime);
+                console.log(nowTime);
+                return "Start time cannot be in the past.";
+            }
         } else {
-            return "Dates Saved";
+            if (startTime < nowTime) {
+                console.log(startTime);
+                console.log(nowTime);
+                return "Start time cannot be in the past.";
+            }
+            if (startTime > endTime) {
+                console.log(startTime);
+                console.log(endTime);
+                return "Start time cannot be later than end time.";
+            }
         }
+
+        return "Dates Saved";
     };
 
-    const calculateDuration = () => {
-        if (!dateTimeRange.startDate || !dateTimeRange.endDate) return ""
-
-        const diffMs = differenceInMilliseconds(dateTimeRange.endDate, dateTimeRange.startDate)
-
-        // Calculate days and hours
-        const days = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-        const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-
-        if (days === 0) {
-            return `${hours} hour${hours !== 1 ? "s" : ""}`
-        } else if (hours === 0) {
-            return `${days} day${days !== 1 ? "s" : ""}`
-        } else {
-            return `${days} day${days !== 1 ? "s" : ""} and ${hours} hour${hours !== 1 ? "s" : ""}`
-        }
-    }
-
-    // Handle form submission (Add/Edit activity)
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        // Validate dates
         if (!dateTimeRange.startDate || !dateTimeRange.endDate) {
             toast.error("Please select both start and end dates")
             return
@@ -312,7 +299,6 @@ export default function DialogModal({
             return
         }
 
-        // If no place is selected, use the existing place details from activityToEdit
         const placeDetails = selectedPlaceDetails ?? {
             title: activityToEdit!.title,
             lat: activityToEdit!.lat,
@@ -329,7 +315,6 @@ export default function DialogModal({
             place_id: activityToEdit!.place_id,
         }
 
-        // If `placeDetails` is still undefined (i.e., editing activity and no place found), return an error
         if (!placeDetails) {
             toast.error("Could not find place details.")
             return
@@ -372,7 +357,6 @@ export default function DialogModal({
         try {
             let response
             if (activityToEdit) {
-                // Editing existing activity
                 response = await editActivity(newActivity)
                 if (response) {
                     toast.success("Activity updated successfully")
@@ -380,7 +364,6 @@ export default function DialogModal({
                     toast.error("Error updating activity")
                 }
             } else {
-                // Adding new activity
                 response = await addActivity(newActivity)
                 if (response) {
                     toast.success("Activity added successfully")
@@ -396,7 +379,6 @@ export default function DialogModal({
         }
     }
 
-    // Cleanup on unmount
     useEffect(() => {
         return () => {
             if (searchTimeoutRef.current) {
@@ -461,7 +443,7 @@ export default function DialogModal({
                         </div>
 
                         {dateTimeRange.startDate && dateTimeRange.endDate && (
-                            <p className="text-sm text-muted-foreground">Duration: {calculateDuration()}</p>
+                            <p className="text-sm text-muted-foreground">Duration: {calculateDuration(dateTimeRange.startDate, dateTimeRange.endDate)}</p>
                         )}
                     </FormItem>
 

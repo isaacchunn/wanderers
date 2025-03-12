@@ -16,9 +16,9 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { Activity } from "@/lib/types";
-import RenderOpeningHours from "@/components/RenderOpeningHours"; // Adjust the import path
+import RenderOpeningHours from "@/components/RenderOpeningHours";
 import { DropdownSetting } from "@/components/dropdown-menuA";
-import { differenceInMilliseconds } from "date-fns"
+import { calculateDuration } from "@/lib/duration"
 
 interface SortableLocationCardProps {
     activity: Activity;
@@ -38,25 +38,6 @@ export function SortableLocationCard({ activity }: Readonly<SortableLocationCard
         transform: CSS.Transform.toString(transform),
         transition,
     };
-
-    const duration = () => {
-        if (!activity.start_date || !activity.end_date) return ""
-
-        const diffMs = differenceInMilliseconds(activity.end_date, activity.start_date)
-
-        // Calculate days and hours
-        const days = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-        const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-
-        if (days === 0) {
-            return `${hours} hour${hours !== 1 ? "s" : ""}`
-        } else if (hours === 0) {
-            return `${days} day${days !== 1 ? "s" : ""}`
-        } else {
-            return `${days} day${days !== 1 ? "s" : ""} and ${hours} hour${hours !== 1 ? "s" : ""}`
-        }
-    }
-
 
     if (!activity) {
         return (
@@ -140,7 +121,7 @@ export function SortableLocationCard({ activity }: Readonly<SortableLocationCard
                                     <div className="flex items-center gap-2 py-1">
                                         <Clock className="h-4 w-4" />
                                         <span className="text-sm">
-                                            {`${duration()}`}
+                                            {`${calculateDuration(activity.start_date, activity.end_date)}`}
                                         </span>
                                     </div>
 
