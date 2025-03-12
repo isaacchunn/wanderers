@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Fixed
+
+### Changed
+
+### Removed
+
+## [1.0.0] - 2025-03-12
+
+### Added
+
 - (BE) Other authentication related APIs (request-confirmation, confirm-account, forgot-password, reset-password)
 - (BE) Ethereal implementation for sending emails
 - (FE) Global user state (UserProvider and UserStore) with zustand implemented
@@ -37,8 +47,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (BE) Google Places API response to include more information for FE to use
 - (BE/FE) Hardcoded server urls to use environment values instead
 - (BE) Password change logic that prevents users from reusing their previous three passwords and ensures password adheres to best password practices
-
-### Removed
 
 ## [0.0.4] - 2025-02-19
 
@@ -98,8 +106,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CODEOWNERS file to track mandatory reviewers of certain PRs
 
 ---
-
-[unreleased]: https://github.com/isaacchunn/wanderers/compare/v0.0.4...HEAD
+[unreleased]: https://github.com/isaacchunn/wanderers/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/isaacchunn/wanderers/compare/v0.0.4...v1.0.0
 [0.0.4]: https://github.com/isaacchunn/wanderers/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/isaacchunn/wanderers/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/isaacchunn/wanderers/compare/v0.0.1...v0.0.2
