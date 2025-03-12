@@ -284,11 +284,8 @@ export default function DialogModal({
         return "Dates Saved";
     };
 
-    const onSubmit = async (values: z.infer<typeof formSchema>) => {
-
-        const selectedPlaceDetails = placeDetailsResults.find((place) => place.title === query)
-
-        const placeDetails = selectedPlaceDetails ?? {
+    const getPlaceDetails = (selectedPlaceDetails: PlaceDetails | undefined, activityToEdit: Activity | undefined) => {
+        return selectedPlaceDetails ?? {
             title: activityToEdit!.title,
             lat: activityToEdit!.lat,
             lon: activityToEdit!.lon,
@@ -303,19 +300,10 @@ export default function DialogModal({
             googleMapsUrl: activityToEdit!.google_maps_url,
             place_id: activityToEdit!.place_id,
         }
+    }
 
-        if (!dateTimeRange.startDate || !dateTimeRange.endDate) {
-            toast.error("Please select both start and end dates")
-            return
-        } else if (!selectedPlaceDetails && !activityToEdit) {
-            toast.error("Please select a valid place")
-            return
-        } else if (!placeDetails) {
-            toast.error("Could not find place details.")
-            return
-        }
-
-        const newActivity: Activity = {
+    const createActivity = (values: z.infer<typeof formSchema>, placeDetails: PlaceDetails, selectedPlaceDetails: PlaceDetails | undefined, activities: Activity[], itinerary: Itinerary, dateTimeRange: { startDate: Date | undefined; endDate: Date | undefined }, activityToEdit: Activity | undefined) => {
+        return {
             id: activityToEdit?.id ?? 0,
             title: placeDetails.title,
             description: values.notes ?? "",
@@ -348,26 +336,48 @@ export default function DialogModal({
                 : activityToEdit!.opening_hours || [],
             google_maps_url: selectedPlaceDetails ? selectedPlaceDetails.googleMapsUrl : activityToEdit!.google_maps_url,
         }
+    }
 
-        let response
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+        if (!dateTimeRange.startDate || !dateTimeRange.endDate) {
+            toast.error("Please select both start and end dates");
+            return;
+        }
+
+        const selectedPlaceDetails = placeDetailsResults.find((place) => place.title === query);
+        const placeDetails = getPlaceDetails(selectedPlaceDetails, activityToEdit);
+
+        if (!placeDetails) {
+            toast.error("Could not find place details.");
+            return;
+        }
+
+        if (!selectedPlaceDetails && !activityToEdit) {
+            toast.error("Please select a valid place");
+            return;
+        }
+
+        const newActivity = createActivity(values, placeDetails, selectedPlaceDetails, activities, itinerary, dateTimeRange, activityToEdit);
+
+        let response;
         if (activityToEdit) {
-            response = await editActivity(newActivity)
+            response = await editActivity(newActivity as Activity);
             if (response) {
-                toast.success("Activity updated successfully")
+                toast.success("Activity updated successfully");
             } else {
-                toast.error("Error updating activity")
+                toast.error("Error updating activity");
             }
         } else {
-            response = await addActivity(newActivity)
+            response = await addActivity(newActivity as Activity);
             if (response) {
-                toast.success("Activity added successfully")
+                toast.success("Activity added successfully");
             } else {
-                toast.error("Error adding activity")
+                toast.error("Error adding activity");
             }
         }
 
-        window.location.reload()
-    }
+        window.location.reload();
+    };
 
     useEffect(() => {
         return () => {
