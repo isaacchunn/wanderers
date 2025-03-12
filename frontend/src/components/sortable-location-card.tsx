@@ -81,7 +81,7 @@ export function SortableLocationCard({ activity }: Readonly<SortableLocationCard
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 priority
                             />
-                            {activity.rating > 0 && (
+                            {activity.rating > 0 ? (
                                 <Badge
                                     variant="secondary"
                                     className="absolute right-2 top-2 bg-background/80 backdrop-blur-sm"
@@ -89,7 +89,18 @@ export function SortableLocationCard({ activity }: Readonly<SortableLocationCard
                                     <Star className="mr-1 h-3 w-3 fill-current text-yellow-400" />
                                     {activity.rating}
                                     <span className="ml-1 text-xs text-muted-foreground">
-                                        ({activity.user_ratings_total?.toLocaleString()})
+                                        ({activity.user_ratings_total?.toLocaleString() || "No ratings"})
+                                    </span>
+                                </Badge>
+                            ) : (
+                                <Badge
+                                    variant="secondary"
+                                    className="absolute right-2 top-2 bg-background/80 backdrop-blur-sm"
+                                >
+                                    <Star className="mr-1 h-3 w-3 fill-current text-yellow-400" />
+                                    {"No rating"}
+                                    <span className="ml-1 text-xs text-muted-foreground">
+                                        {"No ratings"}
                                     </span>
                                 </Badge>
                             )}
@@ -142,12 +153,20 @@ export function SortableLocationCard({ activity }: Readonly<SortableLocationCard
                                         <span className="text-muted-foreground">{activity.formatted_address}</span>
                                     </div>
 
-                                    {activity.international_phone_number && (
+                                    {activity.international_phone_number ? (
                                         <div className="flex items-center gap-5 mt-1">
                                             <Phone className="h-4 w-4" />
-                                            <span className="text-muted-foreground">{activity.international_phone_number}</span>
+                                            <span className="text-muted-foreground">
+                                                {activity.international_phone_number}
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-5 mt-1">
+                                            <Phone className="h-4 w-4" />
+                                            <span className="text-muted-foreground">No phone number available</span>
                                         </div>
                                     )}
+
                                     {activity.opening_hours && (
                                         <div className="flex items-center gap-5 mt-1">
                                             <Clock className="h-4 w-4 flex-shrink-0" />
@@ -170,14 +189,17 @@ export function SortableLocationCard({ activity }: Readonly<SortableLocationCard
                                 </div>
                             </div>
                             <div className="flex gap-2">
-                                {activity.website && (
+                                {activity.website ? (
                                     <Button size="sm" variant="outline" asChild>
                                         <a href={activity.website} target="_blank" rel="noopener noreferrer">
                                             <Globe className="mr-2 h-4 w-4" />
                                             Website
                                         </a>
                                     </Button>
+                                ) : (
+                                    <span className="text-muted-foreground">No website available</span>
                                 )}
+
                                 <Button size="sm" variant="outline" asChild>
                                     <a href={activity.google_maps_url} target="_blank" rel="noopener noreferrer">
                                         <ExternalLink className="mr-2 h-4 w-4" />

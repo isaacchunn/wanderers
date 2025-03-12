@@ -9,6 +9,7 @@ import {
   getActivitiesByItineraryId,
   updateActivity,
   deleteActivity,
+  updateActivitySequence,
 } from "../services/activity";
 import { activitySchema } from "../zod/schemas";
 import { HttpCode } from "../lib/httpCodes";
@@ -109,6 +110,41 @@ export const updateActivityController = async (req: AuthenticatedRequest, res: R
 
     const updatedActivity = await updateActivity(parseInt(req.params.id), parsed.data);
     responseBody = updatedActivity;
+  } catch (error: any) {
+    responseCode = HttpCode.BadRequest;
+    responseBody = { message: error.message || "Internal Server Error" };
+  }
+
+  res.status(responseCode).json(responseBody);
+};
+
+
+// @desc    Update activity sequence
+// @route   PUT /api/activity/sequence
+// @access  Private
+export const updateActivitySequenceController = async (req: AuthenticatedRequest, res: Response) => {
+  let responseCode = HttpCode.OK;
+  let responseBody: any = {};
+
+  try {
+    const activities = req.body.activities;
+    if (!activities.length) {
+      throw new Error("Activities array is empty");
+    }
+
+    // Sequences must be from 1 to n
+    const sequences = activities.map((activity: any) => activity.sequence);
+    if (new Set(sequences).size !== sequences.length) {
+      throw new Error("Activity sequences must be unique");
+    }
+
+    const updatedActivities = await Promise.all(
+      activities.map(async (activity: any) => {
+        return await updateActivitySequence(activity.id, activity.sequence);
+      })
+    );
+
+    responseBody = updatedActivities;
   } catch (error: any) {
     responseCode = HttpCode.BadRequest;
     responseBody = { message: error.message || "Internal Server Error" };

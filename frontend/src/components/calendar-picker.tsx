@@ -23,10 +23,10 @@ interface DateRangePickerProps {
     initialStartDate?: Date;
     initialEndDate?: Date;
     mode:
-    | "create-itinerary"
-    | "update-itinerary"
-    | "create-activity"
-    | "update-activity";
+        | "create-itinerary"
+        | "update-itinerary"
+        | "create-activity"
+        | "update-activity";
     autoSave?: boolean;
 }
 
@@ -40,10 +40,11 @@ export function DateRangePicker({
     autoSave = false,
 }: Readonly<DateRangePickerProps>) {
     const [startDate, setStartDate] = useState<Date | undefined>(
-        initialStartDate || activity?.start_date || itinerary?.start_date
+        initialStartDate ?? activity?.start_date ?? itinerary?.start_date
     );
+
     const [endDate, setEndDate] = useState<Date | undefined>(
-        initialEndDate || activity?.end_date || itinerary?.end_date
+        initialEndDate ?? activity?.end_date ?? itinerary?.end_date
     );
     const [isPopoverOpen, setIsPopoverOpen] = useState<
         "start" | "end" | "none"
@@ -103,8 +104,10 @@ export function DateRangePicker({
         );
     };
 
-    const isDisabledDate = (date: Date, type: "start" | "end"): boolean => {
+    const isDisabledDate = (date: Date): boolean => {
+        // Normalize time to 00:00:00 for comparison
         const today = new Date();
+        today.setHours(0, 0, 0, 0);
         today.setHours(0, 0, 0, 0);
 
         if (date < today) return true;
@@ -128,46 +131,27 @@ export function DateRangePicker({
     };
 
     const validateStartDate = (utcDate: Date): boolean => {
-        if (endDate && utcDate > endDate) {
+        const utcEndDate = toUTCDate(endDate);
+        if (utcEndDate && utcDate > utcEndDate) {
             toast.error("Start date cannot be later than end date");
             return false;
         }
-
-        if (
-            mode.includes("activity") &&
-            itinerary?.start_date &&
-            utcDate < itinerary.start_date
-        ) {
-            toast.error(
-                "Activity start date must be within itinerary date range"
-            );
-            return false;
-        }
-
         return true;
     };
 
     const validateEndDate = (utcDate: Date): boolean => {
-        if (startDate && utcDate < startDate) {
+        const utcStartDate = toUTCDate(startDate);
+        if (utcStartDate && utcDate < utcStartDate) {
             toast.error("End date cannot be earlier than start date");
             return false;
         }
-
-        if (
-            mode.includes("activity") &&
-            itinerary?.end_date &&
-            utcDate > itinerary.end_date
-        ) {
-            toast.error(
-                "Activity end date must be within itinerary date range"
-            );
-            return false;
-        }
-
         return true;
     };
 
-    const handleDateSelect = (dateType: "start" | "end", date: Date | undefined): void => {
+    const handleDateSelect = (
+        dateType: "start" | "end",
+        date: Date | undefined
+    ): void => {
         if (!date) return;
 
         const utcDate = toUTCDate(date);
@@ -260,8 +244,8 @@ export function DateRangePicker({
                         mode="single"
                         selected={startDate}
                         onSelect={(date) => handleDateSelect("start", date)}
-                        disabled={(date) => isDisabledDate(date, "start")}
-                        initialFocus
+                        disabled={(date) => isDisabledDate(date)}
+                        autoFocus
                     />
                 </PopoverContent>
             </Popover>
@@ -291,11 +275,12 @@ export function DateRangePicker({
                         mode="single"
                         selected={endDate}
                         onSelect={(date) => handleDateSelect("end", date)}
-                        disabled={(date) => isDisabledDate(date, "end")}
-                        initialFocus
+                        disabled={(date) => isDisabledDate(date)}
+                        autoFocus
                     />
                 </PopoverContent>
             </Popover>
         </div>
     );
 }
+

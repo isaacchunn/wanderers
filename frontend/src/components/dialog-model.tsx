@@ -142,8 +142,13 @@ export default function DialogModal({
                 const retryDelay = Math.min(2000 * Math.pow(2, retryCountRef.current), 30000)
                 retryCountRef.current += 1
 
-                console.log(`Rate limit hit. Retrying in ${retryDelay / 1000} seconds...`)
-                toast.warning(`Search rate limit reached. Please wait a moment.`)
+                console.log(
+                    `Rate limit hit. Retrying in ${retryDelay / 1000
+                    } seconds...`
+                );
+                toast.warning(
+                    `Search rate limit reached. Please wait a moment.`
+                );
 
                 searchTimeoutRef.current = setTimeout(() => {
                     setIsSearching(false)
@@ -292,49 +297,45 @@ export default function DialogModal({
             image: activityToEdit!.photo_url,
             formattedAddress: activityToEdit!.formatted_address,
             types: activityToEdit!.types,
-            rating: activityToEdit!.rating,
-            userRatingsTotal: activityToEdit!.user_ratings_total,
-            internationalPhoneNumber: activityToEdit!.international_phone_number,
-            website: activityToEdit!.website,
-            openingHours: activityToEdit?.opening_hours || [],
+            rating: activityToEdit?.rating ?? 0,
+            userRatingsTotal: activityToEdit?.user_ratings_total ?? 0,
+            internationalPhoneNumber:
+                activityToEdit?.international_phone_number ??
+                "No phone number available",
+            website: activityToEdit?.website ?? "No website available",
+            openingHours: activityToEdit?.opening_hours ?? [],
             googleMapsUrl: activityToEdit!.google_maps_url,
             place_id: activityToEdit!.place_id,
         }
     }
 
-    const createActivity = (values: z.infer<typeof formSchema>, placeDetails: PlaceDetails, selectedPlaceDetails: PlaceDetails | undefined, activities: Activity[], itinerary: Itinerary, dateTimeRange: { startDate: Date | undefined; endDate: Date | undefined }, activityToEdit: Activity | undefined) => {
+    const createActivity = (values: z.infer<typeof formSchema>, selectedPlaceDetails: PlaceDetails, activities: Activity[], itinerary: Itinerary, dateTimeRange: { startDate: Date | undefined; endDate: Date | undefined }, activityToEdit: Activity) => {
         return {
             id: activityToEdit?.id ?? 0,
-            title: placeDetails.title,
+            title: selectedPlaceDetails.title,
             description: values.notes ?? "",
             itinerary_id: itinerary.id,
-            lat: placeDetails.lat,
-            lon: placeDetails.lon,
+            lat: selectedPlaceDetails.lat,
+            lon: selectedPlaceDetails.lon,
             expense: 0,
             split: "split",
             sequence: activities.length + 1,
-            photo_url: selectedPlaceDetails ? selectedPlaceDetails.image : activityToEdit!.photo_url,
-            start_date: dateTimeRange.startDate instanceof Date ? dateTimeRange.startDate : new Date(new Date().setHours(0, 0, 0, 0)),
-            end_date: dateTimeRange.endDate instanceof Date ? dateTimeRange.endDate : new Date(new Date().setHours(23, 59, 59, 999)),
+            photo_url: selectedPlaceDetails.image,
+            start_date: dateTimeRange.startDate,
+            end_date: dateTimeRange.endDate,
             active: true,
             created_at: new Date(),
             place_id: "PLACE_ID_HERE",
-            formatted_address: selectedPlaceDetails
-                ? selectedPlaceDetails.formattedAddress
-                : activityToEdit!.formatted_address,
-            types: placeDetails.types,
-            rating: placeDetails.rating,
-            user_ratings_total: selectedPlaceDetails
-                ? selectedPlaceDetails.userRatingsTotal
-                : activityToEdit!.user_ratings_total,
-            international_phone_number: selectedPlaceDetails
-                ? selectedPlaceDetails.internationalPhoneNumber
-                : activityToEdit!.international_phone_number,
-            website: placeDetails.website,
-            opening_hours: selectedPlaceDetails
-                ? selectedPlaceDetails.openingHours || []
-                : activityToEdit!.opening_hours || [],
-            google_maps_url: selectedPlaceDetails ? selectedPlaceDetails.googleMapsUrl : activityToEdit!.google_maps_url,
+            formatted_address: selectedPlaceDetails.formattedAddress,
+            types: selectedPlaceDetails.types,
+            rating: selectedPlaceDetails?.rating ?? 0,
+            user_ratings_total: selectedPlaceDetails?.userRatingsTotal ?? 0,
+            international_phone_number:
+                selectedPlaceDetails?.internationalPhoneNumber ??
+                "No phone number available",
+            website: selectedPlaceDetails?.website ?? "No website available",
+            opening_hours: selectedPlaceDetails?.openingHours ?? [],
+            google_maps_url: selectedPlaceDetails.googleMapsUrl,
         }
     }
 
@@ -357,7 +358,7 @@ export default function DialogModal({
             return;
         }
 
-        const newActivity = createActivity(values, placeDetails, selectedPlaceDetails, activities, itinerary, dateTimeRange, activityToEdit);
+        const newActivity = createActivity(values, selectedPlaceDetails as PlaceDetails, activities, itinerary, dateTimeRange, activityToEdit as Activity);
 
         let response;
         if (activityToEdit) {
@@ -404,8 +405,10 @@ export default function DialogModal({
                             onSelect={(term) => setQuery(term)}
                             initialValue={activityToEdit?.title}
                         />
-                        {query && query.length < 3 && (
-                            <p className="text-xs text-muted-foreground">Type at least 3 characters to search</p>
+                        {query && query.length < 1 && (
+                            <p className="text-xs text-muted-foreground">
+                                Type at least 1 character to search
+                            </p>
                         )}
                     </FormItem>
 

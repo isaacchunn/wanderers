@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { registerUserSchema, loginUserschema, updatePasswordSchema } from "../zod/schemas";
+import { registerUserSchema, loginUserschema, updatePasswordSchema, resetPasswordSchema } from "../zod/schemas";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { db } from "../controllers/db";
@@ -15,7 +15,7 @@ import {
   deleteToken
 } from "../services/token";
 
-const tokenExpirationPeriod = 60 * 60 * 1000 * 24; // 1 day
+const tokenExpirationPeriod = 60 * 60 * 1000 * 48; // 2 day
 
 interface AuthenticatedRequest extends Request {
   user?: { id: number };
@@ -51,7 +51,10 @@ export const registerUser = async (req: Request, res: Response) => {
     } else if (existingUser && existingUser.email_verified) {
       throw new Error("Email already in use!");
     } else {
-      await createUser(username, lowercaseEmail, hashedPassword);
+      const user = await createUser(username, lowercaseEmail, hashedPassword);
+
+      await updateUserPasswordHistory(user.id, hashedPassword);
+
       await deliverConfirmationEmail(
         confirmAccountToken.sent_to,
         username,
@@ -181,6 +184,11 @@ export const resetPassword = async (req: Request, res: Response) => {
   let responseCode = HttpCode.OK;
   let responseBody: any = {};
   try {
+    const validatedFields = resetPasswordSchema.safeParse(req.body);
+    if (!validatedFields.success) {
+      throw new Error(validatedFields.error.errors.map((err) => err.message).join(", "));
+    }
+
     const token = req.params.token;
     const existingToken = await getPasswordResetTokenByToken(token);
 
