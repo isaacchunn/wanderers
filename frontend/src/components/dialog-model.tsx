@@ -203,7 +203,6 @@ export default function DialogModal({
         const timeValidationError = validateTime(startDate, endDate);
         if (timeValidationError) {
             toast.error(timeValidationError);
-            return;
         }
     };
 
@@ -251,7 +250,6 @@ export default function DialogModal({
         if (!startDate || !endDate) return "Please select a valid start and end time.";
 
         const now = new Date();
-        const today = now.toDateString();
 
         const formatDate = (date: Date) => date.toISOString().slice(0, 16);
 
@@ -287,17 +285,8 @@ export default function DialogModal({
     };
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
-        if (!dateTimeRange.startDate || !dateTimeRange.endDate) {
-            toast.error("Please select both start and end dates")
-            return
-        }
 
         const selectedPlaceDetails = placeDetailsResults.find((place) => place.title === query)
-
-        if (!selectedPlaceDetails && !activityToEdit) {
-            toast.error("Please select a valid place")
-            return
-        }
 
         const placeDetails = selectedPlaceDetails ?? {
             title: activityToEdit!.title,
@@ -315,7 +304,13 @@ export default function DialogModal({
             place_id: activityToEdit!.place_id,
         }
 
-        if (!placeDetails) {
+        if (!dateTimeRange.startDate || !dateTimeRange.endDate) {
+            toast.error("Please select both start and end dates")
+            return
+        } else if (!selectedPlaceDetails && !activityToEdit) {
+            toast.error("Please select a valid place")
+            return
+        } else if (!placeDetails) {
             toast.error("Could not find place details.")
             return
         }
@@ -354,29 +349,24 @@ export default function DialogModal({
             google_maps_url: selectedPlaceDetails ? selectedPlaceDetails.googleMapsUrl : activityToEdit!.google_maps_url,
         }
 
-        try {
-            let response
-            if (activityToEdit) {
-                response = await editActivity(newActivity)
-                if (response) {
-                    toast.success("Activity updated successfully")
-                } else {
-                    toast.error("Error updating activity")
-                }
+        let response
+        if (activityToEdit) {
+            response = await editActivity(newActivity)
+            if (response) {
+                toast.success("Activity updated successfully")
             } else {
-                response = await addActivity(newActivity)
-                if (response) {
-                    toast.success("Activity added successfully")
-                } else {
-                    toast.error("Error adding activity")
-                }
+                toast.error("Error updating activity")
             }
-
-            window.location.reload()
-        } catch (error) {
-            toast.error("Something went wrong. Please try again.")
-            console.error(error)
+        } else {
+            response = await addActivity(newActivity)
+            if (response) {
+                toast.success("Activity added successfully")
+            } else {
+                toast.error("Error adding activity")
+            }
         }
+
+        window.location.reload()
     }
 
     useEffect(() => {
