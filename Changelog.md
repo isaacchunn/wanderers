@@ -9,13 +9,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Global user state (UserProvider and UserStore) with zustand implemented
-- Authentication and User state integrated
-- Protect Activity, Places route
+- (BE) Other authentication related APIs (request-confirmation, confirm-account, forgot-password, reset-password)
+- (BE) Ethereal implementation for sending emails
+- (FE) Global user state (UserProvider and UserStore) with zustand implemented
+- (BE) Authorization protection for non-authentication related backend routes
+- (BE) Profile API (upload profile photo, update profile description and password change)
+- (FE) Activity Creation Modal for Itineraries
+- (FE) User Profile view to make changes to their profile information
+- (FE) Middleware logic to redirect users appropriately based on user's logged in status
+- (FE) Chat box socket to listen and emit messages to BE in itinerary pages (Only owners and collaborators can view)
+- (BE) Chat box socket server to listen and emit messages to FE
+- (BE/FE) Integration for authentication-related functions (register, login, confirm account, forget password)
+- (BE/FE) Integration for Itinerary (CRUD itineraries)
+- (BE/FE) Integration for Activity (CRUD activities)
+- (BE/FE) Integration for User Profile
+- (BE/FE) Integration for Chat feature in Itinerary
 
 ### Fixed
 
+- (BE) An issue with GET Itinerary only returning if they are the owner or collaborator regardless of visibility
+- (BE) An issue with GET Activity returning deleted (non-active) activities
+- (FE) An issue with the Create-Itinerary feature requires users to add at least one collaborator, restricting solo trip planning and reducing flexibility
+- (FE) An issue where users are not redirected to "/" route from the Settings page
+
 ### Changed
+
+- (BE) Google Places API response to include more information for FE to use
+- (BE/FE) Hardcoded server urls to use environment values instead
+- (BE) Password change logic that prevents users from reusing their previous three passwords and ensures password adheres to best password practices
 
 ### Removed
 
