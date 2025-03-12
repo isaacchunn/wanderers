@@ -29,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - (BE) An issue with GET Itinerary only returning if they are the owner or collaborator regardless of visibility
 - (BE) An issue with GET Activity returning deleted (non-active) activities
+- (FE) An issue with the Create-Itinerary feature requires users to add at least one collaborator, restricting solo trip planning and reducing flexibility
+- (FE) An issue where users are not redirected to "/" route from the Settings page
 
 ### Changed
 
