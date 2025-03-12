@@ -33,12 +33,12 @@ jobs:
           if [ "$REF" == 'refs/heads/prd' ]
           then
               echo "vercel-args=--prod --prebuilt" >> $GITHUB_OUTPUT
-              echo "vercel-url=https://wanderers-prd.vercel.app/" >> $GITHUB_OUTPUT
-              echo "vercel-build=--prod" >> $GITHUB_OUTPUT
+              echo "vercel-url=https://wanderers-prd.vercel.app/"" >> $GITHUB_OUTPUT
+              echo "vercel-build"=--prod >> $GITHUB_OUTPUT
           else
               echo "vercel-args=--prebuilt" >> $GITHUB_OUTPUT
-              echo "vercel-url=https://wanderers-stg.vercel.app/" >> $GITHUB_OUTPUT
-              echo "vercel-build=" >> $GITHUB_OUTPUT
+              echo "vercel-url=https://wanderers-stg.vercel.app/"" >> $GITHUB_OUTPUT
+              echo "vercel-build"="" >> $GITHUB_OUTPUT
           fi
         env:
           REF: ${{ github.ref }}

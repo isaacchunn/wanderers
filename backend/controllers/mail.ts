@@ -42,6 +42,7 @@ export const deliverPasswordResetSuccessfulEmail = async (
 export const deliverItineraryCollabEmail = async (
   email: string,
   username: string,
+  itineraryId: number,
   inviterUsername: string,
   itineraryName: string,
   itineraryLocation: string,
@@ -50,7 +51,7 @@ export const deliverItineraryCollabEmail = async (
     email,
     `Wanderers - Invitation to collaborate in \"${itineraryName}\"`,
     await itineraryCollabBody(
-      `${process.env.FRONTEND_URL as string}`,
+      `${process.env.FRONTEND_URL as string}/itinerary/${itineraryId}`,
       username,
       inviterUsername,
       itineraryName,
@@ -61,15 +62,15 @@ export const deliverItineraryCollabEmail = async (
 
 const forgetpasswordbody = (url: string, username: string, token: string) => {
   var date = new Date();
-  date.setDate(date.getDate() + 1);
+  date.setDate(date.getDate() + 2);
 
   return `
 	Hi ${username}!
 
 	<br/>
-	We received a request to reset your account password. Please use the following link to verify yourself. This link is valid for 1 day till ${date}.
+	We received a request to reset your account password. Please use the following link to verify yourself. This link is valid for 2 days till ${date.toLocaleDateString}.
 	<br/><br/>
-	Click on this <a href="${url}/auth/reset-password/${token}">${url}/auth/reset-password/${token}</a> to reset your password
+	Click on this <a href="${url}/reset-password/${token}">${url}/reset-password/${token}</a> to reset your password
 	<br/><br/>
 	If you didn't initiate this action or if you think you received this email by mistake, please contact support@wanderers.com
     `;
@@ -95,7 +96,7 @@ const confirmemailbody = (url: string, username: string, token: string) => {
 	<br/>
 	You must follow this link to activate your account:
 	<br/>
-    Click on this <a href="${url}/auth/confirm-account/${token}">${url}/auth/confirm-account/${token}</a> to confirm your email
+    Click on this <a href="${url}/confirm-account/${token}">${url}/confirm-account/${token}</a> to confirm your email
 
 	<br/><br/>
 	Have fun, and don't hesitate to contact us with your feedback.

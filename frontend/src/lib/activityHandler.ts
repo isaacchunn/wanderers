@@ -1,16 +1,27 @@
-import { Search } from "@/lib/types";
+import { Itinerary, Activity } from "@/lib/types";
+import { getToken } from "@/lib/auth";
+const NEXT_PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-export async function addActivity(search: Search): Promise<object | undefined> {
-    console.log("Activity - Adding activity:", search);
+export async function addActivity(
+    activity: Activity
+): Promise<object | undefined> {
     try {
-        const response = await fetch(`http://localhost:4000/api/place/search`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(search),
-            cache: "no-store",
-        });
+        console.log(activity);
+        const token = await getToken();
+        const response = await fetch(
+            `${NEXT_PUBLIC_BACKEND_URL}/api/activity`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(activity),
+                cache: "no-store",
+            }
+        );
+
+        console.log(response);
 
         if (!response.ok) {
             console.log(
@@ -19,7 +30,8 @@ export async function addActivity(search: Search): Promise<object | undefined> {
         }
 
         const data: object = await response.json();
-        console.log("Activity - Fetched Google Places Response:", data);
+        console.log(data);
+
         return data;
     } catch (error) {
         console.error(
@@ -29,28 +41,31 @@ export async function addActivity(search: Search): Promise<object | undefined> {
         return undefined;
     }
 }
-export async function getActivity(id: string): Promise<object[] | undefined> {
-    console.log("Activity - Retrieving activity:", id);
+
+export async function getActivity(
+    id: string | number
+): Promise<Activity[] | undefined> {
     try {
+        const token = await getToken();
         const response = await fetch(
-            `http://localhost:4000/api/activity/itinerary/${id}`,
+            `${NEXT_PUBLIC_BACKEND_URL}/api/activity/itinerary/${id}`,
             {
-                method: "POST",
+                method: "GET",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
                 cache: "no-store",
             }
         );
-
         if (!response.ok) {
             console.log(
                 `Failed to retrieve Activity: ${response.status} ${response.statusText}`
             );
             return undefined;
         }
-        const data: object[] = await response.json();
-        console.log("Activity - Successfully retrieved activity:", data);
+        const data: Activity[] = await response.json();
+
         return data;
     } catch (error) {
         console.error(
@@ -61,15 +76,16 @@ export async function getActivity(id: string): Promise<object[] | undefined> {
     }
 }
 
-export async function deleteActivity(id: string): Promise<boolean> {
-    console.log("Activity - Deleting activity:", id);
+export async function deleteActivity(id: string | number): Promise<boolean> {
     try {
+        const token = await getToken();
         const response = await fetch(
-            `http://localhost:4000/api/activity/${id}`,
+            `${NEXT_PUBLIC_BACKEND_URL}/api/activity/${id}`,
             {
-                method: "POST",
+                method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
                 },
                 cache: "no-store",
             }
@@ -81,7 +97,7 @@ export async function deleteActivity(id: string): Promise<boolean> {
             );
             return false;
         }
-        console.log("Activity - Successfully deleted activity:");
+
         return true;
     } catch (error) {
         console.error(
@@ -90,4 +106,72 @@ export async function deleteActivity(id: string): Promise<boolean> {
         );
         return false;
     }
+}
+
+export async function editActivity(
+    activity: Activity
+): Promise<object | undefined> {
+    try {
+        console.log(activity);
+        const token = await getToken();
+        const response = await fetch(
+            `${NEXT_PUBLIC_BACKEND_URL}/api/activity/${activity.id}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(activity),
+                cache: "no-store",
+            }
+        );
+        console.log(response);
+        if (!response.ok) {
+            console.log(
+                `Failed to retrieve Activity: ${response.status} ${response.statusText}`
+            );
+            return undefined;
+        }
+        const data: Activity[] = await response.json();
+
+        return data;
+    } catch (error) {
+        console.error(
+            "Activity - Failed to edit activity:",
+            error instanceof Error ? error.message : error
+        );
+        return undefined;
+    }
+}
+
+export function adjustActivityDates(
+    activity: Activity,
+    oldItinerary: Itinerary,
+    newItinerary: Itinerary
+): Activity {
+    let newStartDate = activity.start_date;
+    let newEndDate = activity.end_date;
+
+    // When itinerary start date moves later than activity start date
+    if (
+        newItinerary.start_date > oldItinerary.start_date &&
+        activity.start_date < newItinerary.start_date
+    ) {
+        newStartDate = newItinerary.start_date;
+    }
+
+    // When itinerary end date moves earlier than activity end date
+    if (
+        newItinerary.end_date < oldItinerary.end_date &&
+        activity.end_date > newItinerary.end_date
+    ) {
+        newEndDate = newItinerary.end_date;
+    }
+
+    return {
+        ...activity,
+        start_date: newStartDate,
+        end_date: newEndDate,
+    };
 }

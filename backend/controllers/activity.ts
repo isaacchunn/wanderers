@@ -1,157 +1,177 @@
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
+
+interface AuthenticatedRequest extends Request {
+  user?: { id: number };
+}
 import {
   createActivity,
   getActivityById,
   getActivitiesByItineraryId,
   updateActivity,
   deleteActivity,
+  updateActivitySequence,
 } from "../services/activity";
 import { activitySchema } from "../zod/schemas";
 import { HttpCode } from "../lib/httpCodes";
 
+
 // @desc    Create new activity
 // @route   POST /api/activity
 // @access  Private
-export const createActivityController = async (req: Request, res: Response) => {
+export const createActivityController = async (req: AuthenticatedRequest, res: Response) => {
+  let responseCode = HttpCode.ResourceCreated;
+  let responseBody: any = {};
+
   try {
     const parsed = activitySchema.safeParse(req.body);
     if (!parsed.success) {
-      res.status(HttpCode.BadRequest).json({
-        message: parsed.error.errors
-          .map((err) => `${err.path.join(".")}: ${err.message}`)
-          .join(", "),
-      });
-    } else {
-      const {
-        title,
-        description,
-        itinerary_id,
-        lat,
-        lon,
-        expense,
-        split,
-        sequence,
-        start_date,
-        end_date,
-        photo_url
-      } = parsed.data;
-      let activity = await createActivity(
-        title,
-        description,
-        itinerary_id,
-        lat,
-        lon,
-        expense,
-        split,
-        sequence,
-        photo_url || null,
-        start_date,
-        end_date,
+      throw new Error(
+        parsed.error.errors.map((err) => `${err.path.join(".")}: ${err.message}`).join(", ")
       );
-
-      res.status(HttpCode.ResourceCreated).json(activity);
     }
+
+    const activity = await createActivity({ ...parsed.data });
+    responseBody = activity;
   } catch (error: any) {
-    res.status(500).json({ message: error.message || "Internal Server Error" });
+    responseCode = HttpCode.BadRequest;
+    responseBody = { message: error.message || "Internal Server Error" };
   }
+
+  res.status(responseCode).json(responseBody);
 };
+
 
 // @desc    Get activity by id
-// @route   POST /api/activity/:id
+// @route   GET /api/activity/:id
 // @access  Private
-export const getActivityByIdController = async (
-  req: Request,
-  res: Response,
-) => {
+export const getActivityByIdController = async (req: AuthenticatedRequest, res: Response) => {
+  let responseCode = HttpCode.OK;
+  let responseBody: any = {};
+
   try {
-    let activity = await getActivityById(parseInt(req.params.id));
+    const activity = await getActivityById(parseInt(req.params.id));
     if (!activity) {
-      res.status(HttpCode.NotFound).json({ message: "Activity not found" });
-    } else {
-      res.status(HttpCode.OK).json(activity);
+      responseCode = HttpCode.NotFound
+      throw new Error("Activity not found");
     }
+    if (!activity.active) {
+      responseCode = HttpCode.NotFound
+      throw new Error("Activity has been deleted");
+    }
+
+    responseBody = activity;
   } catch (error: any) {
-    res.status(HttpCode.InternalServerError).json({ message: error.message || "Internal Server Error" });
+    responseCode = responseCode === HttpCode.OK ? HttpCode.BadRequest : responseCode;
+    responseBody = { message: error.message || "Internal Server Error" };
   }
+
+  res.status(responseCode).json(responseBody);
 };
 
+
 // @desc    Get activities by itinerary id
-// @route   POST /api/activity/itinerary/:itinerary_id
+// @route   GET /api/activity/itinerary/:itinerary_id
 // @access  Private
-export const getActivitiesByItineraryIdController = async (
-  req: Request,
-  res: Response,
-) => {
+export const getActivitiesByItineraryIdController = async (req: AuthenticatedRequest, res: Response) => {
+  let responseCode = HttpCode.OK;
+  let responseBody: any = {};
+
   try {
-    let activities = await getActivitiesByItineraryId(
-      parseInt(req.params.itinerary_id),
-    );
-    res.status(HttpCode.OK).json(activities);
+    const activities = await getActivitiesByItineraryId(parseInt(req.params.itinerary_id));
+    responseBody = activities;
   } catch (error: any) {
-    res.status(HttpCode.InternalServerError).json({ message: error.message || "Internal Server Error" });
+    responseCode = HttpCode.BadRequest;
+    responseBody = { message: error.message || "Internal Server Error" };
   }
+
+  res.status(responseCode).json(responseBody);
 };
+
 
 // @desc    Update activity by id
 // @route   PUT /api/activity/:id
 // @access  Private
-export const updateActivityController = async (req: Request, res: Response) => {
+export const updateActivityController = async (req: AuthenticatedRequest, res: Response) => {
+  let responseCode = HttpCode.OK;
+  let responseBody: any = {};
+
   try {
+    const activity = await getActivityById(parseInt(req.params.id));
+    if (!activity) {
+      throw new Error("Activity not found");
+    }
+
     const parsed = activitySchema.safeParse(req.body);
     if (!parsed.success) {
-      res.status(HttpCode.BadRequest).json({
-        message: parsed.error.errors
-          .map((err) => `${err.path.join(".")}: ${err.message}`)
-          .join(", "),
-      });
-    } else {
-      const {
-        title,
-        description,
-        itinerary_id,
-        lat,
-        lon,
-        expense,
-        split,
-        sequence,
-        photo_url,
-        start_date,
-        end_date,
-      } = parsed.data;
-      let activity = await updateActivity(
-        parseInt(req.params.id),
-        title,
-        description,
-        itinerary_id,
-        lat,
-        lon,
-        expense,
-        split,
-        sequence,
-        photo_url || null,
-        start_date,
-        end_date,
+      throw new Error(
+        parsed.error.errors.map((err) => `${err.path.join(".")}: ${err.message}`).join(", ")
       );
-
-      res.status(HttpCode.OK).json(activity);
     }
+
+    const updatedActivity = await updateActivity(parseInt(req.params.id), parsed.data);
+    responseBody = updatedActivity;
   } catch (error: any) {
-    res.status(HttpCode.InternalServerError).json({ message: error.message || "Internal Server Error" });
+    responseCode = HttpCode.BadRequest;
+    responseBody = { message: error.message || "Internal Server Error" };
   }
+
+  res.status(responseCode).json(responseBody);
 };
 
-// @desc    Soft deletes activity by id
+
+// @desc    Update activity sequence
+// @route   PUT /api/activity/sequence
+// @access  Private
+export const updateActivitySequenceController = async (req: AuthenticatedRequest, res: Response) => {
+  let responseCode = HttpCode.OK;
+  let responseBody: any = {};
+
+  try {
+    const activities = req.body.activities;
+    if (!activities.length) {
+      throw new Error("Activities array is empty");
+    }
+
+    // Sequences must be from 1 to n
+    const sequences = activities.map((activity: any) => activity.sequence);
+    if (new Set(sequences).size !== sequences.length) {
+      throw new Error("Activity sequences must be unique");
+    }
+
+    const updatedActivities = await Promise.all(
+      activities.map(async (activity: any) => {
+        return await updateActivitySequence(activity.id, activity.sequence);
+      })
+    );
+
+    responseBody = updatedActivities;
+  } catch (error: any) {
+    responseCode = HttpCode.BadRequest;
+    responseBody = { message: error.message || "Internal Server Error" };
+  }
+
+  res.status(responseCode).json(responseBody);
+};
+
+// @desc    Soft delete activity by id
 // @route   DELETE /api/activity/:id
 // @access  Private
-export const deleteActivityController = async (req: Request, res: Response) => {
+export const deleteActivityController = async (req: AuthenticatedRequest, res: Response) => {
+  let responseCode = HttpCode.OK;
+  let responseBody: any = {};
+
   try {
-    let activity = await deleteActivity(parseInt(req.params.id));
+    const activity = await getActivityById(parseInt(req.params.id));
     if (!activity) {
-      res.status(HttpCode.NotFound).json({ message: "Activity not found" });
-    } else {
-      res.status(HttpCode.OK).json(activity);
+      throw new Error("Activity not found");
     }
+
+    const deletedActivity = await deleteActivity(parseInt(req.params.id));
+    responseBody = deletedActivity;
   } catch (error: any) {
-    res.status(HttpCode.InternalServerError).json({ message: error.message || "Internal Server Error" });
+    responseCode = HttpCode.BadRequest;
+    responseBody = { message: error.message || "Internal Server Error" };
   }
+
+  res.status(responseCode).json(responseBody);
 };

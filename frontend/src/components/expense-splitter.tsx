@@ -13,6 +13,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { saveExpense } from "@/app/itinerary/[id]/actions";
+import { Itinerary } from "@/lib/types";
 
 interface Expense {
     id: string;
@@ -25,13 +26,17 @@ interface Expense {
 const MEMBERS = ["Alice", "Bob", "Charlie", "David"];
 const initialState = { success: false, message: "" };
 
-export function ExpenseSplitter() {
+/* eslint-disable */
+export function ExpenseSplitter({
+    itinerary,
+}: {
+    itinerary: Readonly<Itinerary>;
+}) {
     const [expenses, setExpenses] = useState<Expense[]>([]);
     const [description, setDescription] = useState("");
     const [amount, setAmount] = useState("");
     const [paidBy, setPaidBy] = useState("");
     const [splitWith, setSplitWith] = useState<string[]>([]);
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [state, formAction, isPending] = useActionState(
         saveExpense,

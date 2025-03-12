@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from "express";
+import express from "express";
 import cors from "cors";
 import path from "path";
 import cookieParser from "cookie-parser";
@@ -18,11 +18,17 @@ import activityRouter from "./routes/activity";
 import itineraryProtectedRouter from "./routes/itineraryProtected";
 import itineraryPublicRouter from "./routes/itineraryPublic";
 import placeRouter from "./routes/place";
+import userRouter from "./routes/user";
+import profileRouter from "./routes/profile";
+import chatRouter from "./routes/chat";
+
+// Import socket
+import { setupSocket } from "./services/websocket-server";
 
 const port = process.env.PORT || 4000;
 const app = express();
 
-app.use(cors({origin: '*'}))
+app.use(cors({ origin: "*" }));
 
 // Swagger options
 const swaggerDefinition = {
@@ -51,7 +57,7 @@ const swaggerDefinition = {
 // Rate limiter
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 5, // Limit each IP to 5 requests per `window` (here, per 15 minutes).
+  limit: 20, // Limit each IP to 20 requests per `window` (here, per 15 minutes).
   standardHeaders: "draft-8", // draft-6: `RateLimit-*` headers; draft-7 & draft-8: combined `RateLimit` header
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
 });
@@ -81,6 +87,10 @@ app.use("/api/activity", activityRouter);
 app.use("/api/itinerary", itineraryProtectedRouter);
 app.use("/api/public/itinerary", itineraryPublicRouter);
 app.use("/api/place", limiter, placeRouter);
+app.use("/api/user", userRouter);
+app.use("/api/profile", profileRouter);
+app.use("/api/chat", chatRouter);
+
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, "../frontend/build")));
 
@@ -93,12 +103,16 @@ app.get("*", (req, res) => {
 // refer to https://stackoverflow.com/a/63299022
 if (process.env.NODE_ENV !== "test") {
   // sequelize.sync().then(() => {
-  app.listen(Number(port), "0.0.0.0", () => {
+  const server = app.listen(Number(port), "0.0.0.0", () => {
     console.log(`[server]: Server is running at ${port}`);
     console.log(
-      `[server]: Swagger docs available at http://localhost:${port}/docs`,
+      `[server]: Swagger docs available at http://localhost:${port}/docs`
     );
   });
+
+  // socket io
+  setupSocket(server);
+
   // });
 }
 

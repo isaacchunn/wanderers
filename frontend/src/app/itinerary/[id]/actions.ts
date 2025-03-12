@@ -1,6 +1,18 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { deleteActivity } from "@/lib/activityHandler";
+
+export async function deleteActivityAndRevalidate(
+    activityId: number,
+    itineraryId: number
+) {
+    const success = await deleteActivity(activityId);
+    if (success) {
+        revalidatePath(`/itinerary/${itineraryId}`);
+    }
+    return success;
+}
 
 export async function saveItinerary(formData: FormData) {
     const locations = JSON.parse(formData.get("locations") as string);

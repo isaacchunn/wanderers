@@ -7,14 +7,16 @@ import {
   deleteItineraryApi,
   getCreatedItinerariesProtectedApi,
   getItineraryProtectedApi,
+  undoDeleteItineraryApi,
 } from "../controllers/itinerary";
+import { protect } from "../middleware/auth";
 
 const router = express.Router();
 /**
  * @swagger
  * tags:
  *   - name: Itinerary (Protected)
- *     description: Protected endpoints related to itineraries (logged in userId=1 for now until login is fully implemented)
+ *     description: Protected endpoints related to itineraries
  */
 /**
  * @swagger
@@ -33,7 +35,7 @@ const router = express.Router();
  *         - photo_url
  *         - active
  *         - created_at
- *         - updated_at 
+ *         - updated_at
  *         - owner
  *         - collaborators
  *         - _count
@@ -76,7 +78,7 @@ const router = express.Router();
  *         updated_at:
  *           type: string
  *           format: date-time
- *           description: Timestamp when the itinerary was last updated 
+ *           description: Timestamp when the itinerary was last updated
  *         owner:
  *           type: object
  *           properties:
@@ -86,7 +88,7 @@ const router = express.Router();
  *             user_photo:
  *               type: string
  *               nullable: true
- *               description: User's profile image URL
+ *               description: User's profile image partial URL
  *         collaborators:
  *           type: array
  *           description: List of collaborators associated with the itinerary
@@ -105,7 +107,7 @@ const router = express.Router();
  *                 description: The username of the collaborator
  *               user_photo:
  *                 type: string
- *                 description: Collaborator's profile image URL
+ *                 description: Collaborator's profile image partial URL
  *         _count:
  *           type: object
  *           properties:
@@ -118,7 +120,7 @@ const router = express.Router();
  *         location: "FR"
  *         owner_id: 456
  *         visibility: "public"
- *         photo_url: "https://example.com/photo1.jpg"
+ *         photo_url: "http://xd.com/image.jpg"
  *         start_date: "2025-03-01T00:00:00Z"
  *         end_date: "2025-03-10T00:00:00Z"
  *         active: true
@@ -126,16 +128,16 @@ const router = express.Router();
  *         updated_at: "2025-02-10T12:30:00Z"
  *         owner:
  *           username: "owner456"
- *           user_photo: "https://example.com/photo1.jpg"
+ *           user_photo: "user/456/f345668d-86b4-4939-8cc8-5efa2fa2cfc4.jpeg"
  *         collaborators:
  *           - id: 1
  *             email: "collaborator1@example.com"
  *             username: "collaborator1"
- *             user_photo: "https://example.com/photo1.jpg"
+ *             user_photo: "user/1/f345668d-86b4-4939-8cc8-5efa2fa2cfc4.jpeg"
  *           - id: 2
  *             email: "collaborator2@example.com"
  *             username: "collaborator2"
- *             user_photo: "https://example.com/photo2.jpg"
+ *             user_photo: "user/2/f345668d-86b4-4939-8cc8-5efa2fa2cfc4.jpeg"
  *         _count:
  *           votes: 3
  */
@@ -192,11 +194,19 @@ const router = express.Router();
  *       400:
  *         description: Invalid Input.
  *       401:
- *         description: Unauthorized Access.
+ *         description: Unauthorized access
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No token provided
  *       500:
  *         description: Internal Server Error.
  */
-router.route("/").post(createItineraryApi);
+router.route("/").post(protect, createItineraryApi);
 
 /**
  * @swagger
@@ -230,11 +240,19 @@ router.route("/").post(createItineraryApi);
  *               items:
  *                  $ref: '#/components/schemas/Itinerary'
  *       401:
- *         description: Unauthorized Access.
+ *         description: Unauthorized access
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No token provided
  *       500:
  *         description: Internal Server Error.
  */
-router.route("/collaborated").get(getCollabItinerariesApi);
+router.route("/collaborated").get(protect, getCollabItinerariesApi);
 
 /**
  * @swagger
@@ -274,11 +292,21 @@ router.route("/collaborated").get(getCollabItinerariesApi);
  *               items:
  *                 $ref: '#/components/schemas/Itinerary'
  *       401:
- *         description: Unauthorized Access.
+ *         description: Unauthorized access
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No token provided
  *       500:
  *         description: Internal Server Error.
  */
-router.route("/:ownerId/created").get(getCreatedItinerariesProtectedApi);
+router
+  .route("/:ownerId/created")
+  .get(protect, getCreatedItinerariesProtectedApi);
 
 /**
  * @swagger
@@ -304,7 +332,15 @@ router.route("/:ownerId/created").get(getCreatedItinerariesProtectedApi);
  *             schema:
  *               $ref: '#/components/schemas/Itinerary'
  *       401:
- *         description: Unauthorized Access.
+ *         description: Unauthorized access
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No token provided
  *       404:
  *         description: Itinerary not found.
  *         content:
@@ -318,7 +354,7 @@ router.route("/:ownerId/created").get(getCreatedItinerariesProtectedApi);
  *       500:
  *         description: Internal Server Error.
  */
-router.route("/:itineraryId").get(getItineraryProtectedApi);
+router.route("/:itineraryId").get(protect, getItineraryProtectedApi);
 
 /**
  * @swagger
@@ -374,10 +410,20 @@ router.route("/:itineraryId").get(getItineraryProtectedApi);
  *               $ref: '#/components/schemas/Itinerary'
  *       400:
  *         description: Invalid Input.
+ *       401:
+ *         description: Unauthorized access
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No token provided
  *       500:
  *         description: Internal Server Error.
  */
-router.route("/:itineraryId").put(updateItineraryApi);
+router.route("/:itineraryId").put(protect, updateItineraryApi);
 
 /**
  * @swagger
@@ -402,10 +448,63 @@ router.route("/:itineraryId").put(updateItineraryApi);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Itinerary'
+ *               type: object
+ *               properties:
+ *                 deletedItineraryId:
+ *                   type: integer
+ *                   example: 1
+ *       401:
+ *         description: Unauthorized access
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No token provided
  *       500:
  *         description: Internal Server Error.
  */
-router.route("/:itineraryId").delete(deleteItineraryApi);
+router.route("/:itineraryId").delete(protect, deleteItineraryApi);
+
+/**
+ * @swagger
+ * /api/itinerary/{itineraryId}/restore:
+ *   put:
+ *     summary: Restore deleted itinerary by ID
+ *     description: Restores a deleted itinerary by its ID.
+ *     tags: [Itinerary (Protected)]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: itineraryId
+ *         in: path
+ *         description: ID of the deleted itinerary to be restored
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: Successfully restored the deleted itinerary
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Itinerary'
+ *       401:
+ *         description: Unauthorized access
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No token provided
+ *       500:
+ *         description: Internal Server Error.
+ */
+router.route("/:itineraryId/restore").put(protect, undoDeleteItineraryApi);
 
 export { router as default };
