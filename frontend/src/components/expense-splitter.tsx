@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,7 +15,7 @@ import { currencies } from "@/lib/constants/currencies.json"
 export function ExpenseSplitter({
     itinerary,
 }: {
-    itinerary: Readonly<Itinerary>;
+    itinerary: Itinerary;
 }) {
     const [expenses, setExpenses] = useState<Expense[]>([]);
     const [description, setDescription] = useState("");
@@ -34,30 +34,39 @@ export function ExpenseSplitter({
 
     const currencyCode = getCurrencyCode(itinerary.location);
 
-    // Moved updateBalances inside useEffect
+    const updateBalances = useCallback(() => {
+        const updatedBalances: Record<string, number> = {};
+
+        expenses.forEach((expense) => {
+            const splitAmount = calculateSplitAmount(expense);
+
+            updatePaidByBalance(updatedBalances, expense, splitAmount);
+            updateSplitWithBalances(updatedBalances, expense, splitAmount);
+        });
+
+        setBalances(updatedBalances);
+    }, [expenses]);
+
+    const calculateSplitAmount = (expense: Expense) => {
+        return expense.amount / (expense.splitWith.length + 1);
+    };
+
+    const updatePaidByBalance = (updatedBalances: Record<string, number>, expense: Expense, splitAmount: number) => {
+        updatedBalances[expense.paidBy] = (updatedBalances[expense.paidBy] || 0) + expense.amount;
+        updatedBalances[expense.paidBy] -= splitAmount;
+    };
+
+    const updateSplitWithBalances = (updatedBalances: Record<string, number>, expense: Expense, splitAmount: number) => {
+        expense.splitWith.forEach((person) => {
+            updatedBalances[person] = (updatedBalances[person] || 0) - splitAmount;
+        });
+    };
+
     useEffect(() => {
-        const updateBalances = () => {
-            const updatedBalances: Record<string, number> = {};
-
-            expenses.forEach((expense) => {
-                const splitAmount = expense.amount / (expense.splitWith.length + 1);
-
-                updatedBalances[expense.paidBy] = (updatedBalances[expense.paidBy] || 0) + expense.amount;
-
-                expense.splitWith.forEach((person) => {
-                    updatedBalances[person] = (updatedBalances[person] || 0) - splitAmount;
-                });
-
-                updatedBalances[expense.paidBy] -= splitAmount;
-            });
-
-            setBalances(updatedBalances);
-        };
-
         if (expenses.length > 0) {
             updateBalances();
         }
-    }, [expenses]);
+    }, [expenses, updateBalances]);
 
     const updateActivityExpense = async (activityId: string, expenseAmount: number) => {
         try {
@@ -114,17 +123,14 @@ export function ExpenseSplitter({
         return activity ? activity.title : "";
     };
 
-    // Fetching activities and collaborators inside useEffect
     useEffect(() => {
         const fetchActivitiesAndCollaborators = async () => {
             try {
-                // Fetch activities
                 const activityData: Activity[] = (await getActivity(`${itinerary.id}`)) || [];
                 const activeData = activityData?.filter((activity) => activity.active) || [];
                 activeData.sort((a, b) => a.sequence - b.sequence);
                 setActivities(activeData);
 
-                // Fetch collaborators
                 const collaboratorsWithUsernames = await Promise.all(
                     itinerary.collaborators.map(async (collab) => {
                         const userResponse = await getUser(collab.email);
@@ -148,7 +154,7 @@ export function ExpenseSplitter({
         };
 
         fetchActivitiesAndCollaborators();
-    }, [itinerary.id, itinerary.collaborators]); // Rerun when itinerary changes
+    }, [itinerary.id, itinerary.collaborators]);
 
     const calculateTotalExpense = () => {
         return expenses.reduce((total, expense) => total + expense.amount, 0);
