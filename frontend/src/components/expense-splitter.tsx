@@ -15,7 +15,7 @@ import { currencies } from "@/lib/constants/currencies.json"
 export function ExpenseSplitter({
     itinerary,
 }: {
-    itinerary: Itinerary;
+    readonly itinerary: Readonly<Itinerary>
 }) {
     const [expenses, setExpenses] = useState<Expense[]>([]);
     const [description, setDescription] = useState("");
