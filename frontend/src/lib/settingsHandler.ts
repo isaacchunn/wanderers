@@ -7,6 +7,16 @@ interface CheckEmailResponse {
     message?: string;
 }
 
+export interface User {
+    email: string;
+    username: string;
+}
+
+export interface UserResponse {
+    success: boolean;
+    data?: User;
+}
+
 const baseUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}`;
 
 export async function updateProfile(
@@ -29,8 +39,8 @@ export async function updateProfile(
 
         const data: object = await response.json();
         return { success: true, data: data };
-    } catch (error) {
-        return { success: false, data: { error: error } };
+    } catch {
+        return { success: false, data: { error: "Failed to update profile" } };
     }
 }
 
@@ -39,49 +49,36 @@ export async function uploadProfilePicture(
 ): Promise<{ success: boolean; data: string }> {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value.replace(/(^")|("$)/g, "");
-    try {
-        const formData = new FormData();
-        formData.append("file", file);
+    const formData = new FormData();
+    formData.append("file", file);
 
-        const response = await fetch(`${baseUrl}/api/profile/picture`, {
-            method: "PUT",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            body: formData,
-            cache: "no-store",
-            next: { revalidate: 10 },
-        });
+    const response = await fetch(`${baseUrl}/api/profile/picture`, {
+        method: "PUT",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+        cache: "no-store",
+        next: { revalidate: 10 },
+    });
 
-        if (!response.ok) {
-            return { success: false, data: "Failed to upload image" };
-        }
+    if (!response.ok) {
+        return { success: false, data: "Failed to upload image" };
+    }
 
-        const data = await response.json();
+    const data = await response.json();
 
-        if (data.full_image_path) {
-            return { success: true, data: data.full_image_path };
-        } else {
-            return {
-                success: false,
-                data: "No image_path received from server",
-            };
-        }
-    } catch (error) {
+    if (data.full_image_path) {
+        return { success: true, data: data.full_image_path };
+    } else {
         return {
             success: false,
-            data:
-                error instanceof Error
-                    ? error.message
-                    : "Failed to upload image",
+            data: "No image_path received from server",
         };
     }
 }
 
-export async function deleteProfilePicture(): Promise<{
-    success: boolean;
-    data: string;
-}> {
+export async function deleteProfilePicture(): Promise<{ success: boolean; data: string; }> {
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value.replace(/(^")|("$)/g, "");
 
@@ -91,18 +88,15 @@ export async function deleteProfilePicture(): Promise<{
             headers: {
                 Authorization: `Bearer ${token}`,
             },
-            // Note: Don't set Content-Type header, let the browser set it for FormData
             cache: "no-store",
             next: { revalidate: 10 },
         });
+
         return { success: true, data: "Image deleted successfully" };
-    } catch (error) {
+    } catch {
         return {
             success: false,
-            data:
-                error instanceof Error
-                    ? error.message
-                    : "Failed to delete image",
+            data: "Failed to delete image",
         };
     }
 }
@@ -139,13 +133,10 @@ export async function updatePassword(
         }
 
         return { success: true, data: responseData.message };
-    } catch (error) {
+    } catch {
         return {
             success: false,
-            data:
-                error instanceof Error
-                    ? error.message
-                    : "Failed to update password",
+            data: "Failed to update password",
         };
     }
 }
@@ -185,14 +176,33 @@ export async function checkEmail(email: string): Promise<CheckEmailResponse> {
             exists: response.ok,
             message: data.message,
         };
-    } catch (error) {
+    } catch {
         return {
             isCurrentUser: false,
             exists: false,
-            message:
-                error instanceof Error
-                    ? error.message
-                    : "Failed to check email",
+            message: "Failed to check email",
         };
+    }
+}
+
+export async function getUser(email: string): Promise<UserResponse> {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token")?.value.replace(/(^")|("$)/g, "");
+
+    try {
+        const response = await fetch(`${baseUrl}/api/user/email/${email}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            cache: "no-store",
+            next: { revalidate: 10 },
+        });
+
+        const data: User = await response.json();
+        return { success: true, data };
+    } catch {
+        return { success: false };
     }
 }
