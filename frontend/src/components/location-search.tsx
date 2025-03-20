@@ -91,7 +91,7 @@ export function LocationSearch({
             lastSearchRef.current = "";
             setShowDropdown(false);
         }
-    }, [search, debouncedSearch, locationSelected]);
+    }, [search, debouncedSearch, locationSelected, initialValue]);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -184,11 +184,10 @@ export function LocationSearch({
                         {autoCompleteResults.map((place, index) => (
                             <button
                                 key={place}
-                                className={`relative flex cursor-pointer select-none items-center px-2 py-1.5 text-sm outline-none transition-colors text-left w-full ${
-                                    index === selectedIndex
+                                className={`relative flex cursor-pointer select-none items-center px-2 py-1.5 text-sm outline-none transition-colors text-left w-full ${index === selectedIndex
                                         ? "bg-accent text-accent-foreground"
                                         : "hover:bg-muted"
-                                }`}
+                                    }`}
                                 role="option"
                                 id={`place-option-${index}`}
                                 aria-selected={index === selectedIndex}

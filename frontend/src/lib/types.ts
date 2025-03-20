@@ -87,3 +87,12 @@ export interface ChatMessage {
     itinerary_id: number;
     active: boolean;
 }
+
+export type Expense = {
+    id: string;
+    description: string;
+    amount: number;
+    paidBy: string;
+    splitWith: string[];
+    activityId: string;
+};
