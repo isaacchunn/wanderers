@@ -23,10 +23,10 @@ interface DateRangePickerProps {
     initialStartDate?: Date;
     initialEndDate?: Date;
     mode:
-        | "create-itinerary"
-        | "update-itinerary"
-        | "create-activity"
-        | "update-activity";
+    | "create-itinerary"
+    | "update-itinerary"
+    | "create-activity"
+    | "update-activity";
     autoSave?: boolean;
 }
 
@@ -37,25 +37,32 @@ export function DateRangePicker({
     initialStartDate,
     initialEndDate,
     mode,
-    autoSave = false, // Default to false - only updateItinerary should use autoSave=true
+    autoSave = false,
 }: Readonly<DateRangePickerProps>) {
-    // Initialize with provided dates or defaults based on context
     const [startDate, setStartDate] = useState<Date | undefined>(
-        initialStartDate ?? activity?.start_date ?? itinerary?.start_date
+        initialStartDate || activity?.start_date || itinerary?.start_date
     );
-
     const [endDate, setEndDate] = useState<Date | undefined>(
-        initialEndDate ?? activity?.end_date ?? itinerary?.end_date
+        initialEndDate || activity?.end_date || itinerary?.end_date
     );
     const [isPopoverOpen, setIsPopoverOpen] = useState<
         "start" | "end" | "none"
     >("none");
     const [saveStatus, setSaveStatus] = useState<"idle" | "saving">("idle");
 
-    // Keep references of previous values to determine changes
     const previousValues = useRef({ startDate, endDate });
 
-    // Auto-save effect (only used for update-itinerary mode with autoSave=true)
+    useEffect(() => {
+        if (mode.includes("activity") && itinerary) {
+            setStartDate((prevStart) =>
+                prevStart && prevStart < itinerary.start_date ? itinerary.start_date : prevStart
+            );
+            setEndDate((prevEnd) =>
+                prevEnd && prevEnd > itinerary.end_date ? itinerary.end_date : prevEnd
+            );
+        }
+    }, [itinerary, itinerary?.start_date, itinerary?.end_date, mode]);
+
     useEffect(() => {
         if (!autoSave || mode !== "update-itinerary" || saveStatus !== "saving")
             return;
@@ -70,16 +77,14 @@ export function DateRangePicker({
         }
 
         const timer = setTimeout(() => {
-            // Call onDateChange with current dates
             if (startDate && endDate) {
                 onDateChange({ startDate, endDate });
 
-                // Update reference values
                 previousValues.current = { startDate, endDate };
             }
 
             setSaveStatus("idle");
-        }, 1000); // Reasonable debounce delay
+        }, 1000);
 
         return () => clearTimeout(timer);
     }, [startDate, endDate, onDateChange, mode, autoSave, saveStatus]);
@@ -98,64 +103,105 @@ export function DateRangePicker({
         );
     };
 
-    const isDisabledDate = (date: Date): boolean => {
-        // Normalize time to 00:00:00 for comparison
+    const isDisabledDate = (date: Date, type: "start" | "end"): boolean => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        // Disable past dates
         if (date < today) return true;
+
+        if (mode.includes("activity") && itinerary) {
+            const itineraryStart = new Date(itinerary.start_date);
+            const itineraryEnd = new Date(itinerary.end_date);
+
+            itineraryStart.setHours(0, 0, 0, 0);
+            itineraryEnd.setHours(0, 0, 0, 0);
+
+            if (type === "start") {
+                if (date < itineraryStart) return true;
+            }
+            if (type === "end") {
+                if (date > itineraryEnd) return true;
+            }
+        }
+
         return false;
     };
 
     const validateStartDate = (utcDate: Date): boolean => {
-        const utcEndDate = toUTCDate(endDate);
-        if (utcEndDate && utcDate > utcEndDate) {
+        if (endDate && utcDate > endDate) {
             toast.error("Start date cannot be later than end date");
             return false;
         }
+
+        if (
+            mode.includes("activity") &&
+            itinerary?.start_date &&
+            utcDate < itinerary.start_date
+        ) {
+            toast.error(
+                "Activity start date must be within itinerary date range"
+            );
+            return false;
+        }
+
         return true;
     };
 
     const validateEndDate = (utcDate: Date): boolean => {
-        const utcStartDate = toUTCDate(startDate);
-        if (utcStartDate && utcDate < utcStartDate) {
+        if (startDate && utcDate < startDate) {
             toast.error("End date cannot be earlier than start date");
             return false;
         }
+
+        if (
+            mode.includes("activity") &&
+            itinerary?.end_date &&
+            utcDate > itinerary.end_date
+        ) {
+            toast.error(
+                "Activity end date must be within itinerary date range"
+            );
+            return false;
+        }
+
         return true;
     };
 
-    const handleDateSelect = (
-        dateType: "start" | "end",
-        date: Date | undefined
-    ): void => {
+    const handleDateSelect = (dateType: "start" | "end", date: Date | undefined): void => {
         if (!date) return;
 
         const utcDate = toUTCDate(date);
         if (!utcDate) return;
 
-        let isValid = false;
-
         if (dateType === "start") {
-            isValid = validateStartDate(utcDate);
-            if (isValid) {
-                setStartDate(utcDate);
-
-                // Adjust endDate if it's now before startDate
-                if (endDate && endDate < utcDate) {
-                    setEndDate(utcDate);
-                }
-            }
+            handleStartDate(utcDate);
         } else {
-            isValid = validateEndDate(utcDate);
-            if (isValid) {
-                setEndDate(utcDate);
-            }
+            handleEndDate(utcDate);
         }
 
-        if (!isValid) return;
+        setIsPopoverOpen("none");
+    };
 
+    const handleStartDate = (utcDate: Date): void => {
+        if (validateStartDate(utcDate)) {
+            setStartDate(utcDate);
+
+            if (endDate && endDate < utcDate) {
+                setEndDate(utcDate);
+            }
+
+            handleDateChange("start", utcDate);
+        }
+    };
+
+    const handleEndDate = (utcDate: Date): void => {
+        if (validateEndDate(utcDate)) {
+            setEndDate(utcDate);
+            handleDateChange("end", utcDate);
+        }
+    };
+
+    const handleDateChange = (dateType: "start" | "end", utcDate: Date): void => {
         const newDates = {
             startDate: dateType === "start" ? utcDate : startDate,
             endDate: dateType === "end" ? utcDate : endDate,
@@ -166,8 +212,6 @@ export function DateRangePicker({
         } else {
             onDateChange(newDates);
         }
-
-        setIsPopoverOpen("none");
     };
 
     const openPopover = (type: "start" | "end") => {
@@ -178,7 +222,6 @@ export function DateRangePicker({
         setIsPopoverOpen("none");
     };
 
-    // Refactor the handlePopoverOpenChange function to use the open/close methods
     const handlePopoverOpenChange = (
         action: "open" | "close",
         type: "start" | "end"
@@ -192,7 +235,6 @@ export function DateRangePicker({
 
     return (
         <div className="flex items-center space-x-2">
-            {/* Start Date Popover */}
             <Popover
                 open={isPopoverOpen === "start"}
                 onOpenChange={(open) =>
@@ -202,7 +244,8 @@ export function DateRangePicker({
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
-                        className="w-[240px] justify-start text-left font-normal z-40"
+                        className={`w-[240px] justify-start text-left font-normal z-40"
+                            }`}
                         onClick={(e) => {
                             e.stopPropagation();
                             handlePopoverOpenChange("open", "start");
@@ -217,13 +260,12 @@ export function DateRangePicker({
                         mode="single"
                         selected={startDate}
                         onSelect={(date) => handleDateSelect("start", date)}
-                        disabled={(date) => isDisabledDate(date)}
-                        autoFocus
+                        disabled={(date) => isDisabledDate(date, "start")}
+                        initialFocus
                     />
                 </PopoverContent>
             </Popover>
 
-            {/* End Date Popover */}
             <Popover
                 open={isPopoverOpen === "end"}
                 onOpenChange={(open) =>
@@ -233,7 +275,8 @@ export function DateRangePicker({
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
-                        className="w-[240px] justify-start text-left font-normal z-40"
+                        className={`w-[240px] justify-start text-left font-normal z-40"
+                            }`}
                         onClick={(e) => {
                             e.stopPropagation();
                             handlePopoverOpenChange("open", "end");
@@ -248,8 +291,8 @@ export function DateRangePicker({
                         mode="single"
                         selected={endDate}
                         onSelect={(date) => handleDateSelect("end", date)}
-                        disabled={(date) => isDisabledDate(date)}
-                        autoFocus
+                        disabled={(date) => isDisabledDate(date, "end")}
+                        initialFocus
                     />
                 </PopoverContent>
             </Popover>

@@ -27,7 +27,6 @@ export default function EditCalendar({ itinerary }: EditCalendarProps) {
         if (!newDates.startDate || !newDates.endDate) return
 
         try {
-            // Handle itinerary date update
             const updatedItinerary = await updateItinerary({
                 ...itinerary,
                 start_date: newDates.startDate,
@@ -47,7 +46,6 @@ export default function EditCalendar({ itinerary }: EditCalendarProps) {
             console.error("Error updating dates:", error)
             toast.error("Failed to update itinerary dates")
 
-            // Reset to original dates
             setDateRange({
                 startDate: itinerary.start_date,
                 endDate: itinerary.end_date,
