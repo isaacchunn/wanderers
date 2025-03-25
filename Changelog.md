@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- (FE) Implement Expense Calculation and Splitting
+- (FE) Add a time feature for Activity
+
 ### Fixed
 
 ### Changed
