@@ -9,14 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- (FE) Implement Expense Calculation and Splitting
-- (FE) Add a time feature for Activity
-
 ### Fixed
 
 ### Changed
 
 ### Removed
+
+## [1.1.0] - 2025-03-25
+
+### Added
+
+- (FE) Implement Expense Calculation and Splitting
+- (FE) Add a time feature for Activity
 
 ## [1.0.0] - 2025-03-12
 
@@ -109,7 +113,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CODEOWNERS file to track mandatory reviewers of certain PRs
 
 ---
-[unreleased]: https://github.com/isaacchunn/wanderers/compare/v1.0.0...HEAD
+[unreleased]: https://github.com/isaacchunn/wanderers/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/isaacchunn/wanderers/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/isaacchunn/wanderers/compare/v0.0.4...v1.0.0
 [0.0.4]: https://github.com/isaacchunn/wanderers/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/isaacchunn/wanderers/compare/v0.0.2...v0.0.3
