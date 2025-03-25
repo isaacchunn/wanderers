@@ -16,9 +16,9 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { Activity } from "@/lib/types";
-import { getTime } from "date-fns";
-import RenderOpeningHours from "@/components/RenderOpeningHours"; // Adjust the import path
+import RenderOpeningHours from "@/components/RenderOpeningHours";
 import { DropdownSetting } from "@/components/dropdown-menuA";
+import { calculateDuration } from "@/lib/duration"
 
 interface SortableLocationCardProps {
     activity: Activity;
@@ -114,21 +114,30 @@ export function SortableLocationCard({ activity }: Readonly<SortableLocationCard
                                             {activity.title}
                                         </h3>
                                     </div>
-                                    <div className="flex items-center gap-2">
+
+                                    <div className="flex items-center gap-2 py-1">
                                         <Calendar className="h-4 w-4" />
                                         <span className="text-sm">
                                             {`${new Date(activity.start_date).toLocaleDateString()} - ${new Date(activity.end_date).toLocaleDateString()}`}
                                         </span>
                                     </div>
 
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-2 py-1">
                                         <Clock className="h-4 w-4" />
                                         <span className="text-sm">
-                                            {`${Math.floor(
-                                                (getTime(activity.end_date) - getTime(activity.start_date)) / 86400000
-                                            ) + 1} Day(s)`}
+                                            {`${new Date(activity.start_date).toLocaleTimeString()} - ${new Date(activity.end_date).toLocaleTimeString()}`}
                                         </span>
                                     </div>
+
+                                    <div className="flex items-center gap-2 py-1">
+                                        <Clock className="h-4 w-4" />
+                                        <span className="text-sm">
+                                            {`${calculateDuration(activity.start_date, activity.end_date)}`}
+                                        </span>
+                                    </div>
+
+
+
                                     <div className="mt-2 flex flex-wrap gap-1">
                                         {activity.types?.slice(0, 4).map((type) => (
                                             <Badge key={type} variant="outline" className="capitalize">

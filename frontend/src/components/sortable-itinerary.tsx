@@ -32,10 +32,6 @@ export function SortableItinerary({
     const initialOrderRef = useRef<Activity[]>(fetchedActivities);
 
     useEffect(() => {
-        saveOrder();
-    }, [activities]);
-
-    useEffect(() => {
         setActivities(fetchedActivities);
         initialOrderRef.current = fetchedActivities;
     }, [fetchedActivities]);
@@ -71,6 +67,10 @@ export function SortableItinerary({
             toast.error("Error saving activity order");
         }
     }, [activities]);
+
+    useEffect(() => {
+        saveOrder();
+    }, [activities, saveOrder]);
 
     return (
         <div ref={containerRef}>

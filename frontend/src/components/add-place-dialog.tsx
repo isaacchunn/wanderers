@@ -15,15 +15,14 @@ import DialogModal from "@/components/dialog-model";
 export default function AddPlaceDialog({
     itinerary,
     activities,
-    open: externalOpen, // External state (optional)
-    setOpen: externalSetOpen, // External setter (optional)
+    open: externalOpen,
+    setOpen: externalSetOpen,
 }: Readonly<{
     itinerary: Itinerary;
     activities: Activity[];
-    open?: boolean; // Make open state optional
-    setOpen?: (value: boolean) => void; // Make setter optional
+    open?: boolean;
+    setOpen?: (value: boolean) => void;
 }>) {
-    // State for place details and auto-complete results
     const [internalOpen, setInternalOpen] = useState(false);
     const isOpen = externalOpen ?? internalOpen;
     const setIsOpen = externalSetOpen ?? setInternalOpen;
