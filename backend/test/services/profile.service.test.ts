@@ -55,7 +55,7 @@ describe("Profile Service Tests", () => {
 
       // Call the service function and expect it to throw
       await expect(updateProfileDescription(1, "Test description")).rejects.toThrow(dbError);
-      
+
       expect(db.user.updateMany).toHaveBeenCalledWith({
         where: { id: 1 },
         data: { profile_description: "Test description" }
@@ -116,7 +116,7 @@ describe("Profile Service Tests", () => {
       // Call the service function and expect it to throw
       const imagePath = "https://example.com/images/profile123.jpg";
       await expect(updateProfileImagePath(1, imagePath)).rejects.toThrow(dbError);
-      
+
       expect(db.user.updateMany).toHaveBeenCalledWith({
         where: { id: 1 },
         data: { user_photo: imagePath }

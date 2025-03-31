@@ -36,23 +36,23 @@ export const RESPONSE_MESSAGES = {
   ACCOUNT_VERIFIED: "Account already verified",
   UNAUTHORIZED_NO_TOKEN: "Not authorized, no token",
   UNAUTHORIZED_FAILED: "Not authorized, token failed",
-  
+
   // Activity related messages
   ACTIVITY_CREATED: "Activity created successfully",
   ACTIVITY_UPDATED: "Activity updated successfully",
   ACTIVITY_DELETED: "Activity deleted successfully",
   ACTIVITY_NOT_FOUND: "Activity not found",
-  
+
   // Itinerary related messages
   ITINERARY_CREATED: "Itinerary created successfully",
   ITINERARY_UPDATED: "Itinerary updated successfully",
   ITINERARY_DELETED: "Itinerary deleted successfully",
   ITINERARY_NOT_FOUND: "Itinerary not found",
-  
+
   // Profile related messages
   PROFILE_UPDATED: "Profile updated successfully",
   PROFILE_NOT_FOUND: "Profile not found",
-  
+
   // Generic messages
   INVALID_INPUT: "Invalid input data",
   SUCCESS: "Success",
@@ -77,14 +77,14 @@ export const TEST_DATA = {
     verifiedEmail: "verified@gmail.com",
     unverifiedEmail: "test-unverified@example.com"
   },
-  
+
   // Activity related test data
   activity: {
     validTitle: "Test Activity",
     validDescription: "Test Description",
     validExpense: 100
   },
-  
+
   // Itinerary related test data
   itinerary: {
     validTitle: "Test Itinerary",
@@ -101,12 +101,12 @@ export const TEST_DATA = {
  */
 export const createAuthenticatedRequest = (userId: number, method: string, path: string) => {
   const token = jwt.sign(
-    { id: userId }, 
+    { id: userId },
     process.env.JWT_SECRET || "test-secret"
   );
-  
+
   let req;
-  
+
   switch (method.toLowerCase()) {
     case 'get':
       req = request(app).get(path);
@@ -123,7 +123,7 @@ export const createAuthenticatedRequest = (userId: number, method: string, path:
     default:
       req = request(app).get(path);
   }
-  
+
   return req.set("Authorization", `Bearer ${token}`);
 };
 
@@ -225,19 +225,19 @@ export const createMockServices = () => {
     updateUserPassword: jest.fn(),
     updateUserPasswordHistory: jest.fn(),
     checkPasswordReused: jest.fn(),
-    
+
     // Token service methods
     getConfirmAccountTokenByToken: jest.fn(),
     getPasswordResetTokenByToken: jest.fn(),
     deleteToken: jest.fn(),
     generateConfirmAccountToken: jest.fn(),
     generatePasswordResetToken: jest.fn(),
-    
+
     // Mail service methods
     deliverConfirmationEmail: jest.fn(),
     deliverForgotPasswordEmail: jest.fn(),
     deliverPasswordResetSuccessfulEmail: jest.fn(),
-    
+
     // Activity service methods
     createActivity: jest.fn(),
     getActivityById: jest.fn(),
@@ -245,18 +245,18 @@ export const createMockServices = () => {
     updateActivity: jest.fn(),
     updateActivitySequence: jest.fn(),
     deleteActivity: jest.fn(),
-    
+
     // Itinerary service methods
     createItinerary: jest.fn(),
     getItineraryById: jest.fn(),
     getItinerariesByUserId: jest.fn(),
     updateItinerary: jest.fn(),
     deleteItinerary: jest.fn(),
-    
+
     // Profile service methods
     getProfileByUserId: jest.fn(),
     updateProfile: jest.fn(),
-    
+
     // Image service methods
     uploadImage: jest.fn(),
     deleteImage: jest.fn()

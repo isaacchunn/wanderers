@@ -9,6 +9,11 @@ import {
 } from "../../controllers/activity";
 import * as activityService from "../../services/activity";
 import { HttpCode } from "../../lib/httpCodes";
+const req = {} as Request;
+const res = {
+  status: jest.fn().mockReturnThis(),
+  json: jest.fn()
+} as unknown as Response;
 
 // Mock the activity service
 jest.mock("../../services/activity", () => ({

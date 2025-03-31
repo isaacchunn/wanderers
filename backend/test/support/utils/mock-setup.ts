@@ -1,4 +1,4 @@
-import { userFixture, userTokenFixture } from "../fixtures";
+import { userFixture } from "../fixtures";
 import { createMockServices, getTokenByTokenMock, setupTokenMock } from "./test-utils";
 
 /**

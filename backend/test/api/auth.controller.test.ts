@@ -1,4 +1,3 @@
-import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import {
@@ -13,13 +12,19 @@ import {
 import * as userService from "../../services/user";
 import * as tokenService from "../../services/token";
 import * as mailController from "../../controllers/mail";
-import { userFixture, userTokenFixture } from "../support/fixtures";
-import { 
-  HTTP_STATUS, 
-  RESPONSE_MESSAGES, 
-  TEST_DATA, 
-  createMockServices 
+import {
+  HTTP_STATUS,
+  RESPONSE_MESSAGES,
+  TEST_DATA,
+  createMockServices
 } from "../support/utils/test-utils";
+import { Request, Response } from 'express';
+
+const req = {} as Request;
+const res = {
+  status: jest.fn().mockReturnThis(),
+  json: jest.fn()
+} as unknown as Response;
 import { db } from "../../controllers/db";
 
 // Create a centralized mock services object
@@ -88,25 +93,10 @@ jest.mock("../../controllers/db", () => ({
 }));
 
 describe("Auth Controller Tests", () => {
-  let req: Partial<Request>;
-  let res: Partial<Response>;
 
   beforeEach(() => {
     // Reset mocks before each test
     jest.clearAllMocks();
-
-    // Setup request and response objects
-    req = {
-      body: {},
-      params: {},
-      // @ts-ignore
-      user: { id: 1 }
-    };
-
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn()
-    };
 
     // Default JWT_SECRET environment variable
     process.env.JWT_SECRET = "test-secret";
@@ -140,7 +130,7 @@ describe("Auth Controller Tests", () => {
       (userService.createUser as jest.Mock).mockResolvedValue({ id: 1, username: "testuser", email: "test@example.com" });
       (tokenService.generateConfirmAccountToken as jest.Mock).mockResolvedValue({ id: 1, token: "confirm-token", sent_to: "test@example.com" });
 
-      await registerUser(req as Request, res as Response);
+      await registerUser(req, res);
 
       expect(userService.createUser).toHaveBeenCalledWith("testuser", "test@example.com", "hashedpassword");
       expect(userService.updateUserPasswordHistory).toHaveBeenCalledWith(1, "hashedpassword");
@@ -154,7 +144,7 @@ describe("Auth Controller Tests", () => {
       (userService.getUserByEmail as jest.Mock).mockResolvedValue({ id: 1, username: "testuser", email: "test@example.com", email_verified: null });
       (tokenService.generateConfirmAccountToken as jest.Mock).mockResolvedValue({ id: 1, token: "confirm-token", sent_to: "test@example.com" });
 
-      await registerUser(req as Request, res as Response);
+      await registerUser(req, res);
 
       expect(mailController.deliverConfirmationEmail).toHaveBeenCalledWith("test@example.com", "testuser", "confirm-token");
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
@@ -170,7 +160,7 @@ describe("Auth Controller Tests", () => {
         email_verified: new Date()
       });
 
-      await registerUser(req as Request, res as Response);
+      await registerUser(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: "Email already in use!" });
@@ -183,7 +173,7 @@ describe("Auth Controller Tests", () => {
         error: { errors: [{ message: RESPONSE_MESSAGES.PASSWORD_TOO_SHORT }] }
       });
 
-      await registerUser(req as Request, res as Response);
+      await registerUser(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.PASSWORD_TOO_SHORT });
@@ -203,7 +193,7 @@ describe("Auth Controller Tests", () => {
       (userService.getUserByEmail as jest.Mock).mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
-      await loginUser(req as Request, res as Response);
+      await loginUser(req, res);
 
       expect(jwt.sign).toHaveBeenCalledWith({ id: 1 }, "test-secret", { expiresIn: "7d" });
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.OK);
@@ -221,7 +211,7 @@ describe("Auth Controller Tests", () => {
     it("should return error if user does not exist", async () => {
       (userService.getUserByEmail as jest.Mock).mockResolvedValue(null);
 
-      await loginUser(req as Request, res as Response);
+      await loginUser(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: "Invalid credentials" });
@@ -238,7 +228,7 @@ describe("Auth Controller Tests", () => {
       (userService.getUserByEmail as jest.Mock).mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      await loginUser(req as Request, res as Response);
+      await loginUser(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: "Invalid credentials" });
@@ -261,7 +251,7 @@ describe("Auth Controller Tests", () => {
         sent_to: "test@example.com"
       });
 
-      await loginUser(req as Request, res as Response);
+      await loginUser(req, res);
 
       expect(mailController.deliverConfirmationEmail).toHaveBeenCalledWith("test@example.com", "testuser", "confirm-token");
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
@@ -290,7 +280,7 @@ describe("Auth Controller Tests", () => {
       (tokenService.getConfirmAccountTokenByToken as jest.Mock).mockResolvedValue(mockToken);
       (userService.getUserByEmail as jest.Mock).mockResolvedValue(mockUser);
 
-      await confirmAccount(req as Request, res as Response);
+      await confirmAccount(req, res);
 
       expect(db.user.update).toHaveBeenCalledWith({
         where: { id: 1 },
@@ -310,7 +300,7 @@ describe("Auth Controller Tests", () => {
 
       (tokenService.getConfirmAccountTokenByToken as jest.Mock).mockResolvedValue(null);
 
-      await confirmAccount(req as Request, res as Response);
+      await confirmAccount(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.INVALID_TOKEN });
@@ -333,7 +323,7 @@ describe("Auth Controller Tests", () => {
 
       (tokenService.getConfirmAccountTokenByToken as jest.Mock).mockResolvedValue(mockToken);
 
-      await confirmAccount(req as Request, res as Response);
+      await confirmAccount(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.TOKEN_EXPIRED });
@@ -353,7 +343,7 @@ describe("Auth Controller Tests", () => {
       (tokenService.getConfirmAccountTokenByToken as jest.Mock).mockResolvedValue(mockToken);
       (userService.getUserByEmail as jest.Mock).mockResolvedValue(null);
 
-      await confirmAccount(req as Request, res as Response);
+      await confirmAccount(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.NO_USER });
@@ -383,7 +373,7 @@ describe("Auth Controller Tests", () => {
       (userService.getUserByEmail as jest.Mock).mockResolvedValue(mockUser);
       (userService.checkPasswordReused as jest.Mock).mockResolvedValue(false);
 
-      await resetPassword(req as Request, res as Response);
+      await resetPassword(req, res);
 
       expect(userService.updateUserPassword).toHaveBeenCalledWith(1, "hashedpassword");
       expect(userService.updateUserPasswordHistory).toHaveBeenCalledWith(1, "hashedpassword");
@@ -399,7 +389,7 @@ describe("Auth Controller Tests", () => {
 
       (tokenService.getPasswordResetTokenByToken as jest.Mock).mockResolvedValue(null);
 
-      await resetPassword(req as Request, res as Response);
+      await resetPassword(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.INVALID_TOKEN });
@@ -423,7 +413,7 @@ describe("Auth Controller Tests", () => {
 
       (tokenService.getPasswordResetTokenByToken as jest.Mock).mockResolvedValue(mockToken);
 
-      await resetPassword(req as Request, res as Response);
+      await resetPassword(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.TOKEN_EXPIRED });
@@ -444,7 +434,7 @@ describe("Auth Controller Tests", () => {
       (tokenService.getPasswordResetTokenByToken as jest.Mock).mockResolvedValue(mockToken);
       (userService.getUserByEmail as jest.Mock).mockResolvedValue(null);
 
-      await resetPassword(req as Request, res as Response);
+      await resetPassword(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.NO_USER });
@@ -472,7 +462,7 @@ describe("Auth Controller Tests", () => {
       (userService.getUserByEmail as jest.Mock).mockResolvedValue(mockUser);
       (userService.checkPasswordReused as jest.Mock).mockResolvedValue(true);
 
-      await resetPassword(req as Request, res as Response);
+      await resetPassword(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.PASSWORD_REUSED });
@@ -488,7 +478,7 @@ describe("Auth Controller Tests", () => {
         error: { errors: [{ message: RESPONSE_MESSAGES.PASSWORD_TOO_SHORT }] }
       });
 
-      await resetPassword(req as Request, res as Response);
+      await resetPassword(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.PASSWORD_TOO_SHORT });
@@ -516,7 +506,7 @@ describe("Auth Controller Tests", () => {
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
       (userService.checkPasswordReused as jest.Mock).mockResolvedValue(false);
 
-      await updatePassword(req as any, res as Response);
+      await updatePassword(req, res);
 
       expect(userService.updateUserPassword).toHaveBeenCalledWith(1, "hashedpassword");
       expect(userService.updateUserPasswordHistory).toHaveBeenCalledWith(1, "hashedpassword");
@@ -534,7 +524,7 @@ describe("Auth Controller Tests", () => {
       // @ts-ignore
       req.user = { id: 1 };
 
-      await updatePassword(req as any, res as Response);
+      await updatePassword(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.PASSWORDS_MISMATCH });
@@ -551,7 +541,7 @@ describe("Auth Controller Tests", () => {
 
       (userService.getUserById as jest.Mock).mockResolvedValue(null);
 
-      await updatePassword(req as any, res as Response);
+      await updatePassword(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.NO_USER });
@@ -576,7 +566,7 @@ describe("Auth Controller Tests", () => {
       (userService.getUserById as jest.Mock).mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      await updatePassword(req as any, res as Response);
+      await updatePassword(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.WRONG_PASSWORD });
@@ -602,7 +592,7 @@ describe("Auth Controller Tests", () => {
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
       (userService.checkPasswordReused as jest.Mock).mockResolvedValue(true);
 
-      await updatePassword(req as any, res as Response);
+      await updatePassword(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.PASSWORD_REUSED });
@@ -621,7 +611,7 @@ describe("Auth Controller Tests", () => {
         error: { errors: [{ message: RESPONSE_MESSAGES.PASSWORD_TOO_SHORT }] }
       });
 
-      await updatePassword(req as any, res as Response);
+      await updatePassword(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.PASSWORD_TOO_SHORT });
@@ -646,7 +636,7 @@ describe("Auth Controller Tests", () => {
         sent_to: TEST_DATA.auth.unverifiedEmail
       });
 
-      await requestConfirmationEmail(req as Request, res as Response);
+      await requestConfirmationEmail(req, res);
 
       expect(mailController.deliverConfirmationEmail).toHaveBeenCalledWith(TEST_DATA.auth.unverifiedEmail, "testuser", "confirm-token");
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.OK);
@@ -658,7 +648,7 @@ describe("Auth Controller Tests", () => {
 
       (userService.getUserByEmail as jest.Mock).mockResolvedValue(null);
 
-      await requestConfirmationEmail(req as Request, res as Response);
+      await requestConfirmationEmail(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.NO_USER });
@@ -676,7 +666,7 @@ describe("Auth Controller Tests", () => {
 
       (userService.getUserByEmail as jest.Mock).mockResolvedValue(mockUser);
 
-      await requestConfirmationEmail(req as Request, res as Response);
+      await requestConfirmationEmail(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.ACCOUNT_VERIFIED });
@@ -700,7 +690,7 @@ describe("Auth Controller Tests", () => {
         sent_to: "test@example.com"
       });
 
-      await requestForgetPasswordEmail(req as Request, res as Response);
+      await requestForgetPasswordEmail(req, res);
 
       expect(mailController.deliverForgotPasswordEmail).toHaveBeenCalledWith("test@example.com", "testuser", "reset-token");
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.OK);
@@ -712,7 +702,7 @@ describe("Auth Controller Tests", () => {
 
       (userService.getUserByEmail as jest.Mock).mockResolvedValue(null);
 
-      await requestForgetPasswordEmail(req as Request, res as Response);
+      await requestForgetPasswordEmail(req, res);
 
       expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
       expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.NO_USER });

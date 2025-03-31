@@ -9,7 +9,6 @@ import {
 } from "../../services/activity";
 import { db } from "../../controllers/db";
 import { ExpenseSplitType } from "prisma/prisma-client";
-import { HTTP_STATUS, RESPONSE_MESSAGES, TEST_DATA, createMockServices } from "../support/utils/test-utils";
 
 // Create a centralized mock services object
 const mockServices = {
@@ -253,7 +252,7 @@ describe("Activity Service Tests", () => {
         title: "Updated Title",
         description: "Updated Description"
       };
-      
+
       const mockResult = {
         id: 1,
         ...updatedActivity,
@@ -261,7 +260,7 @@ describe("Activity Service Tests", () => {
         updated_at: new Date(),
         active: true
       };
-      
+
       (db.activity.update as jest.Mock).mockResolvedValue(mockResult);
 
       // Call the service function
@@ -293,7 +292,7 @@ describe("Activity Service Tests", () => {
     it("should update only the sequence of an activity", async () => {
       // Setup mock data
       const newSequence = 3;
-      
+
       const mockResult = {
         id: 1,
         ...sampleActivity,
@@ -302,7 +301,7 @@ describe("Activity Service Tests", () => {
         updated_at: new Date(),
         active: true
       };
-      
+
       (db.activity.update as jest.Mock).mockResolvedValue(mockResult);
 
       // Call the service function
@@ -341,7 +340,7 @@ describe("Activity Service Tests", () => {
         created_at: new Date(),
         updated_at: new Date()
       };
-      
+
       (db.activity.update as jest.Mock).mockResolvedValue(mockResult);
 
       // Call the service function

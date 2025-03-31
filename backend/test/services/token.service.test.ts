@@ -1,4 +1,4 @@
-import { 
+import {
   getConfirmAccountTokenByToken,
   getConfirmAccountTokenByEmail,
   getPasswordResetTokenByToken,
@@ -8,7 +8,6 @@ import {
   deleteToken
 } from "../../services/token";
 import { db } from "../../controllers/db";
-import { v4 as uuidv4 } from "uuid";
 
 // Mock uuid to return predictable values
 jest.mock("uuid", () => ({
@@ -35,7 +34,7 @@ describe("Token Service Tests", () => {
     created_at: new Date(),
     updated_at: new Date()
   };
-  
+
   const mockResetToken = {
     ...mockToken,
     id: "token-id-2",
@@ -50,9 +49,9 @@ describe("Token Service Tests", () => {
   describe("getConfirmAccountTokenByToken", () => {
     it("should return a token when it exists", async () => {
       (db.userToken.findFirst as jest.Mock).mockResolvedValue(mockToken);
-      
+
       const result = await getConfirmAccountTokenByToken("test-token-value");
-      
+
       expect(db.userToken.findFirst).toHaveBeenCalledWith({
         where: { token: "test-token-value", context: "email_confirmation" }
       });
@@ -61,9 +60,9 @@ describe("Token Service Tests", () => {
 
     it("should return null when token doesn't exist", async () => {
       (db.userToken.findFirst as jest.Mock).mockResolvedValue(null);
-      
+
       const result = await getConfirmAccountTokenByToken("non-existent-token");
-      
+
       expect(db.userToken.findFirst).toHaveBeenCalledWith({
         where: { token: "non-existent-token", context: "email_confirmation" }
       });
@@ -72,9 +71,9 @@ describe("Token Service Tests", () => {
 
     it("should return null on database error", async () => {
       (db.userToken.findFirst as jest.Mock).mockRejectedValue(new Error("Database error"));
-      
+
       const result = await getConfirmAccountTokenByToken("test-token-value");
-      
+
       expect(result).toBeNull();
     });
   });
@@ -82,9 +81,9 @@ describe("Token Service Tests", () => {
   describe("getConfirmAccountTokenByEmail", () => {
     it("should return a token when it exists for the email", async () => {
       (db.userToken.findFirst as jest.Mock).mockResolvedValue(mockToken);
-      
+
       const result = await getConfirmAccountTokenByEmail("test@example.com");
-      
+
       expect(db.userToken.findFirst).toHaveBeenCalledWith({
         where: { sent_to: "test@example.com", context: "email_confirmation" }
       });
@@ -93,9 +92,9 @@ describe("Token Service Tests", () => {
 
     it("should return null when no token exists for the email", async () => {
       (db.userToken.findFirst as jest.Mock).mockResolvedValue(null);
-      
+
       const result = await getConfirmAccountTokenByEmail("no-token@example.com");
-      
+
       expect(db.userToken.findFirst).toHaveBeenCalledWith({
         where: { sent_to: "no-token@example.com", context: "email_confirmation" }
       });
@@ -104,9 +103,9 @@ describe("Token Service Tests", () => {
 
     it("should return null on database error", async () => {
       (db.userToken.findFirst as jest.Mock).mockRejectedValue(new Error("Database error"));
-      
+
       const result = await getConfirmAccountTokenByEmail("test@example.com");
-      
+
       expect(result).toBeNull();
     });
   });
@@ -114,9 +113,9 @@ describe("Token Service Tests", () => {
   describe("getPasswordResetTokenByToken", () => {
     it("should return a reset token when it exists", async () => {
       (db.userToken.findFirst as jest.Mock).mockResolvedValue(mockResetToken);
-      
+
       const result = await getPasswordResetTokenByToken("reset-token-value");
-      
+
       expect(db.userToken.findFirst).toHaveBeenCalledWith({
         where: { token: "reset-token-value", context: "reset_password" }
       });
@@ -125,9 +124,9 @@ describe("Token Service Tests", () => {
 
     it("should return null when reset token doesn't exist", async () => {
       (db.userToken.findFirst as jest.Mock).mockResolvedValue(null);
-      
+
       const result = await getPasswordResetTokenByToken("non-existent-token");
-      
+
       expect(db.userToken.findFirst).toHaveBeenCalledWith({
         where: { token: "non-existent-token", context: "reset_password" }
       });
@@ -136,9 +135,9 @@ describe("Token Service Tests", () => {
 
     it("should return null on database error", async () => {
       (db.userToken.findFirst as jest.Mock).mockRejectedValue(new Error("Database error"));
-      
+
       const result = await getPasswordResetTokenByToken("reset-token-value");
-      
+
       expect(result).toBeNull();
     });
   });
@@ -146,9 +145,9 @@ describe("Token Service Tests", () => {
   describe("getPasswordResetokenByEmail", () => {
     it("should return a reset token when it exists for the email", async () => {
       (db.userToken.findFirst as jest.Mock).mockResolvedValue(mockResetToken);
-      
+
       const result = await getPasswordResetokenByEmail("test@example.com");
-      
+
       expect(db.userToken.findFirst).toHaveBeenCalledWith({
         where: { sent_to: "test@example.com", context: "reset_password" }
       });
@@ -157,9 +156,9 @@ describe("Token Service Tests", () => {
 
     it("should return null when no reset token exists for the email", async () => {
       (db.userToken.findFirst as jest.Mock).mockResolvedValue(null);
-      
+
       const result = await getPasswordResetokenByEmail("no-token@example.com");
-      
+
       expect(db.userToken.findFirst).toHaveBeenCalledWith({
         where: { sent_to: "no-token@example.com", context: "reset_password" }
       });
@@ -168,9 +167,9 @@ describe("Token Service Tests", () => {
 
     it("should return null on database error", async () => {
       (db.userToken.findFirst as jest.Mock).mockRejectedValue(new Error("Database error"));
-      
+
       const result = await getPasswordResetokenByEmail("test@example.com");
-      
+
       expect(result).toBeNull();
     });
   });
@@ -187,9 +186,9 @@ describe("Token Service Tests", () => {
         created_at: expect.any(Date),
         updated_at: expect.any(Date)
       });
-      
+
       const result = await generatePasswordResetToken("test@example.com");
-      
+
       expect(db.userToken.findFirst).toHaveBeenCalledWith({
         where: { sent_to: "test@example.com", context: "reset_password" }
       });
@@ -225,9 +224,9 @@ describe("Token Service Tests", () => {
         created_at: expect.any(Date),
         updated_at: expect.any(Date)
       });
-      
+
       const result = await generatePasswordResetToken("test@example.com");
-      
+
       expect(db.userToken.findFirst).toHaveBeenCalledWith({
         where: { sent_to: "test@example.com", context: "reset_password" }
       });
@@ -269,9 +268,9 @@ describe("Token Service Tests", () => {
         created_at: expect.any(Date),
         updated_at: expect.any(Date)
       });
-      
+
       const result = await generateConfirmAccountToken("test@example.com");
-      
+
       expect(db.userToken.findFirst).toHaveBeenCalledWith({
         where: { sent_to: "test@example.com", context: "email_confirmation" }
       });
@@ -307,9 +306,9 @@ describe("Token Service Tests", () => {
         created_at: expect.any(Date),
         updated_at: expect.any(Date)
       });
-      
+
       const result = await generateConfirmAccountToken("test@example.com");
-      
+
       expect(db.userToken.findFirst).toHaveBeenCalledWith({
         where: { sent_to: "test@example.com", context: "email_confirmation" }
       });
@@ -341,9 +340,9 @@ describe("Token Service Tests", () => {
   describe("deleteToken", () => {
     it("should delete a token by id", async () => {
       (db.userToken.delete as jest.Mock).mockResolvedValue({});
-      
+
       await deleteToken("token-id-1");
-      
+
       expect(db.userToken.delete).toHaveBeenCalledWith({
         where: { id: "token-id-1" }
       });
@@ -351,10 +350,10 @@ describe("Token Service Tests", () => {
 
     it("should handle errors when deleting tokens", async () => {
       (db.userToken.delete as jest.Mock).mockRejectedValue(new Error("Database error"));
-      
+
       // The function doesn't have error handling, so it should throw
       await expect(deleteToken("token-id-1")).rejects.toThrow("Database error");
-      
+
       expect(db.userToken.delete).toHaveBeenCalledWith({
         where: { id: "token-id-1" }
       });

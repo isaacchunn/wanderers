@@ -76,7 +76,7 @@ describe("Image Service Tests", () => {
         ...mockFile,
         mimetype: "image/png"
       };
-      
+
       // Call the function
       await uploadS3ProfileImage(123, pngFile);
 
@@ -105,7 +105,7 @@ describe("Image Service Tests", () => {
     it("should handle missing environment variables", async () => {
       // Remove environment variables
       delete process.env.S3_BUCKET_NAME;
-      
+
       // Call the function
       const result = await uploadS3ProfileImage(123, mockFile);
 
@@ -155,11 +155,11 @@ describe("Image Service Tests", () => {
     it("should handle missing environment variables", async () => {
       // Remove environment variables
       delete process.env.S3_BUCKET_NAME;
-      
+
       // Set up mock response
       const mockS3Client = new S3Client({});
       (mockS3Client.send as jest.Mock).mockResolvedValue({});
-      
+
       // Call the function
       await deleteS3ProfileImage("123");
 

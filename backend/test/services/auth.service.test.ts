@@ -1,14 +1,13 @@
 import request from "supertest";
 import app from "../../index";
 import { userFixture, userTokenFixture } from "../support/fixtures";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { 
-  runTokenBasedTests, 
-  runEmailBasedTests, 
-  RESPONSE_MESSAGES, 
+import {
+  runTokenBasedTests,
+  runEmailBasedTests,
+  RESPONSE_MESSAGES,
   HTTP_STATUS,
-  API_TEST_CONFIG, 
+  API_TEST_CONFIG,
   TEST_DATA,
   createAuthenticatedRequest
 } from "../support/utils/test-utils";
