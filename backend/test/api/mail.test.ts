@@ -113,7 +113,7 @@ describe("Mail Controller Tests", () => {
 
             expect(mailService.sendMail).toHaveBeenCalledWith(
                 email,
-                `Wanderers - Invitation to collaborate in \"${itineraryName}\"`,
+                `Wanderers - Invitation to collaborate in "${itineraryName}"`,
                 expect.stringContaining(username)
             );
             expect(mailService.sendMail).toHaveBeenCalledWith(

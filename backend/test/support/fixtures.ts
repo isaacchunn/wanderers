@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import { UserRole, ItineraryVisibility } from "@prisma/client";
 import crypto from "crypto";
 

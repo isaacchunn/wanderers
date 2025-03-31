@@ -1,6 +1,5 @@
 import request from "supertest";
 import app from "../../index";
-import { prismaMock } from "../../prisma/singleton";
 import { activityFixture, userFixture } from "../support/fixtures";
 import jwt from "jsonwebtoken";
 
