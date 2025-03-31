@@ -54,7 +54,8 @@ jobs:
         with:
           working-directory: ./backend
 
-      # Test and lint is not enabled for backend for now
+      - name: "run tests"
+        run: npm run test
 
   # Job to test and lint frontend code only if frontend files were changed
   frontend:

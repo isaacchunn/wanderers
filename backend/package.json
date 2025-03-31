@@ -7,7 +7,7 @@
     "server": "nodemon index.ts",
     "client": "npm start --prefix ../frontend",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "test": "jest --watchAll",
+    "test": "jest",
     "format": "prettier --write ."
   },
   "author": "",
