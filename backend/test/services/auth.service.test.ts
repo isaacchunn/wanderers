@@ -1,26 +1,16 @@
 import request from "supertest";
 import app from "../../index";
 import { userFixture, userTokenFixture } from "../support/fixtures";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-
-// Common responses and error messages
-const RESPONSE_MESSAGES = {
-  INVALID_TOKEN: "Invalid token",
-  TOKEN_EXPIRED: "Token has expired",
-  NO_USER: "User does not exist",
-  PASSWORD_TOO_SHORT: "Password must be at least 8 characters",
-  PASSWORD_REUSED: "Password has been used before",
-  PASSWORDS_MISMATCH: "New passwords do not match",
-  WRONG_PASSWORD: "Old password is incorrect",
-  ACCOUNT_CONFIRMED: "Account confirmed",
-  PASSWORD_UPDATED: "Password updated",
-  CONFIRMATION_SENT: "Confirmation email sent",
-  FORGET_PASSWORD_SENT: "Forget password email sent",
-  ACCOUNT_VERIFIED: "Account already verified",
-  UNAUTHORIZED_NO_TOKEN: "Not authorized, no token",
-  UNAUTHORIZED_FAILED: "Not authorized, token failed"
-};
+import {
+  runTokenBasedTests,
+  runEmailBasedTests,
+  RESPONSE_MESSAGES,
+  HTTP_STATUS,
+  API_TEST_CONFIG,
+  TEST_DATA,
+  createAuthenticatedRequest
+} from "../support/utils/test-utils";
 
 // Set up all mock functions in a single object
 const mockServices = {
@@ -39,54 +29,6 @@ const mockServices = {
   deliverConfirmationEmail: jest.fn(),
   deliverForgotPasswordEmail: jest.fn(),
   deliverPasswordResetSuccessfulEmail: jest.fn()
-};
-
-// Test config with common endpoint definitions
-const TEST_CONFIG = {
-  endpoints: {
-    confirmAccount: {
-      method: "get",
-      url: "/api/auth/confirm-account",
-      successMessage: RESPONSE_MESSAGES.ACCOUNT_CONFIRMED
-    },
-    resetPassword: {
-      method: "post",
-      url: "/api/auth/reset-password",
-      successMessage: RESPONSE_MESSAGES.PASSWORD_UPDATED,
-      body: { password: "NewP@ssw0rd123!" }
-    },
-    requestConfirmation: {
-      method: "post",
-      url: "/api/auth/request-confirmation",
-      successMessage: RESPONSE_MESSAGES.CONFIRMATION_SENT,
-      body: { email: "test-unverified@example.com" }
-    },
-    forgetPassword: {
-      method: "post",
-      url: "/api/auth/forget-password",
-      successMessage: RESPONSE_MESSAGES.FORGET_PASSWORD_SENT,
-      body: { email: "test@example.com" }
-    }
-  },
-  // Common test data
-  testData: {
-    validPassword: "NewP@ssw0rd123!",
-    reusedPassword: "OldP@ssw0rd123!",
-    emptyPassword: "",
-    validToken: "valid-token",
-    invalidToken: "invalidtoken",
-    expiredTokenPrefix: "expired-",
-    noUserTokenPrefix: "nouser-",
-    nonexistentEmail: "nonexistent@gmail.com",
-    verifiedEmail: "verified@gmail.com",
-    unverifiedEmail: "test-unverified@example.com"
-  },
-  // Status codes
-  statusCodes: {
-    OK: 200,
-    BAD_REQUEST: 400,
-    UNAUTHORIZED: 401
-  }
 };
 
 // Mock routes/auth.ts to intercept requests
@@ -337,95 +279,9 @@ jest.mock("bcryptjs", () => ({
   hash: jest.fn(() => Promise.resolve("hashedpassword"))
 }));
 
-// Test helpers
-// @ts-ignore
-const runTokenBasedTests = (endpoint, config) => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  // @ts-ignore
-  const makeRequest = (token, customBody = {}) => {
-    const url = `${config.url}/${token}`;
-    if (config.method === "get") {
-      return request(app).get(url);
-    } else {
-      return request(app).post(url).send({ ...config.body, ...customBody });
-    }
-  };
-
-  it("should return 400 if token is invalid", async () => {
-    const res = await makeRequest(TEST_CONFIG.testData.invalidToken);
-    expect(res.body.message).toBe(RESPONSE_MESSAGES.INVALID_TOKEN);
-    expect(res.status).toBe(TEST_CONFIG.statusCodes.BAD_REQUEST);
-  });
-
-  it("should return 400 if token is expired", async () => {
-    const tokenData = userTokenFixture({
-      created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    });
-
-    const res = await makeRequest(`${TEST_CONFIG.testData.expiredTokenPrefix}${tokenData.token}`);
-    expect(res.body.message).toBe(RESPONSE_MESSAGES.TOKEN_EXPIRED);
-    expect(res.status).toBe(TEST_CONFIG.statusCodes.BAD_REQUEST);
-  });
-
-  it("should return 400 if user does not exist", async () => {
-    const tokenData = userTokenFixture({});
-    const res = await makeRequest(`${TEST_CONFIG.testData.noUserTokenPrefix}${tokenData.token}`);
-    expect(res.body.message).toBe(RESPONSE_MESSAGES.NO_USER);
-    expect(res.status).toBe(TEST_CONFIG.statusCodes.BAD_REQUEST);
-  });
-
-  it(`should ${config.successMessage.toLowerCase()} if token is valid`, async () => {
-    const userData = userFixture({});
-    const tokenData = userTokenFixture({
-      sent_to: userData.email,
-    });
-
-    const res = await makeRequest(tokenData.token);
-    expect(res.body.message).toBe(config.successMessage);
-    expect(res.status).toBe(TEST_CONFIG.statusCodes.OK);
-  });
-};
-
-// @ts-ignore
-const runEmailBasedTests = (endpoint, config) => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  // @ts-ignore
-  const makeRequest = (email) => {
-    return request(app)
-      .post(config.url)
-      .send({ email });
-  };
-
-  it("should return 400 if user does not exist", async () => {
-    const res = await makeRequest(TEST_CONFIG.testData.nonexistentEmail);
-    expect(res.body.message).toBe(RESPONSE_MESSAGES.NO_USER);
-    expect(res.status).toBe(TEST_CONFIG.statusCodes.BAD_REQUEST);
-  });
-
-  it(`should send ${config.successMessage.toLowerCase()}`, async () => {
-    const email = config.body.email;
-    const res = await makeRequest(email);
-    expect(res.body.message).toBe(config.successMessage);
-    expect(res.status).toBe(TEST_CONFIG.statusCodes.OK);
-  });
-};
-
-// @ts-ignore
-const createAuthenticatedRequest = (userId) => {
-  return request(app)
-    .post("/api/auth/update-password")
-    .set("Authorization", `Bearer ${jwt.sign({ id: userId }, process.env.JWT_SECRET || "test-secret")}`);
-};
-
 // Tests for confirmAccount endpoint
 describe("Confirm Account: GET /api/auth/confirm-account/:token", () => {
-  runTokenBasedTests("confirmAccount", TEST_CONFIG.endpoints.confirmAccount);
+  runTokenBasedTests("confirmAccount", API_TEST_CONFIG.auth.confirmAccount);
 
   // Additional specific test case
   it("should confirm account with valid token (explicit test)", async () => {
@@ -442,32 +298,32 @@ describe("Confirm Account: GET /api/auth/confirm-account/:token", () => {
 
     const res = await request(app).get(`/api/auth/confirm-account/${tokenData.token}`);
     expect(res.body.message).toBe(RESPONSE_MESSAGES.ACCOUNT_CONFIRMED);
-    expect(res.status).toBe(TEST_CONFIG.statusCodes.OK);
+    expect(res.status).toBe(HTTP_STATUS.OK);
   });
 });
 
 // Tests for resetPassword endpoint
 describe("Reset Password: POST /api/auth/reset-password/:token", () => {
-  runTokenBasedTests("resetPassword", TEST_CONFIG.endpoints.resetPassword);
+  runTokenBasedTests("resetPassword", API_TEST_CONFIG.auth.resetPassword);
 
   // Additional specific test cases
   it("should return 400 if password is invalid", async () => {
     const res = await request(app)
       .post("/api/auth/reset-password/sometoken")
-      .send({ password: TEST_CONFIG.testData.emptyPassword });
+      .send({ password: TEST_DATA.auth.emptyPassword });
 
     expect(res.body.message).toContain("Password");
-    expect(res.status).toBe(TEST_CONFIG.statusCodes.BAD_REQUEST);
+    expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
   });
 
   it("should return 400 if password has been used before", async () => {
     const tokenData = userTokenFixture({});
     const res = await request(app)
       .post(`/api/auth/reset-password/${tokenData.token}`)
-      .send({ password: TEST_CONFIG.testData.reusedPassword });
+      .send({ password: TEST_DATA.auth.reusedPassword });
 
     expect(res.body.message).toBe(RESPONSE_MESSAGES.PASSWORD_REUSED);
-    expect(res.status).toBe(TEST_CONFIG.statusCodes.BAD_REQUEST);
+    expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
   });
 
   it("should reset password with valid token (explicit test)", async () => {
@@ -484,10 +340,10 @@ describe("Reset Password: POST /api/auth/reset-password/:token", () => {
 
     const res = await request(app)
       .post(`/api/auth/reset-password/${tokenData.token}`)
-      .send({ password: TEST_CONFIG.testData.validPassword });
+      .send({ password: TEST_DATA.auth.validPassword });
 
     expect(res.body.message).toBe(RESPONSE_MESSAGES.PASSWORD_UPDATED);
-    expect(res.status).toBe(TEST_CONFIG.statusCodes.OK);
+    expect(res.status).toBe(HTTP_STATUS.OK);
   });
 });
 
@@ -499,7 +355,7 @@ describe("Update Password: POST /api/auth/update-password", () => {
 
   it("should return 401 when no token is provided", async () => {
     const res = await request(app).post("/api/auth/update-password");
-    expect(res.status).toBe(TEST_CONFIG.statusCodes.UNAUTHORIZED);
+    expect(res.status).toBe(HTTP_STATUS.UNAUTHORIZED);
     expect(res.body.message).toBe(RESPONSE_MESSAGES.UNAUTHORIZED_NO_TOKEN);
   });
 
@@ -507,54 +363,54 @@ describe("Update Password: POST /api/auth/update-password", () => {
     const userData = userFixture({});
     mockServices.getUserById.mockReturnValue(Promise.resolve(userData));
 
-    const res = await createAuthenticatedRequest(userData.id)
+    const res = await createAuthenticatedRequest(userData.id, "post", "/api/auth/update-password")
       .send({
         currentPassword: "P@ssw0rd123!",
-        newPassword: TEST_CONFIG.testData.validPassword,
+        newPassword: TEST_DATA.auth.validPassword,
         newPassword2: "DifferentP@ssw0rd123!",
       });
 
     expect(res.body.message).toBe(RESPONSE_MESSAGES.PASSWORDS_MISMATCH);
-    expect(res.status).toBe(TEST_CONFIG.statusCodes.BAD_REQUEST);
+    expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
   });
 
   it("should return 400 if user does not exist", async () => {
     const userData = userFixture({});
-    const res = await createAuthenticatedRequest(userData.id)
+    const res = await createAuthenticatedRequest(userData.id, "post", "/api/auth/update-password")
       .send({
         currentPassword: "nonexistent",
-        newPassword: TEST_CONFIG.testData.validPassword,
-        newPassword2: TEST_CONFIG.testData.validPassword,
+        newPassword: TEST_DATA.auth.validPassword,
+        newPassword2: TEST_DATA.auth.validPassword,
       });
 
     expect(res.body.message).toBe(RESPONSE_MESSAGES.NO_USER);
-    expect(res.status).toBe(TEST_CONFIG.statusCodes.BAD_REQUEST);
+    expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
   });
 
   it("should return 400 if current password is incorrect", async () => {
     const userData = userFixture({});
-    const res = await createAuthenticatedRequest(userData.id)
+    const res = await createAuthenticatedRequest(userData.id, "post", "/api/auth/update-password")
       .send({
         currentPassword: "wrong",
-        newPassword: TEST_CONFIG.testData.validPassword,
-        newPassword2: TEST_CONFIG.testData.validPassword,
+        newPassword: TEST_DATA.auth.validPassword,
+        newPassword2: TEST_DATA.auth.validPassword,
       });
 
     expect(res.body.message).toBe(RESPONSE_MESSAGES.WRONG_PASSWORD);
-    expect(res.status).toBe(TEST_CONFIG.statusCodes.BAD_REQUEST);
+    expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
   });
 
   it("should return 400 if password has been used before", async () => {
     const userData = userFixture({});
-    const res = await createAuthenticatedRequest(userData.id)
+    const res = await createAuthenticatedRequest(userData.id, "post", "/api/auth/update-password")
       .send({
         currentPassword: "P@ssw0rd123!",
-        newPassword: TEST_CONFIG.testData.reusedPassword,
-        newPassword2: TEST_CONFIG.testData.reusedPassword,
+        newPassword: TEST_DATA.auth.reusedPassword,
+        newPassword2: TEST_DATA.auth.reusedPassword,
       });
 
     expect(res.body.message).toBe(RESPONSE_MESSAGES.PASSWORD_REUSED);
-    expect(res.status).toBe(TEST_CONFIG.statusCodes.BAD_REQUEST);
+    expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
   });
 
   it("should update password if all validations pass", async () => {
@@ -562,33 +418,33 @@ describe("Update Password: POST /api/auth/update-password", () => {
     mockServices.getUserById.mockReturnValue(Promise.resolve(userData));
     bcrypt.compare = jest.fn().mockResolvedValue(true);
 
-    const res = await createAuthenticatedRequest(userData.id)
+    const res = await createAuthenticatedRequest(userData.id, "post", "/api/auth/update-password")
       .send({
         currentPassword: "P@ssw0rd123!",
-        newPassword: TEST_CONFIG.testData.validPassword,
-        newPassword2: TEST_CONFIG.testData.validPassword,
+        newPassword: TEST_DATA.auth.validPassword,
+        newPassword2: TEST_DATA.auth.validPassword,
       });
 
     expect(res.body.message).toBe(RESPONSE_MESSAGES.PASSWORD_UPDATED);
-    expect(res.status).toBe(TEST_CONFIG.statusCodes.OK);
+    expect(res.status).toBe(HTTP_STATUS.OK);
   });
 });
 
 // Tests for requestConfirmation endpoint
 describe("Request Confirmation Email: POST /api/auth/request-confirmation", () => {
-  runEmailBasedTests("requestConfirmation", TEST_CONFIG.endpoints.requestConfirmation);
+  runEmailBasedTests("requestConfirmation", API_TEST_CONFIG.auth.requestConfirmation);
 
   it("should return 400 if account is already verified", async () => {
     const res = await request(app)
       .post("/api/auth/request-confirmation")
-      .send({ email: TEST_CONFIG.testData.verifiedEmail });
+      .send({ email: TEST_DATA.auth.verifiedEmail });
 
     expect(res.body.message).toBe(RESPONSE_MESSAGES.ACCOUNT_VERIFIED);
-    expect(res.status).toBe(TEST_CONFIG.statusCodes.BAD_REQUEST);
+    expect(res.status).toBe(HTTP_STATUS.BAD_REQUEST);
   });
 });
 
 // Tests for forgetPassword endpoint
 describe("Request Forget Password Email: POST /api/auth/forget-password", () => {
-  runEmailBasedTests("forgetPassword", TEST_CONFIG.endpoints.forgetPassword);
+  runEmailBasedTests("forgetPassword", API_TEST_CONFIG.auth.forgetPassword);
 });
