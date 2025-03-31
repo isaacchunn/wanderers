@@ -4,6 +4,6 @@ module.exports = {
   transform: {
     "^.+\\.ts?$": "ts-jest",
   },
-  setupFilesAfterEnv: ["./backend/test/setup.ts"],
+  setupFilesAfterEnv: ["./prisma/singleton.ts"],
   transformIgnorePatterns: ["<rootDir>/node_modules/"],
 };
